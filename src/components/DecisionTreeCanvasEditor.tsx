@@ -1546,10 +1546,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
                 </p>
                 <div className="mt-2.5 text-xs text-slate-600 bg-red-50/60 border border-red-100/80 rounded-xl p-3">
                   {deleteModal.count === 1 ? (
-                    <p>Esta acción eliminará este nodo del diagrama y no se puede deshacer.</p>
+                    <p>Esta acción eliminará este nodo del diagrama. Puedes recuperarlo con Deshacer mientras el editor permanezca abierto.</p>
                   ) : (
                     <p>
-                      Se eliminarán <strong className="text-red-700 font-bold">{deleteModal.count} nodos en total</strong> (el nodo seleccionado y todas sus ramas descendientes conectadas).
+                      Se eliminarán <strong className="text-red-700 font-bold">{deleteModal.count} nodos en total</strong> (el nodo seleccionado y todas sus ramas descendientes conectadas). Puedes recuperarlos con Deshacer mientras el editor permanezca abierto.
                     </p>
                   )}
                 </div>
