@@ -108,7 +108,9 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   );
 
   // History State for Undo/Redo
-  const [history, setHistory] = useState<LayoutBlock[][]>([blocks]);
+  const [history, setHistory] = useState<LayoutBlock[][]>(() => [
+    JSON.parse(JSON.stringify(blocks)) as LayoutBlock[]
+  ]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
   const historyDebounceTimerRef = useRef<any>(null);
 
