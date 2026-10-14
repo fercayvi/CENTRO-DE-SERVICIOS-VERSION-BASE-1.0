@@ -186,7 +186,11 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
   if (!nodes || nodes.length === 0) return [];
 
   const nodeMap = new Map<string, DecisionNodeType>();
-  nodes.forEach(n => nodeMap.set(n.id, n));
+  const originalNodeOrder = new Map<string, number>();
+  nodes.forEach((node, index) => {
+    nodeMap.set(node.id, node);
+    originalNodeOrder.set(node.id, index);
+  });
 
   // Build adjacency list for parent -> children
   const childrenMap = new Map<string, string[]>();
@@ -212,6 +216,13 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
         orderA !== orderB) {
       return orderA - orderB;
     }
+
+    // Ties and old nodes without order metadata use stable graph insertion order,
+    // never current visual Y, so moving a card cannot silently reorder choices.
+    const indexA = originalNodeOrder.get(idA) ?? Number.MAX_SAFE_INTEGER;
+    const indexB = originalNodeOrder.get(idB) ?? Number.MAX_SAFE_INTEGER;
+    if (indexA !== indexB) return indexA - indexB;
+
     return (nodeA?.position.y || 0) - (nodeB?.position.y || 0);
   };
 
