@@ -1,0 +1,754 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { 
+  ArrowLeft, 
+  Save, 
+  Check, 
+  Eye, 
+  Edit3, 
+  Monitor, 
+  Tablet, 
+  Smartphone, 
+  Layers, 
+  Sparkles,
+  LayoutGrid,
+  Undo2,
+  Redo2,
+  AlertTriangle,
+  X
+} from 'lucide-react';
+import { 
+  LayoutBlock, 
+  TextLayoutBlock, 
+  AlertLayoutBlock, 
+  FAQLayoutBlock, 
+  MediaLayoutBlock, 
+  ColumnsLayoutBlock,
+  ButtonLayoutBlock,
+  DividerLayoutBlock
+} from '../types';
+import { 
+  createNewTextBlock, 
+  createNewAlertBlock, 
+  createNewFAQBlock, 
+  createNewImageBlock,
+  createNewVideoBlock,
+  createNewPdfBlock,
+  createNewColumnsBlock,
+  createNewButtonBlock,
+  createNewDividerBlock
+} from '../utils/layoutBlocks';
+import { PageBuilderToolbar, BlockTemplateItem, AVAILABLE_BLOCKS } from './page-builder/PageBuilderToolbar';
+import { PageBuilderInspector } from './page-builder/PageBuilderInspector';
+import { PageBuilderCanvas } from './page-builder/PageBuilderCanvas';
+
+interface PageBuilderFullScreenEditorProps {
+  blocks: LayoutBlock[];
+  onChange: (blocks: LayoutBlock[]) => void;
+  onClose: () => void;
+  onCancel?: () => void;
+  serviceTitle?: string;
+}
+
+export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorProps> = ({
+  blocks,
+  onChange,
+  onClose,
+  onCancel,
+  serviceTitle
+}) => {
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [previewMode, setPreviewMode] = useState<boolean>(false);
+  const [activeDragItem, setActiveDragItem] = useState<any>(null);
+  const [mobileTab, setMobileTab] = useState<'tools' | 'canvas' | 'inspector'>('canvas');
+
+  // Track initial blocks state for Cancel / Discard
+  const initialBlocksRef = useRef<LayoutBlock[]>(JSON.parse(JSON.stringify(blocks)));
+  const hasChanges = JSON.stringify(blocks) !== JSON.stringify(initialBlocksRef.current);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+
+  const executeCancel = () => {
+    onChange(initialBlocksRef.current);
+    if (onCancel) {
+      onCancel();
+    } else {
+      onClose();
+    }
+  };
+
+  const handleCancel = () => {
+    if (hasChanges) {
+      setCancelModalOpen(true);
+      return;
+    }
+    executeCancel();
+  };
+
+  // Sensors for DND: Require 8px movement before dragging starts to allow normal text click & cursor placement in contentEditable
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  // History State for Undo/Redo
+  const [history, setHistory] = useState<LayoutBlock[][]>([blocks]);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
+  const historyDebounceTimerRef = useRef<any>(null);
+
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < history.length - 1;
+
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const prevIdx = historyIndex - 1;
+      const target = history[prevIdx];
+      setHistoryIndex(prevIdx);
+      onChange(target);
+    }
+  }, [historyIndex, history, onChange]);
+
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const nextIdx = historyIndex + 1;
+      const target = history[nextIdx];
+      setHistoryIndex(nextIdx);
+      onChange(target);
+    }
+  }, [historyIndex, history, onChange]);
+
+  // Keyboard shortcuts: Ctrl+Z / Cmd+Z for Undo, Ctrl+Y / Ctrl+Shift+Z / Cmd+Shift+Z for Redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          e.preventDefault();
+          handleRedo();
+        } else {
+          e.preventDefault();
+          handleUndo();
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleUndo, handleRedo]);
+
+  const updateBlocksWithHistory = useCallback((newBlocks: LayoutBlock[], immediate: boolean = true) => {
+    onChange(newBlocks);
+
+    if (immediate) {
+      if (historyDebounceTimerRef.current) {
+        clearTimeout(historyDebounceTimerRef.current);
+      }
+      setHistory((prev) => {
+        const trimmed = prev.slice(0, historyIndex + 1);
+        return [...trimmed, newBlocks].slice(-30);
+      });
+      setHistoryIndex((prev) => Math.min(prev + 1, 29));
+    } else {
+      if (historyDebounceTimerRef.current) {
+        clearTimeout(historyDebounceTimerRef.current);
+      }
+      historyDebounceTimerRef.current = setTimeout(() => {
+        setHistory((prev) => {
+          const trimmed = prev.slice(0, historyIndex + 1);
+          return [...trimmed, newBlocks].slice(-30);
+        });
+        setHistoryIndex((prev) => Math.min(prev + 1, 29));
+      }, 500);
+    }
+  }, [historyIndex, onChange]);
+
+  // Helper to create a new block given a template type
+  const instantiateBlock = (type: string): LayoutBlock => {
+    switch (type) {
+      case 'text':
+        return createNewTextBlock();
+      case 'columns-2':
+        return createNewColumnsBlock(2, 'equal');
+      case 'columns-3':
+        return createNewColumnsBlock(3, 'equal');
+      case 'image':
+        return createNewImageBlock();
+      case 'video':
+        return createNewVideoBlock();
+      case 'pdf':
+        return createNewPdfBlock();
+      case 'button':
+        return createNewButtonBlock();
+      case 'divider':
+        return createNewDividerBlock();
+      case 'alert':
+        return createNewAlertBlock();
+      case 'faq':
+        return createNewFAQBlock();
+      default:
+        return createNewTextBlock();
+    }
+  };
+
+  // Add block at specific index (or append to end)
+  const handleAddBlockAt = (type: any, index: number = blocks.length) => {
+    const newBlock = instantiateBlock(type);
+    const updated = [...blocks];
+    updated.splice(index, 0, newBlock);
+    updateBlocksWithHistory(updated, true);
+    setSelectedBlockId(newBlock.id);
+    if (window.innerWidth < 1024) setMobileTab('canvas');
+  };
+
+  // Add block from toolbar
+  const handleAddBlockFromToolbar = (type: any) => {
+    handleAddBlockAt(type, blocks.length);
+  };
+
+  // Update block content (handles both root blocks and nested column blocks)
+  const handleUpdateBlock = (updated: LayoutBlock) => {
+    // Check if it's a top-level block
+    const topIndex = blocks.findIndex(b => b.id === updated.id);
+    if (topIndex !== -1) {
+      const newBlocks = [...blocks];
+      newBlocks[topIndex] = updated;
+      updateBlocksWithHistory(newBlocks, false);
+      return;
+    }
+
+    // Otherwise check if it's inside a column container
+    const newBlocks = blocks.map(b => {
+      if (b.type === 'columns') {
+        const colBlock = b as ColumnsLayoutBlock;
+        const updatedCols = colBlock.columns.map(col => {
+          const childIndex = col.blocks.findIndex(cb => cb.id === updated.id);
+          if (childIndex !== -1) {
+            const newColBlocks = [...col.blocks];
+            newColBlocks[childIndex] = updated;
+            return { ...col, blocks: newColBlocks };
+          }
+          return col;
+        });
+        return { ...colBlock, columns: updatedCols };
+      }
+      return b;
+    });
+
+    updateBlocksWithHistory(newBlocks, false);
+  };
+
+  // Delete block (handles top-level and nested)
+  const handleDeleteBlock = (blockId: string) => {
+    if (selectedBlockId === blockId) setSelectedBlockId(null);
+
+    // Top-level delete
+    if (blocks.some(b => b.id === blockId)) {
+      updateBlocksWithHistory(blocks.filter(b => b.id !== blockId), true);
+      return;
+    }
+
+    // Nested delete
+    const newBlocks = blocks.map(b => {
+      if (b.type === 'columns') {
+        const colBlock = b as ColumnsLayoutBlock;
+        const updatedCols = colBlock.columns.map(col => ({
+          ...col,
+          blocks: col.blocks.filter(cb => cb.id !== blockId)
+        }));
+        return { ...colBlock, columns: updatedCols };
+      }
+      return b;
+    });
+    updateBlocksWithHistory(newBlocks, true);
+  };
+
+  // Duplicate block (recursive: top-level and nested inside columns)
+  const handleDuplicateBlock = (blockId: string) => {
+    const topIndex = blocks.findIndex(b => b.id === blockId);
+    if (topIndex !== -1) {
+      const target = blocks[topIndex];
+      const cloned: LayoutBlock = JSON.parse(JSON.stringify(target));
+      cloned.id = `block_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+      if (cloned.type === 'columns') {
+        cloned.columns = cloned.columns.map((c, i) => ({
+          id: `col_${i + 1}_${Date.now()}`,
+          blocks: c.blocks.map(cb => ({
+            ...cb,
+            id: `block_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`
+          }))
+        }));
+      }
+      const newBlocks = [...blocks];
+      newBlocks.splice(topIndex + 1, 0, cloned);
+      updateBlocksWithHistory(newBlocks, true);
+      setSelectedBlockId(cloned.id);
+      return;
+    }
+
+    // Check inside columns
+    let clonedId: string | null = null;
+    const newBlocks = blocks.map(b => {
+      if (b.type === 'columns') {
+        const colBlock = b as ColumnsLayoutBlock;
+        const updatedCols = colBlock.columns.map(col => {
+          const childIndex = col.blocks.findIndex(cb => cb.id === blockId);
+          if (childIndex !== -1) {
+            const target = col.blocks[childIndex];
+            const cloned: LayoutBlock = JSON.parse(JSON.stringify(target));
+            cloned.id = `block_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+            clonedId = cloned.id;
+            const newColBlocks = [...col.blocks];
+            newColBlocks.splice(childIndex + 1, 0, cloned);
+            return { ...col, blocks: newColBlocks };
+          }
+          return col;
+        });
+        return { ...colBlock, columns: updatedCols };
+      }
+      return b;
+    });
+
+    if (clonedId) {
+      updateBlocksWithHistory(newBlocks, true);
+      setSelectedBlockId(clonedId);
+    }
+  };
+
+  // Move block up or down (recursive: top-level and nested inside columns)
+  const handleMoveBlock = (blockId: string, direction: 'up' | 'down') => {
+    const topIndex = blocks.findIndex(b => b.id === blockId);
+    if (topIndex !== -1) {
+      const newIndex = direction === 'up' ? topIndex - 1 : topIndex + 1;
+      if (newIndex < 0 || newIndex >= blocks.length) return;
+
+      const newBlocks = [...blocks];
+      const [moved] = newBlocks.splice(topIndex, 1);
+      newBlocks.splice(newIndex, 0, moved);
+      updateBlocksWithHistory(newBlocks, true);
+      return;
+    }
+
+    // Check inside columns
+    let movedAny = false;
+    const newBlocks = blocks.map(b => {
+      if (b.type === 'columns') {
+        const colBlock = b as ColumnsLayoutBlock;
+        const updatedCols = colBlock.columns.map(col => {
+          const childIndex = col.blocks.findIndex(cb => cb.id === blockId);
+          if (childIndex !== -1) {
+            const newChildIndex = direction === 'up' ? childIndex - 1 : childIndex + 1;
+            if (newChildIndex >= 0 && newChildIndex < col.blocks.length) {
+              const newColBlocks = [...col.blocks];
+              const [moved] = newColBlocks.splice(childIndex, 1);
+              newColBlocks.splice(newChildIndex, 0, moved);
+              movedAny = true;
+              return { ...col, blocks: newColBlocks };
+            }
+          }
+          return col;
+        });
+        return { ...colBlock, columns: updatedCols };
+      }
+      return b;
+    });
+
+    if (movedAny) {
+      updateBlocksWithHistory(newBlocks, true);
+    }
+  };
+
+  // Clear all blocks
+  const handleClearCanvas = () => {
+    if (window.confirm('¿Deseas vaciar todos los bloques del lienzo? Esta acción no se puede deshacer.')) {
+      updateBlocksWithHistory([], true);
+      setSelectedBlockId(null);
+    }
+  };
+
+  // Find currently selected block (either root or nested)
+  const getSelectedBlock = (): LayoutBlock | null => {
+    if (!selectedBlockId) return null;
+    const top = blocks.find(b => b.id === selectedBlockId);
+    if (top) return top;
+
+    for (const b of blocks) {
+      if (b.type === 'columns') {
+        const colBlock = b as ColumnsLayoutBlock;
+        for (const col of colBlock.columns) {
+          const child = col.blocks.find(cb => cb.id === selectedBlockId);
+          if (child) return child;
+        }
+      }
+    }
+    return null;
+  };
+
+  // Drag and Drop handlers
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveDragItem(event.active.data.current);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveDragItem(null);
+
+    if (!over) return;
+
+    // Check if dragging from toolbar library
+    if (active.data.current?.isTemplate) {
+      const templateType = active.data.current.templateType;
+
+      // 1. Dropped into a specific column inside a container
+      if (over.data.current?.isColumnDrop) {
+        // Validation: Prevent nesting column containers inside another column
+        if (templateType === 'columns-2' || templateType === 'columns-3' || templateType === 'columns') {
+          return;
+        }
+
+        const { parentBlockId, columnId } = over.data.current;
+        const newBlock = instantiateBlock(templateType);
+
+        const updated = blocks.map(b => {
+          if (b.id === parentBlockId && b.type === 'columns') {
+            const colBlock = b as ColumnsLayoutBlock;
+            const updatedCols = colBlock.columns.map(col => {
+              if (col.id === columnId) {
+                return { ...col, blocks: [...col.blocks, newBlock] };
+              }
+              return col;
+            });
+            return { ...colBlock, columns: updatedCols };
+          }
+          return b;
+        });
+
+        updateBlocksWithHistory(updated, true);
+        setSelectedBlockId(newBlock.id);
+        return;
+      }
+
+      // 2. Dropped on a drop zone between blocks
+      if (typeof over.data.current?.dropIndex === 'number') {
+        handleAddBlockAt(templateType, over.data.current.dropIndex);
+        return;
+      }
+
+      // 3. Dropped anywhere else on the canvas
+      handleAddBlockAt(templateType, blocks.length);
+    }
+  };
+
+  const selectedBlock = getSelectedBlock();
+
+  return (
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="fixed inset-0 z-50 bg-slate-100 flex flex-col overflow-hidden animate-fadeIn select-none font-sans text-slate-800">
+        
+        {/* ==================== TOP NAVIGATION & CONTROL BAR ==================== */}
+        <header className="h-14 bg-white border-b border-slate-200 px-3 sm:px-5 flex items-center justify-between gap-3 shrink-0 shadow-2xs z-20">
+          {/* Left: Back / Save & Close + Cancel + Title */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 shrink-0 shadow-xs"
+              title="Guardar cambios y cerrar"
+            >
+              <Check className="w-4 h-4 text-emerald-400" />
+              <span className="hidden sm:inline">Guardar y Cerrar</span>
+              <span className="sm:hidden">Guardar</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-rose-50 text-rose-700 hover:text-rose-800 border border-slate-200 hover:border-rose-300 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 shrink-0 shadow-2xs"
+              title="Descartar cambios y salir"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>Cancelar</span>
+            </button>
+
+            <div className="h-5 w-px bg-slate-200 hidden sm:block shrink-0" />
+
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-600" />
+                <span className="text-[10px] font-extrabold text-blue-700 uppercase tracking-wider truncate">
+                  Lienzo Libre WYSIWYG
+                </span>
+              </div>
+              <h2 className="text-xs font-bold text-slate-800 truncate max-w-xs sm:max-w-md">
+                {serviceTitle || 'Página de Trámite'}
+              </h2>
+            </div>
+          </div>
+
+          {/* Center: Device Viewport Switcher & Preview Mode Toggle */}
+          <div className="hidden md:flex items-center gap-2">
+            {/* Viewport switcher */}
+            <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setDeviceView('desktop')}
+                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                  deviceView === 'desktop' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'
+                }`}
+                title="Vista de Computadora (100%)"
+              >
+                <Monitor className="w-3.5 h-3.5" />
+                <span className="text-[11px]">PC</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeviceView('tablet')}
+                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                  deviceView === 'tablet' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'
+                }`}
+                title="Vista de Tableta (768px)"
+              >
+                <Tablet className="w-3.5 h-3.5" />
+                <span className="text-[11px]">Tablet</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeviceView('mobile')}
+                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                  deviceView === 'mobile' ? 'bg-white text-blue-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'
+                }`}
+                title="Vista de Teléfono Móvil (375px)"
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span className="text-[11px]">Móvil</span>
+              </button>
+            </div>
+
+            {/* Undo / Redo controls */}
+            <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+              <button
+                type="button"
+                onClick={handleUndo}
+                disabled={!canUndo}
+                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+                  canUndo
+                    ? 'text-slate-700 hover:text-slate-900 hover:bg-white cursor-pointer active:scale-95 shadow-2xs'
+                    : 'text-slate-300 cursor-not-allowed'
+                }`}
+                title="Deshacer (Ctrl+Z)"
+              >
+                <Undo2 className="w-3.5 h-3.5" />
+                <span className="text-[11px] hidden xl:inline">Deshacer</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleRedo}
+                disabled={!canRedo}
+                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+                  canRedo
+                    ? 'text-slate-700 hover:text-slate-900 hover:bg-white cursor-pointer active:scale-95 shadow-2xs'
+                    : 'text-slate-300 cursor-not-allowed'
+                }`}
+                title="Rehacer (Ctrl+Y / Ctrl+Shift+Z)"
+              >
+                <Redo2 className="w-3.5 h-3.5" />
+                <span className="text-[11px] hidden xl:inline">Rehacer</span>
+              </button>
+            </div>
+
+            {/* Preview Toggle */}
+            <button
+              type="button"
+              onClick={() => setPreviewMode(!previewMode)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all border cursor-pointer ${
+                previewMode 
+                  ? 'bg-blue-600 text-white border-blue-700 shadow-xs' 
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              {previewMode ? <Edit3 className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5 text-blue-600" />}
+              <span>{previewMode ? 'Modo Editor' : 'Vista Previa'}</span>
+            </button>
+          </div>
+
+          {/* Right: Autosave status & Finish button */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            {/* Mobile Tab Switchers (small screens only) */}
+            <div className="flex lg:hidden bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setMobileTab('tools')}
+                className={`px-2 py-1 text-[11px] font-bold rounded-lg ${mobileTab === 'tools' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600'}`}
+              >
+                Librería
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileTab('canvas')}
+                className={`px-2 py-1 text-[11px] font-bold rounded-lg ${mobileTab === 'canvas' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600'}`}
+              >
+                Lienzo
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileTab('inspector')}
+                className={`px-2 py-1 text-[11px] font-bold rounded-lg ${mobileTab === 'inspector' ? 'bg-white text-blue-700 shadow-2xs' : 'text-slate-600'}`}
+              >
+                Propiedades
+              </button>
+            </div>
+
+            {/* Status indicator */}
+            {hasChanges ? (
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                <span>Cambios sin guardar</span>
+              </div>
+            ) : (
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-50 text-slate-600 border border-slate-200/80 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Sin cambios pendientes</span>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all cursor-pointer active:scale-95"
+              title="Guardar y finalizar edición visual"
+            >
+              <Check className="w-3.5 h-3.5" />
+              <span>Listo</span>
+            </button>
+          </div>
+        </header>
+
+        {/* ==================== 3-COLUMN WYSIWYG WORKSPACE ==================== */}
+        <div className="flex-1 flex overflow-hidden min-h-0">
+          
+          {/* 1. LEFT COLUMN: Toolbar / Library (20%) */}
+          <div className={`w-full lg:w-[20%] lg:min-w-[240px] lg:max-w-[280px] shrink-0 h-full ${
+            mobileTab === 'tools' ? 'block' : 'hidden lg:block'
+          }`}>
+            <PageBuilderToolbar onAddBlock={handleAddBlockFromToolbar} />
+          </div>
+
+          {/* 2. CENTER COLUMN: Live Canvas (60%) */}
+          <div className={`flex-1 min-w-0 h-full flex flex-col ${
+            mobileTab === 'canvas' ? 'flex' : 'hidden lg:flex'
+          }`}>
+            <PageBuilderCanvas
+              blocks={blocks}
+              selectedBlockId={selectedBlockId}
+              onSelectBlock={(id) => {
+                setSelectedBlockId(id);
+                if (id && window.innerWidth < 1024) setMobileTab('inspector');
+              }}
+              onUpdateBlock={handleUpdateBlock}
+              onDeleteBlock={handleDeleteBlock}
+              onDuplicateBlock={handleDuplicateBlock}
+              onMoveBlock={handleMoveBlock}
+              onAddBlockAt={handleAddBlockAt}
+              serviceTitle={serviceTitle}
+              deviceView={deviceView}
+              previewMode={previewMode}
+            />
+          </div>
+
+          {/* 3. RIGHT COLUMN: Contextual Inspector (20%) */}
+          <div className={`w-full lg:w-[20%] lg:min-w-[260px] lg:max-w-[320px] shrink-0 h-full ${
+            mobileTab === 'inspector' ? 'block' : 'hidden lg:block'
+          }`}>
+            <PageBuilderInspector
+              selectedBlock={selectedBlock}
+              onUpdateBlock={handleUpdateBlock}
+              onDeleteBlock={handleDeleteBlock}
+              onDuplicateBlock={handleDuplicateBlock}
+              onMoveBlock={handleMoveBlock}
+              onDeselect={() => setSelectedBlockId(null)}
+              totalBlocks={blocks.length}
+              serviceTitle={serviceTitle}
+              onAddBlock={handleAddBlockFromToolbar}
+              onClearCanvas={handleClearCanvas}
+            />
+          </div>
+
+        </div>
+
+        {/* Drag Overlay for smooth ghost preview */}
+        <DragOverlay>
+          {activeDragItem ? (
+            <div className="bg-white border-2 border-blue-500 rounded-xl p-3 shadow-xl flex items-center gap-2 text-xs font-bold text-blue-700 opacity-95 scale-105 pointer-events-none">
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <span>Soltando elemento...</span>
+            </div>
+          ) : null}
+        </DragOverlay>
+
+        {/* Cancel Confirmation Modal */}
+        {cancelModalOpen && (
+          <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-slate-900">
+                    ¿Descartar cambios no guardados?
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Tienes modificaciones sin guardar en los bloques de la página. Si sales ahora, se perderán estos cambios.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setCancelModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Seguir editando
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCancelModalOpen(false);
+                    executeCancel();
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  Descartar y salir
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </DndContext>
+  );
+};

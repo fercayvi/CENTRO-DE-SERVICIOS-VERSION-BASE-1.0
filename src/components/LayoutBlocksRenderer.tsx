@@ -1,0 +1,575 @@
+import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
+import { 
+  Type, 
+  AlertTriangle, 
+  AlertCircle, 
+  CheckCircle2, 
+  Info, 
+  HelpCircle, 
+  Image as ImageIcon, 
+  Video, 
+  FileDown, 
+  ChevronDown, 
+  ChevronUp, 
+  Download,
+  FileText,
+  ExternalLink
+} from 'lucide-react';
+import { LayoutBlock } from '../types';
+
+export function getEmbedVideoInfo(url?: string | null): { type: 'youtube' | 'vimeo' | 'direct'; embedUrl: string } | null {
+  if (!url || typeof url !== 'string' || !url.trim()) return null;
+  const cleanUrl = url.trim();
+
+  // Strip query params and hash when checking direct video extension
+  const urlPath = cleanUrl.split(/[?#]/)[0];
+
+  // Base64 Data URL video or direct MP4/WebM/OGG file (even with params e.g. video.mp4?v=2)
+  if (cleanUrl.startsWith('data:video') || urlPath.match(/\.(mp4|webm|ogg)$/i)) {
+    return { type: 'direct', embedUrl: cleanUrl };
+  }
+
+  // YouTube
+  const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const ytMatch = cleanUrl.match(ytRegExp);
+  if (ytMatch && ytMatch[2].length === 11) {
+    return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${ytMatch[2]}` };
+  }
+
+  // Vimeo
+  const vimeoRegExp = /(vimeo\.com\/)(\d+)/;
+  const vimeoMatch = cleanUrl.match(vimeoRegExp);
+  if (vimeoMatch && vimeoMatch[2]) {
+    return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${vimeoMatch[2]}` };
+  }
+
+  return null;
+}
+
+// Converts legacy markdown (such as **bold** and *italic*) or raw text with newlines to clean HTML if not already HTML
+function prepareHtmlContent(content: string): string {
+  if (!content || typeof content !== 'string') return '';
+  const trimmed = content.trim();
+  if (!trimmed) return '';
+
+  // Check if content already contains HTML tags
+  const hasHtmlTags = /<[a-z][\s\S]*>/i.test(content);
+
+  if (!hasHtmlTags) {
+    // Process markdown-like formatting for backwards compatibility
+    const paragraphs = content.split(/\n\n+/);
+    const htmlParas = paragraphs.map(para => {
+      const lines = para.split('\n');
+      const htmlLines = lines.map(line => {
+        let l = line
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        
+        // Bullet
+        if (l.trim().startsWith('•') || l.trim().startsWith('- ') || l.trim().startsWith('* ')) {
+          const clean = l.trim().replace(/^[•\-\*]\s*/, '');
+          const bolded = clean.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+          return `<li>${bolded}</li>`;
+        }
+
+        // Bold
+        l = l.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        // Italic
+        l = l.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        return l;
+      });
+
+      if (htmlLines.some(l => l.startsWith('<li>'))) {
+        return `<ul class="list-disc pl-5 my-1.5 space-y-1">${htmlLines.join('')}</ul>`;
+      }
+
+      return `<p class="my-1 leading-relaxed">${htmlLines.join('<br>')}</p>`;
+    });
+
+    return htmlParas.join('');
+  }
+
+  return content;
+}
+
+// Safe rich text formatter supporting direct HTML, bold, italics, bullets, newlines, and strict spacing
+function FormattedTextBlock({ content, alignClass = '' }: { content: string; alignClass?: string }) {
+  if (!content || typeof content !== 'string') return null;
+
+  const rawHtml = prepareHtmlContent(content);
+  if (!rawHtml.trim()) return null;
+
+  const cleanHtml = DOMPurify.sanitize(rawHtml, {
+    ALLOWED_TAGS: [
+      'b', 'strong', 'i', 'em', 'u', 's', 'strike', 'p', 'br', 'ul', 'ol', 'li',
+      'span', 'div', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre'
+    ],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'style']
+  });
+
+  // Force rel="noopener noreferrer" on all links in rich text
+  const safeHtmlWithRel = cleanHtml.replace(/<a\b([^>]*)>/gi, (match, attrs) => {
+    let newAttrs = attrs;
+    if (/rel\s*=\s*["'][^"']*["']/i.test(newAttrs)) {
+      newAttrs = newAttrs.replace(/rel\s*=\s*["'][^"']*["']/i, 'rel="noopener noreferrer"');
+    } else {
+      newAttrs += ' rel="noopener noreferrer"';
+    }
+    return `<a${newAttrs}>`;
+  });
+
+  return (
+    <div
+      style={{
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
+      }}
+      className={`text-slate-700 leading-relaxed whitespace-pre-wrap break-words ${alignClass} [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>p]:my-1.5 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 [&_strong]:font-bold [&_strong]:text-slate-900 [&_b]:font-bold [&_b]:text-slate-900`}
+      dangerouslySetInnerHTML={{ __html: safeHtmlWithRel }}
+    />
+  );
+}
+
+// Dedicated image renderer with loading="lazy" and onError fallback
+function MediaImageBlock({
+  url,
+  title,
+  serviceTitle,
+  onOpenLightbox
+}: {
+  url: string;
+  title?: string;
+  serviceTitle?: string;
+  onOpenLightbox?: (url: string, title?: string) => void;
+}) {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <div className="p-8 bg-slate-50 border border-slate-200 rounded-xl text-center text-slate-400 text-sm font-medium flex flex-col items-center justify-center gap-2">
+        <ImageIcon className="w-8 h-8 text-slate-300" />
+        <span>Imagen no disponible</span>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      onClick={() => onOpenLightbox && onOpenLightbox(url, title || serviceTitle)}
+      className="relative cursor-pointer overflow-hidden rounded-xl border border-slate-100 bg-slate-50"
+    >
+      <img 
+        src={url} 
+        alt={title || 'Contenido multimedia'} 
+        loading="lazy"
+        onError={() => setHasError(true)}
+        className="w-full h-auto max-w-full rounded-xl object-contain shadow-2xs mx-auto max-h-[500px]" 
+      />
+    </div>
+  );
+}
+
+// Single Accordion for FAQs
+function SingleFAQBlock({ title, items }: { title?: string; items: { q: string; a: string }[]; key?: React.Key }) {
+  const [openIndices, setOpenIndices] = useState<number[]>([0]);
+
+  const toggleIndex = (idx: number) => {
+    setOpenIndices(prev => 
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    );
+  };
+
+  if (!items || items.length === 0) return null;
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
+      <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+        <HelpCircle className="w-5 h-5 text-blue-600 shrink-0" />
+        <span>{title || 'Preguntas Frecuentes'}</span>
+      </h3>
+
+      <div className="space-y-3">
+        {items.map((item, idx) => {
+          const isOpen = openIndices.includes(idx);
+          return (
+            <div 
+              key={idx} 
+              className={`bg-white border transition-all rounded-xl overflow-hidden shadow-xs ${
+                isOpen ? 'border-blue-400 ring-1 ring-blue-100' : 'border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => toggleIndex(idx)}
+                className="w-full text-left p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors focus:outline-none cursor-pointer select-none"
+                aria-expanded={isOpen}
+              >
+                <div className="flex items-center gap-3.5 min-w-0 pr-2">
+                  <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 font-extrabold text-xs transition-colors ${
+                    isOpen ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
+                  }`}>
+                    {idx + 1}
+                  </span>
+                  <span className="text-base sm:text-lg font-semibold text-slate-800 leading-snug">
+                    {item.q}
+                  </span>
+                </div>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                  isOpen ? 'bg-blue-50 text-blue-700 rotate-180' : 'bg-slate-100 text-slate-600'
+                }`}>
+                  <ChevronDown className="w-5 h-5 stroke-[2.5]" />
+                </div>
+              </button>
+
+              {isOpen && (
+                <div className="px-5 pb-5 pt-3 border-t border-slate-100 bg-slate-50/60 animate-fadeIn">
+                  <FormattedTextBlock content={item.a} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+interface LayoutBlocksRendererProps {
+  blocks?: LayoutBlock[];
+  onOpenLightbox?: (url: string, title?: string) => void;
+  serviceTitle?: string;
+}
+
+export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
+  blocks,
+  onOpenLightbox,
+  serviceTitle
+}) => {
+  if (!blocks || blocks.length === 0) return null;
+
+  return (
+    <div className="space-y-4 animate-fadeIn">
+      {blocks.map((block, index) => {
+        // ==================== 1. TEXT BLOCK ====================
+        if (block.type === 'text') {
+          const alignClass = block.align === 'center' ? 'text-center' : block.align === 'right' ? 'text-right' : 'text-left';
+          const styleClass = block.style === 'lead' ? 'text-base sm:text-lg font-medium text-slate-800' : block.style === 'heading' ? 'text-lg sm:text-xl font-bold text-slate-900' : 'text-sm sm:text-base';
+
+          return (
+            <div 
+              key={block.id || `text-${index}`}
+              className={`bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-4 ${alignClass}`}
+            >
+              {block.title && (
+                <h3 className={`text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2 ${block.align === 'center' ? 'justify-center' : block.align === 'right' ? 'justify-end' : ''}`}>
+                  <FileText className="w-5 h-5 text-blue-600 shrink-0" />
+                  <span>{block.title}</span>
+                </h3>
+              )}
+              <div 
+                style={{
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                }}
+                className={`${styleClass} whitespace-pre-wrap break-words`}
+              >
+                <FormattedTextBlock content={block.content} alignClass={alignClass} />
+              </div>
+            </div>
+          );
+        }
+
+        // ==================== 2. ALERT BLOCK (NOTIFICACIONES OFICIALES) ====================
+        if (block.type === 'alert') {
+          const isWarning = block.level === 'warning';
+          const isDanger = block.level === 'danger';
+          const isSuccess = block.level === 'success';
+
+          let containerClass = 'bg-blue-50 border-l-4 border-blue-600 text-blue-950';
+          let headerClass = 'text-blue-900';
+          let iconColor = 'text-blue-600';
+          let IconComponent = Info;
+
+          if (isWarning) {
+            containerClass = 'bg-amber-50 border-l-4 border-amber-500 text-amber-950';
+            headerClass = 'text-amber-900';
+            iconColor = 'text-amber-600';
+            IconComponent = AlertTriangle;
+          } else if (isDanger) {
+            containerClass = 'bg-rose-50 border-l-4 border-rose-600 text-rose-950';
+            headerClass = 'text-rose-900';
+            iconColor = 'text-rose-600';
+            IconComponent = AlertCircle;
+          } else if (isSuccess) {
+            containerClass = 'bg-emerald-50 border-l-4 border-emerald-600 text-emerald-950';
+            headerClass = 'text-emerald-900';
+            iconColor = 'text-emerald-600';
+            IconComponent = CheckCircle2;
+          }
+
+          return (
+            <div 
+              key={block.id || `alert-${index}`}
+              className={`${containerClass} rounded-2xl p-6 sm:p-8 shadow-sm flex items-start gap-4 sm:gap-5 transition-all`}
+            >
+              <IconComponent className={`w-7 h-7 sm:w-8 sm:h-8 shrink-0 mt-0.5 ${iconColor}`} />
+              <div className="min-w-0 flex-1 space-y-1">
+                {block.title && (
+                  <h4 className={`text-base font-bold uppercase tracking-wider ${headerClass}`}>
+                    {block.title}
+                  </h4>
+                )}
+                <p className="text-base text-slate-800 font-medium leading-relaxed whitespace-pre-line">
+                  {block.message}
+                </p>
+              </div>
+            </div>
+          );
+        }
+
+        // ==================== 3. FAQ BLOCK ====================
+        if (block.type === 'faq') {
+          return (
+            <SingleFAQBlock 
+              key={block.id || `faq-${index}`} 
+              title={block.title} 
+              items={block.items || []} 
+            />
+          );
+        }
+
+        // ==================== 4. MEDIA BLOCK ====================
+        if (block.type === 'media') {
+          const mediaType = block.mediaType || 'image';
+
+          // IMAGE
+          if (mediaType === 'image') {
+            const alignClass = block.alignment === 'left' ? 'mr-auto' : block.alignment === 'right' ? 'ml-auto' : 'mx-auto';
+            const widthStyle = block.widthPercent ? { width: `${block.widthPercent}%` } : undefined;
+            const sizeClass = !block.widthPercent ? (block.size === 'small' ? 'max-w-xs' : block.size === 'medium' ? 'max-w-md' : 'w-full') : '';
+
+            return (
+              <div 
+                key={block.id || `media-${index}`}
+                style={widthStyle}
+                className={`bg-white border border-slate-200 rounded-2xl shadow-xs p-4 sm:p-5 space-y-3 ${sizeClass} ${alignClass}`}
+              >
+                {block.title && (
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <ImageIcon className="w-5 h-5 text-emerald-600 shrink-0" />
+                    <span>{block.title}</span>
+                  </h3>
+                )}
+
+                {block.url ? (
+                  <MediaImageBlock
+                    url={block.url}
+                    title={block.title}
+                    serviceTitle={serviceTitle}
+                    onOpenLightbox={onOpenLightbox}
+                  />
+                ) : (
+                  <div className="p-5 bg-slate-50 rounded-xl text-center text-slate-400 text-sm italic">
+                    Sin imagen cargada
+                  </div>
+                )}
+
+                {block.caption && (
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium text-center pt-1 italic">
+                    {block.caption}
+                  </p>
+                )}
+              </div>
+            );
+          }
+
+          // VIDEO
+          if (mediaType === 'video') {
+            const videoInfo = getEmbedVideoInfo(block.url);
+            return (
+              <div 
+                key={block.id || `media-${index}`}
+                className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm p-4 sm:p-5 space-y-3"
+              >
+                {block.title && (
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <Video className="w-5 h-5 text-emerald-600 shrink-0" />
+                    <span>{block.title}</span>
+                  </h3>
+                )}
+
+                {videoInfo ? (
+                  <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-inner">
+                    {videoInfo.type === 'direct' ? (
+                      <video src={videoInfo.embedUrl} controls className="w-full h-full" />
+                    ) : (
+                      <iframe 
+                        src={videoInfo.embedUrl} 
+                        title={block.title || 'Video tutorial'} 
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowFullScreen
+                        loading="lazy"
+                        sandbox="allow-scripts allow-same-origin allow-presentation"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="p-5 bg-slate-50 rounded-xl text-center text-slate-400 text-sm italic">
+                    {block.url?.trim() ? 'Video no disponible' : 'Sin video configurado'}
+                  </div>
+                )}
+
+                {block.caption && (
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium text-center pt-1 italic">
+                    {block.caption}
+                  </p>
+                )}
+              </div>
+            );
+          }
+
+          // PDF / FORMATO
+          if (mediaType === 'pdf') {
+            const rawPdfUrl = (block.url || '').trim();
+            const hasValidPdf = Boolean(rawPdfUrl && rawPdfUrl !== 'https://' && rawPdfUrl !== 'http://');
+
+            if (!hasValidPdf) {
+              return null;
+            }
+
+            return (
+              <div 
+                key={block.id || `media-${index}`}
+                className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4"
+              >
+                {block.title && (
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <FileDown className="w-5 h-5 text-blue-600 shrink-0" />
+                    <span>{block.title}</span>
+                  </h3>
+                )}
+
+                <a
+                  href={block.url}
+                  download={block.url?.startsWith('data:') ? `${block.title || 'formato_oficial'}.pdf` : undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-4 sm:p-5 rounded-2xl border-2 border-blue-100 hover:border-blue-400 bg-blue-50/70 hover:bg-blue-100/80 transition-all flex items-center justify-between gap-4 group cursor-pointer active:scale-98"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-blue-700 truncate">
+                        {block.title || 'Descargar Formato / Documento Oficial (PDF)'}
+                      </p>
+                      <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+                        {block.caption || 'Haz clic para abrir o descargar el documento adjunto'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold shadow-xs group-hover:bg-blue-700 transition-all shrink-0">
+                    <Download className="w-4 h-4" />
+                    <span>Descargar</span>
+                  </div>
+                </a>
+              </div>
+            );
+          }
+        }
+
+        // ==================== 5. COLUMNS / CONTAINER BLOCK ====================
+        if (block.type === 'columns') {
+          const colsCount = block.columnsCount || block.columns?.length || 2;
+          let gridClass = 'grid-cols-1 md:grid-cols-2';
+          if (colsCount === 3) {
+            gridClass = 'grid-cols-1 md:grid-cols-3';
+          } else if (block.layout === '1-2') {
+            gridClass = 'grid-cols-1 md:grid-cols-3';
+          } else if (block.layout === '2-1') {
+            gridClass = 'grid-cols-1 md:grid-cols-3';
+          }
+
+          const hasBg = Boolean(block.backgroundColor && block.backgroundColor !== 'transparent');
+          const containerStyle = hasBg ? { backgroundColor: block.backgroundColor } : undefined;
+
+          return (
+            <div 
+              key={block.id || `cols-${index}`}
+              style={containerStyle}
+              className={`space-y-3 ${hasBg ? 'p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs' : ''}`}
+            >
+              {block.title && (
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+                  {block.title}
+                </h3>
+              )}
+              <div className={`grid ${gridClass} gap-4 sm:gap-6 items-start`}>
+                {block.columns.map((col, colIdx) => {
+                  let colSpan = '';
+                  if (block.layout === '1-2' && colIdx === 1) colSpan = 'md:col-span-2';
+                  if (block.layout === '2-1' && colIdx === 0) colSpan = 'md:col-span-2';
+
+                  return (
+                    <div key={col.id || `col-${colIdx}`} className={`space-y-4 ${colSpan}`}>
+                      <LayoutBlocksRenderer 
+                        blocks={col.blocks}
+                        onOpenLightbox={onOpenLightbox}
+                        serviceTitle={serviceTitle}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
+        // ==================== 6. BUTTON BLOCK ====================
+        if (block.type === 'button') {
+          const rawBtnUrl = (block.url || '').trim();
+          if (!rawBtnUrl || rawBtnUrl === 'https://' || rawBtnUrl === 'http://') {
+            return null;
+          }
+
+          const alignClass = block.align === 'center' ? 'text-center' : block.align === 'right' ? 'text-right' : 'text-left';
+          const btnStyle = block.style === 'secondary'
+            ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300'
+            : 'bg-blue-600 hover:bg-blue-700 text-white shadow-xs';
+
+          return (
+            <div key={block.id || `btn-${index}`} className={`my-2 ${alignClass}`}>
+              <a
+                href={block.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all shadow-xs hover:shadow-md cursor-pointer ${btnStyle}`}
+              >
+                <span>{block.label || 'Botón de Acción'}</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          );
+        }
+
+        // ==================== 7. DIVIDER BLOCK ====================
+        if (block.type === 'divider') {
+          const spacingClass = block.spacing === 'small' ? 'my-3' : block.spacing === 'large' ? 'my-8' : 'my-5';
+          const borderStyle = block.lineStyle === 'dashed' ? 'border-dashed' : 'border-solid';
+
+          return (
+            <div key={block.id || `div-${index}`} className={`w-full ${spacingClass}`}>
+              <hr className={`border-t border-slate-200 ${borderStyle}`} />
+            </div>
+          );
+        }
+
+        return null;
+      })}
+    </div>
+  );
+};
