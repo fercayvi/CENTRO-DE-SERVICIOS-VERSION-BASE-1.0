@@ -387,6 +387,8 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
         serviceNode.contentData = { ...data.contentData };
         if (normalizedBlocks.length > 0) {
           serviceNode.contentData.layoutBlocks = normalizedBlocks;
+          // Once successfully migrated, the legacy array is no longer a fallback source.
+          delete serviceNode.contentData.blocks;
         }
       }
     }
