@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { 
   Trash2, Image as ImageIcon, 
   Video, FileDown, FileCheck, Check 
@@ -46,7 +46,10 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
     }
   };
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleClear = () => {
+    if (fileInputRef.current) fileInputRef.current.value = '';
     onChange('');
   };
 
@@ -67,6 +70,7 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
       <div className="space-y-1.5">
         <div className="relative flex items-center bg-white border border-slate-300 rounded-xl p-1.5 hover:border-blue-400 transition-colors focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-600">
           <input
+            ref={fileInputRef}
             id={`${idPrefix}-${type}-file-input`}
             type="file"
             accept={getAcceptType()}
