@@ -77,7 +77,11 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
 
   const executeCancel = () => {
-    onChange(initialBlocksRef.current);
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
+    onChange(JSON.parse(JSON.stringify(initialBlocksRef.current)));
     if (onCancel) {
       onCancel();
     } else {
@@ -110,21 +114,38 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
 
+  useEffect(() => {
+    return () => {
+      if (historyDebounceTimerRef.current) {
+        clearTimeout(historyDebounceTimerRef.current);
+        historyDebounceTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const handleUndo = useCallback(() => {
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
     if (historyIndex > 0) {
       const prevIdx = historyIndex - 1;
       const target = history[prevIdx];
       setHistoryIndex(prevIdx);
-      onChange(target);
+      onChange(JSON.parse(JSON.stringify(target)));
     }
   }, [historyIndex, history, onChange]);
 
   const handleRedo = useCallback(() => {
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1;
       const target = history[nextIdx];
       setHistoryIndex(nextIdx);
-      onChange(target);
+      onChange(JSON.parse(JSON.stringify(target)));
     }
   }, [historyIndex, history, onChange]);
 
@@ -159,31 +180,38 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleUndo, handleRedo]);
 
+  const pushHistorySnapshot = useCallback((newBlocks: LayoutBlock[]) => {
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
+
+    // Store detached snapshots so later nested edits cannot mutate earlier history entries.
+    const snapshot = JSON.parse(JSON.stringify(newBlocks)) as LayoutBlock[];
+    setHistory((prev) => {
+      const trimmed = prev.slice(0, historyIndex + 1);
+      return [...trimmed, snapshot].slice(-30);
+    });
+    setHistoryIndex((prev) => Math.min(prev + 1, 29));
+  }, [historyIndex]);
+
   const updateBlocksWithHistory = useCallback((newBlocks: LayoutBlock[], immediate: boolean = true) => {
     onChange(newBlocks);
 
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
+
     if (immediate) {
-      if (historyDebounceTimerRef.current) {
-        clearTimeout(historyDebounceTimerRef.current);
-      }
-      setHistory((prev) => {
-        const trimmed = prev.slice(0, historyIndex + 1);
-        return [...trimmed, newBlocks].slice(-30);
-      });
-      setHistoryIndex((prev) => Math.min(prev + 1, 29));
+      pushHistorySnapshot(newBlocks);
     } else {
-      if (historyDebounceTimerRef.current) {
-        clearTimeout(historyDebounceTimerRef.current);
-      }
       historyDebounceTimerRef.current = setTimeout(() => {
-        setHistory((prev) => {
-          const trimmed = prev.slice(0, historyIndex + 1);
-          return [...trimmed, newBlocks].slice(-30);
-        });
-        setHistoryIndex((prev) => Math.min(prev + 1, 29));
+        historyDebounceTimerRef.current = null;
+        pushHistorySnapshot(newBlocks);
       }, 500);
     }
-  }, [historyIndex, onChange]);
+  }, [onChange, pushHistorySnapshot]);
 
   // Helper to create a new block given a template type
   const instantiateBlock = (type: string): LayoutBlock => {
