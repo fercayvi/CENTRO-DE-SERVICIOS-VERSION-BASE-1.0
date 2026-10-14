@@ -86,7 +86,8 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
         data: {
           title: 'Pregunta Inicial / Opción 1',
           nodeType: 'category',
-          contentData: { text: '', imageUrl: '', videoUrl: '' }
+          contentData: { text: '', imageUrl: '', videoUrl: '' },
+          order: 0
         }
       }
     ];
@@ -205,7 +206,7 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
     incomingDegree.set(e.target, (incomingDegree.get(e.target) || 0) + 1);
   });
 
-  // Logical order is independent of visual drag position. Position is only a legacy fallback.
+  // Logical order is independent of visual drag position; array order is a stable fallback.
   const compareLogicalOrder = (idA: string, idB: string): number => {
     const nodeA = nodeMap.get(idA);
     const nodeB = nodeMap.get(idB);
