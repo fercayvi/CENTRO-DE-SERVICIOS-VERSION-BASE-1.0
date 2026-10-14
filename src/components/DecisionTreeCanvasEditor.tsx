@@ -14,7 +14,6 @@ import {
   Edge,
   EdgeChange,
   Connection,
-  applyEdgeChanges,
   NodeProps,
   BackgroundVariant,
   Panel,
