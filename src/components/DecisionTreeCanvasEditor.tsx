@@ -114,9 +114,25 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
     }
 
     const normalizedBlocks = normalizeNodeLayoutBlocks(node);
-    const contentDataCopy: ServiceNodeContentData = node.contentData
-      ? { ...node.contentData }
-      : { text: node.text || '', imageUrl: node.imageUrl || '', videoUrl: node.videoUrl || '' };
+    const existingContentData = node.contentData || {};
+    const contentDataCopy: ServiceNodeContentData = {
+      ...existingContentData,
+      text: existingContentData.text?.trim()
+        ? existingContentData.text
+        : node.text?.trim()
+          ? node.text
+          : existingContentData.text || node.text || '',
+      imageUrl: existingContentData.imageUrl?.trim()
+        ? existingContentData.imageUrl
+        : node.imageUrl?.trim()
+          ? node.imageUrl
+          : existingContentData.imageUrl || node.imageUrl || '',
+      videoUrl: existingContentData.videoUrl?.trim()
+        ? existingContentData.videoUrl
+        : node.videoUrl?.trim()
+          ? node.videoUrl
+          : existingContentData.videoUrl || node.videoUrl || '',
+    };
 
     if (normalizedBlocks.length > 0) {
       contentDataCopy.layoutBlocks = normalizedBlocks;
@@ -215,9 +231,13 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
       nodeType: nodeType,
     };
 
-    if ((rawNode as any).text) serviceNode.text = (rawNode as any).text;
-    if ((rawNode as any).imageUrl) serviceNode.imageUrl = (rawNode as any).imageUrl;
-    if ((rawNode as any).videoUrl) serviceNode.videoUrl = (rawNode as any).videoUrl;
+    const directText = data.contentData?.text || (rawNode as any).text;
+    const directImageUrl = data.contentData?.imageUrl || (rawNode as any).imageUrl;
+    const directVideoUrl = data.contentData?.videoUrl || (rawNode as any).videoUrl;
+
+    if (typeof directText === 'string' && directText.trim()) serviceNode.text = directText;
+    if (typeof directImageUrl === 'string' && directImageUrl.trim()) serviceNode.imageUrl = directImageUrl;
+    if (typeof directVideoUrl === 'string' && directVideoUrl.trim()) serviceNode.videoUrl = directVideoUrl;
 
     if (nodeType === 'category' || nodeType === 'step') {
       const childIds = childrenMap.get(id) || [];
@@ -243,7 +263,13 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
       };
 
       // Conservar bloques legados intactos si existían en contentData
-      if (data.contentData?.blocks && Array.isArray(data.contentData.blocks) && data.contentData.blocks.length > 0) {
+      if (
+        normalizedBlocks.length === 0 &&
+        data.contentData?.blocks &&
+        Array.isArray(data.contentData.blocks) &&
+        data.contentData.blocks.length > 0
+      ) {
+        // Keep unconvertible legacy data rather than discarding content that could not be migrated.
         contentDataResult.blocks = data.contentData.blocks;
       }
 
@@ -493,6 +519,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
 
   const pushHistorySnapshot = useCallback((newNodes: DecisionNodeType[], newEdges: Edge[]) => {
+    if (debounceHistoryTimerRef.current) {
+      clearTimeout(debounceHistoryTimerRef.current);
+      debounceHistoryTimerRef.current = null;
+    }
     setHistory((prev) => {
       const trimmed = prev.slice(0, historyIndex + 1);
       return [...trimmed, { nodes: newNodes, edges: newEdges }].slice(-30);
@@ -513,6 +543,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   const canRedo = historyIndex < history.length - 1;
 
   const handleUndo = useCallback(() => {
+    if (debounceHistoryTimerRef.current) {
+      clearTimeout(debounceHistoryTimerRef.current);
+      debounceHistoryTimerRef.current = null;
+    }
     if (historyIndex > 0) {
       const prevIdx = historyIndex - 1;
       const target = history[prevIdx];
@@ -523,6 +557,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   }, [historyIndex, history, setNodes, setEdges]);
 
   const handleRedo = useCallback(() => {
+    if (debounceHistoryTimerRef.current) {
+      clearTimeout(debounceHistoryTimerRef.current);
+      debounceHistoryTimerRef.current = null;
+    }
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1;
       const target = history[nextIdx];
@@ -822,21 +860,34 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
 
   const handleSaveAndClosePageBuilder = useCallback((blocksToSave: LayoutBlock[]) => {
     if (!selectedNode) return;
+
     const nextNodes = nodes.map((node) => {
-      if (node.id === selectedNode.id) {
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            blocks: blocksToSave.length > 0 ? blocksToSave : undefined,
-            contentData: {
-              ...node.data.contentData,
-              layoutBlocks: blocksToSave.length > 0 ? blocksToSave : undefined,
-            },
-          },
-        };
+      if (node.id !== selectedNode.id) return node;
+
+      const nextContentData: ServiceNodeContentData = {
+        ...node.data.contentData,
+        layoutBlocks: blocksToSave.length > 0 ? blocksToSave : undefined,
+      };
+
+      // The page builder has now normalized the editable content. Remove the stale legacy
+      // representation so it cannot reappear if modern blocks are subsequently deleted.
+      delete nextContentData.blocks;
+
+      // An empty save is an intentional deletion, not a request to fall back to legacy fields.
+      if (blocksToSave.length === 0) {
+        nextContentData.text = '';
+        nextContentData.imageUrl = '';
+        nextContentData.videoUrl = '';
       }
-      return node;
+
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          blocks: blocksToSave.length > 0 ? blocksToSave : undefined,
+          contentData: nextContentData,
+        },
+      };
     });
 
     setNodes(nextNodes);
@@ -846,12 +897,22 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
 
   const handleSaveNodeBlocks = useCallback((newBlocks: LayoutBlock[]) => {
     if (!selectedNode) return;
+
+    const nextContentData: ServiceNodeContentData = {
+      ...selectedNode.data.contentData,
+      layoutBlocks: newBlocks.length > 0 ? newBlocks : undefined,
+    };
+    delete nextContentData.blocks;
+
+    if (newBlocks.length === 0) {
+      nextContentData.text = '';
+      nextContentData.imageUrl = '';
+      nextContentData.videoUrl = '';
+    }
+
     updateSelectedNodeData({
-      blocks: newBlocks,
-      contentData: {
-        ...selectedNode.data.contentData,
-        layoutBlocks: newBlocks,
-      }
+      blocks: newBlocks.length > 0 ? newBlocks : undefined,
+      contentData: nextContentData,
     });
   }, [selectedNode, updateSelectedNodeData]);
 
