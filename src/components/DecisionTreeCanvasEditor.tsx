@@ -903,6 +903,8 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       layoutBlocks: newBlocks.length > 0 ? newBlocks : undefined,
     };
     delete nextContentData.blocks;
+    // Explicit undefined overrides the legacy array when updateSelectedNodeData merges objects.
+    nextContentData.blocks = undefined;
 
     if (newBlocks.length === 0) {
       nextContentData.text = '';
