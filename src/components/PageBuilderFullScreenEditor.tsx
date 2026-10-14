@@ -75,6 +75,7 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   const initialBlocksRef = useRef<LayoutBlock[]>(JSON.parse(JSON.stringify(blocks)));
   const hasChanges = JSON.stringify(blocks) !== JSON.stringify(initialBlocksRef.current);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
 
   const executeCancel = () => {
     if (historyDebounceTimerRef.current) {
@@ -408,12 +409,15 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
     }
   };
 
-  // Clear all blocks
+  // Clear all blocks only after an in-app confirmation.
   const handleClearCanvas = () => {
-    if (window.confirm('¿Deseas vaciar todos los bloques del lienzo? Esta acción no se puede deshacer.')) {
-      updateBlocksWithHistory([], true);
-      setSelectedBlockId(null);
-    }
+    setClearCanvasModalOpen(true);
+  };
+
+  const confirmClearCanvas = () => {
+    updateBlocksWithHistory([], true);
+    setSelectedBlockId(null);
+    setClearCanvasModalOpen(false);
   };
 
   // Find currently selected block (either root or nested)
@@ -734,6 +738,41 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
             </div>
           ) : null}
         </DragOverlay>
+
+        {/* Clear Canvas Confirmation Modal */}
+        {clearCanvasModalOpen && (
+          <div className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-slate-900">¿Vaciar el lienzo?</h3>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Se quitarán todos los bloques de esta página. Podrás usar Deshacer para recuperarlos mientras el editor permanezca abierto.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setClearCanvasModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmClearCanvas}
+                  className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  Vaciar lienzo
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Cancel Confirmation Modal */}
         {cancelModalOpen && (
