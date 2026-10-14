@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { 
   Plus, 
@@ -44,6 +44,7 @@ interface PageBuilderCanvasProps {
   onDeleteBlock: (blockId: string) => void;
   onDuplicateBlock: (blockId: string) => void;
   onMoveBlock: (blockId: string, direction: 'up' | 'down') => void;
+  onReorderBlock: (blockId: string, targetIndex: number) => void;
   onAddBlockAt: (type: any, index: number) => void;
   serviceTitle?: string;
   deviceView?: 'desktop' | 'tablet' | 'mobile';
@@ -51,31 +52,55 @@ interface PageBuilderCanvasProps {
 }
 
 // Drop slot line indicator between blocks
-const DropZoneIndicator: React.FC<{ id: string; index: number; onAddBlockAt: (type: any, index: number) => void }> = ({
+const DropZoneIndicator: React.FC<{
+  id: string;
+  index: number;
+  onAddBlockAt: (type: any, index: number) => void;
+  onReorderBlock: (blockId: string, targetIndex: number) => void;
+}> = ({
   id,
   index,
-  onAddBlockAt
+  onAddBlockAt,
+  onReorderBlock
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id,
     data: { dropIndex: index }
   });
+  const [isNativeDragOver, setIsNativeDragOver] = useState(false);
+  const isActiveDropTarget = isOver || isNativeDragOver;
 
   return (
     <div
       ref={setNodeRef}
+      onDragOver={(event) => {
+        if (event.dataTransfer.types.includes('application/x-pagebuilder-block-id')) {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'move';
+          setIsNativeDragOver(true);
+        }
+      }}
+      onDragLeave={() => setIsNativeDragOver(false)}
+      onDrop={(event) => {
+        const draggedBlockId = event.dataTransfer.getData('application/x-pagebuilder-block-id');
+        if (!draggedBlockId) return;
+        event.preventDefault();
+        event.stopPropagation();
+        setIsNativeDragOver(false);
+        onReorderBlock(draggedBlockId, index);
+      }}
       className={`transition-all duration-150 relative py-1 ${
-        isOver ? 'py-3' : 'hover:py-2'
+        isActiveDropTarget ? 'py-3' : 'hover:py-2'
       }`}
     >
       <div
         className={`w-full transition-all flex items-center justify-center rounded-full ${
-          isOver 
-            ? 'h-2 bg-blue-500 ring-4 ring-blue-400/30 animate-pulse shadow-sm' 
+          isActiveDropTarget
+            ? 'h-2 bg-blue-500 ring-4 ring-blue-400/30 animate-pulse shadow-sm'
             : 'h-0.5 bg-transparent hover:bg-blue-300'
         }`}
       >
-        {isOver && (
+        {isActiveDropTarget && (
           <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
             Soltar aquí
           </span>
@@ -271,6 +296,7 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
   onDeleteBlock,
   onDuplicateBlock,
   onMoveBlock,
+  onReorderBlock,
   onAddBlockAt,
   serviceTitle,
   deviceView = 'desktop',
@@ -351,7 +377,12 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
 
         {/* Drop zone indicator before first block */}
         {!previewMode && blocks.length > 0 && (
-          <DropZoneIndicator id="drop-zone-0" index={0} onAddBlockAt={onAddBlockAt} />
+          <DropZoneIndicator
+            id="drop-zone-0"
+            index={0}
+            onAddBlockAt={onAddBlockAt}
+            onReorderBlock={onReorderBlock}
+          />
         )}
 
         {/* Render Blocks */}
@@ -379,6 +410,20 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-400 mr-1 flex items-center gap-1">
                       {block.type}
                     </span>
+                    <button
+                      type="button"
+                      draggable
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData('application/x-pagebuilder-block-id', block.id);
+                        event.dataTransfer.effectAllowed = 'move';
+                      }}
+                      onClick={(event) => event.stopPropagation()}
+                      className="p-1 hover:bg-slate-800 rounded-md transition-colors cursor-grab active:cursor-grabbing"
+                      title="Arrastra para reordenar este bloque"
+                      aria-label="Arrastrar para reordenar bloque"
+                    >
+                      <GripVertical className="w-3.5 h-3.5" />
+                    </button>
                     <button
                       type="button"
                       onClick={() => onMoveBlock(block.id, 'up')}
@@ -662,10 +707,11 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
 
               {/* Drop slot indicator between blocks */}
               {!previewMode && (
-                <DropZoneIndicator 
-                  id={`drop-zone-${index + 1}`} 
-                  index={index + 1} 
-                  onAddBlockAt={onAddBlockAt} 
+                <DropZoneIndicator
+                  id={`drop-zone-${index + 1}`}
+                  index={index + 1}
+                  onAddBlockAt={onAddBlockAt}
+                  onReorderBlock={onReorderBlock}
                 />
               )}
             </React.Fragment>
