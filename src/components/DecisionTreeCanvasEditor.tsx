@@ -563,6 +563,15 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
     }, 500);
   }, [pushHistorySnapshot]);
 
+  useEffect(() => {
+    return () => {
+      if (debounceHistoryTimerRef.current) {
+        clearTimeout(debounceHistoryTimerRef.current);
+        debounceHistoryTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
 
