@@ -409,6 +409,21 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
     }
   };
 
+  // Reorder top-level blocks by dropping the selected drag handle onto a canvas slot.
+  const handleReorderBlock = (blockId: string, targetIndex: number) => {
+    const sourceIndex = blocks.findIndex((block) => block.id === blockId);
+    if (sourceIndex < 0 || targetIndex < 0 || targetIndex > blocks.length) return;
+
+    const insertionIndex = targetIndex > sourceIndex ? targetIndex - 1 : targetIndex;
+    if (insertionIndex === sourceIndex) return;
+
+    const nextBlocks = [...blocks];
+    const [movedBlock] = nextBlocks.splice(sourceIndex, 1);
+    nextBlocks.splice(insertionIndex, 0, movedBlock);
+    updateBlocksWithHistory(nextBlocks, true);
+    setSelectedBlockId(blockId);
+  };
+
   // Clear all blocks only after an in-app confirmation.
   const handleClearCanvas = () => {
     setClearCanvasModalOpen(true);
@@ -702,6 +717,7 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
               onDeleteBlock={handleDeleteBlock}
               onDuplicateBlock={handleDuplicateBlock}
               onMoveBlock={handleMoveBlock}
+              onReorderBlock={handleReorderBlock}
               onAddBlockAt={handleAddBlockAt}
               serviceTitle={serviceTitle}
               deviceView={deviceView}
