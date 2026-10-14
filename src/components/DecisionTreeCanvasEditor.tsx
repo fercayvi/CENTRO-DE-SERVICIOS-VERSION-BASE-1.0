@@ -12,7 +12,9 @@ import {
   MarkerType,
   Node,
   Edge,
+  EdgeChange,
   Connection,
+  applyEdgeChanges,
   NodeProps,
   BackgroundVariant,
   Panel,
@@ -65,6 +67,73 @@ export interface DecisionNodeData extends Record<string, unknown> {
 }
 
 export type DecisionNodeType = Node<DecisionNodeData, 'decisionNode'>;
+
+interface GraphOrderOptions {
+  appendRootIds?: string[];
+  appendChildIdsBySource?: Record<string, string[]>;
+}
+
+/**
+ * Reassigns sibling order metadata after a structural graph change.
+ * Stored order is preferred; insertion order is a stable fallback, never canvas Y.
+ */
+function normalizeGraphSiblingOrders(
+  nodes: DecisionNodeType[],
+  edges: Edge[],
+  options: GraphOrderOptions = {}
+): DecisionNodeType[] {
+  const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+  const nodeIndex = new Map(nodes.map((node, index) => [node.id, index]));
+  const compareStoredOrder = (idA: string, idB: string): number => {
+    const orderA = nodeMap.get(idA)?.data.order;
+    const orderB = nodeMap.get(idB)?.data.order;
+    if (typeof orderA === 'number' && Number.isFinite(orderA) &&
+        typeof orderB === 'number' && Number.isFinite(orderB) &&
+        orderA !== orderB) {
+      return orderA - orderB;
+    }
+    return (nodeIndex.get(idA) ?? Number.MAX_SAFE_INTEGER) -
+      (nodeIndex.get(idB) ?? Number.MAX_SAFE_INTEGER);
+  };
+
+  const childrenBySource = new Map<string, string[]>();
+  const incomingIds = new Set<string>();
+  edges.forEach((edge) => {
+    const children = childrenBySource.get(edge.source) || [];
+    children.push(edge.target);
+    childrenBySource.set(edge.source, children);
+    incomingIds.add(edge.target);
+  });
+
+  const orderById = new Map<string, number>();
+  childrenBySource.forEach((childIds, sourceId) => {
+    const appendIds = (options.appendChildIdsBySource?.[sourceId] || [])
+      .filter((id) => childIds.includes(id));
+    const appendSet = new Set(appendIds);
+    const orderedChildren = childIds
+      .filter((id) => !appendSet.has(id))
+      .sort(compareStoredOrder)
+      .concat(appendIds);
+    orderedChildren.forEach((id, index) => orderById.set(id, index));
+  });
+
+  const appendedRootIds = (options.appendRootIds || []).filter(
+    (id) => nodeMap.has(id) && !incomingIds.has(id)
+  );
+  const appendedRootSet = new Set(appendedRootIds);
+  const rootIds = nodes
+    .filter((node) => !incomingIds.has(node.id) && !appendedRootSet.has(node.id))
+    .map((node) => node.id)
+    .sort(compareStoredOrder)
+    .concat(appendedRootIds);
+  rootIds.forEach((id, index) => orderById.set(id, index));
+
+  return nodes.map((node) => {
+    const nextOrder = orderById.get(node.id);
+    if (nextOrder === undefined || node.data.order === nextOrder) return node;
+    return { ...node, data: { ...node.data, order: nextOrder } };
+  });
+}
 
 /* =========================================================================
    ADAPTER FUNCTIONS: ServiceNode[] <-> React Flow (nodes, edges)
@@ -511,7 +580,7 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   const initialGraph = useMemo(() => treeToFlow(tree), [tree]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<DecisionNodeType>(initialGraph.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialGraph.edges);
+  const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialGraph.edges);
 
   // Track if initial tree arrived empty
   const initialTreeWasEmptyRef = useRef<boolean>(!tree || tree.length === 0);
@@ -563,6 +632,32 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       pushHistorySnapshot(newNodes, newEdges);
     }, 500);
   }, [pushHistorySnapshot]);
+
+  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+    if (!changes.some((change) => change.type === 'remove')) {
+      onEdgesChangeBase(changes);
+      return;
+    }
+
+    const previousRootIds = new Set(
+      nodes
+        .filter((node) => !edges.some((edge) => edge.target === node.id))
+        .map((node) => node.id)
+    );
+    const removedTargetIds = changes
+      .filter((change) => change.type === 'remove')
+      .map((change) => edges.find((edge) => edge.id === change.id)?.target)
+      .filter((id): id is string => Boolean(id));
+    const nextEdges = applyEdgeChanges(changes, edges);
+    const appendedRootIds = [...new Set(removedTargetIds)].filter(
+      (id) => !previousRootIds.has(id) && !nextEdges.some((edge) => edge.target === id)
+    );
+    const nextNodes = normalizeGraphSiblingOrders(nodes, nextEdges, { appendRootIds: appendedRootIds });
+
+    setNodes(nextNodes);
+    setEdges(nextEdges);
+    pushHistorySnapshot(nextNodes, nextEdges);
+  }, [onEdgesChangeBase, nodes, edges, setNodes, setEdges, pushHistorySnapshot]);
 
   useEffect(() => {
     return () => {
@@ -679,12 +774,9 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       };
 
       const nextEdges = addEdge(newEdge, edges);
-      const nextSiblingOrder = edges.filter((edge) => edge.source === params.source).length;
-      const nextNodes = nodes.map((node) =>
-        node.id === params.target
-          ? { ...node, data: { ...node.data, order: nextSiblingOrder } }
-          : node
-      );
+      const nextNodes = normalizeGraphSiblingOrders(nodes, nextEdges, {
+        appendChildIdsBySource: { [params.source!]: [params.target!] },
+      });
       setNodes(nextNodes);
       setEdges(nextEdges);
       pushHistorySnapshot(nextNodes, nextEdges);
@@ -784,7 +876,7 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
     const descendantsToDelete = getDescendants(selectedNode.id, edges);
     descendantsToDelete.delete(selectedNode.id);
 
-    const nextNodes = nodes
+    const remainingNodes = nodes
       .filter((node) => !descendantsToDelete.has(node.id))
       .map((node) => node.id === selectedNode.id
         ? { ...node, data: { ...node.data, nodeType: 'content' as const } }
@@ -795,6 +887,7 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
                 !descendantsToDelete.has(edge.target) &&
                 edge.source !== selectedNode.id
     );
+    const nextNodes = normalizeGraphSiblingOrders(remainingNodes, nextEdges);
 
     setNodes(nextNodes);
     setEdges(nextEdges);
@@ -837,8 +930,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' }
     };
 
-    const nextNodes = [...nodes, newNode];
     const nextEdges = [...edges, newEdge];
+    const nextNodes = normalizeGraphSiblingOrders([...nodes, newNode], nextEdges, {
+      appendChildIdsBySource: { [selectedNode.id]: [newId] },
+    });
     setNodes(nextNodes);
     setEdges(nextEdges);
     pushHistorySnapshot(nextNodes, nextEdges);
@@ -867,7 +962,9 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       }
     };
 
-    const nextNodes = [...nodes, newNode];
+    const nextNodes = normalizeGraphSiblingOrders([...nodes, newNode], edges, {
+      appendRootIds: [newId],
+    });
     setNodes(nextNodes);
     pushHistorySnapshot(nextNodes, edges);
     setSelectedNodeId(newId);
@@ -891,8 +988,9 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
     if (!deleteModal) return;
 
     const toDelete = getDescendants(deleteModal.nodeId, edges);
-    const nextNodes = nodes.filter((n) => !toDelete.has(n.id));
+    const remainingNodes = nodes.filter((n) => !toDelete.has(n.id));
     const nextEdges = edges.filter((e) => !toDelete.has(e.source) && !toDelete.has(e.target));
+    const nextNodes = normalizeGraphSiblingOrders(remainingNodes, nextEdges);
 
     setNodes(nextNodes);
     setEdges(nextEdges);
