@@ -73,6 +73,10 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isBoldActive, setIsBoldActive] = useState<boolean>(false);
   const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('https://');
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const savedLinkRangeRef = useRef<Range | null>(null);
 
   // Check whether content is genuinely empty
   const cleanContent = sanitizeRichText(block.content || '');
@@ -212,27 +216,101 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
 
   const handleInsertLink = () => {
     if (readOnly) return;
-    if (contentRef.current) {
-      contentRef.current.focus();
+
+    const selection = window.getSelection();
+    const activeRange = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+    const rangeBelongsToEditor = Boolean(
+      activeRange &&
+      contentRef.current &&
+      contentRef.current.contains(activeRange.commonAncestorContainer)
+    );
+
+    savedLinkRangeRef.current = rangeBelongsToEditor && activeRange
+      ? activeRange.cloneRange()
+      : null;
+
+    setLinkUrl('https://');
+    setLinkError(savedLinkRangeRef.current && !savedLinkRangeRef.current.collapsed
+      ? null
+      : 'Selecciona primero el texto que quieres convertir en enlace.');
+    setLinkDialogOpen(true);
+  };
+
+  const restoreSavedLinkSelection = (): boolean => {
+    const range = savedLinkRangeRef.current;
+    const editor = contentRef.current;
+    if (!range || !editor || !editor.contains(range.commonAncestorContainer)) return false;
+
+    editor.focus();
+    const selection = window.getSelection();
+    if (!selection) return false;
+    selection.removeAllRanges();
+    selection.addRange(range);
+    return true;
+  };
+
+  const persistEditedLink = () => {
+    if (!contentRef.current) return;
+    const cleanHtml = sanitizeRichText(contentRef.current.innerHTML);
+    if (contentRef.current.innerHTML !== cleanHtml) {
+      contentRef.current.innerHTML = cleanHtml;
     }
-    const inputUrl = window.prompt('Introduce la dirección web (URL) para el hipervínculo:', 'https://');
-    if (inputUrl === null) return;
-    const trimmed = inputUrl.trim();
-    if (!trimmed || trimmed === 'https://' || trimmed === 'http://') {
-      document.execCommand('unlink', false);
-    } else {
-      const finalUrl = trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('mailto:') || trimmed.startsWith('tel:')
-        ? trimmed
-        : `https://${trimmed}`;
-      document.execCommand('createLink', false, finalUrl);
+    onChange({ ...block, content: cleanHtml });
+    updateActiveFormats();
+  };
+
+  const handleApplyLink = () => {
+    const range = savedLinkRangeRef.current;
+    if (!range || range.collapsed || !range.toString().trim()) {
+      setLinkError('Selecciona primero el texto dentro del contenido y vuelve a abrir Insertar enlace.');
+      return;
     }
 
-    if (contentRef.current) {
-      const rawHtml = contentRef.current.innerHTML;
-      const cleanHtml = sanitizeRichText(rawHtml);
-      onChange({ ...block, content: cleanHtml });
+    const trimmed = linkUrl.trim();
+    if (!trimmed) {
+      setLinkError('Escribe una dirección web válida.');
+      return;
     }
-    updateActiveFormats();
+
+    const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(trimmed);
+    const candidate = hasScheme ? trimmed : `https://${trimmed}`;
+    let parsedUrl: URL;
+
+    try {
+      parsedUrl = new URL(candidate);
+    } catch {
+      setLinkError('La dirección no tiene un formato válido.');
+      return;
+    }
+
+    if (!['http:', 'https:', 'mailto:', 'tel:'].includes(parsedUrl.protocol)) {
+      setLinkError('Solo se permiten enlaces HTTP, HTTPS, correo (mailto) o teléfono (tel).');
+      return;
+    }
+
+    if (!restoreSavedLinkSelection()) {
+      setLinkError('Se perdió la selección del texto. Cierra este cuadro, selecciona el texto y vuelve a intentarlo.');
+      return;
+    }
+
+    document.execCommand('createLink', false, candidate);
+    persistEditedLink();
+    setLinkDialogOpen(false);
+    setLinkError(null);
+    savedLinkRangeRef.current = null;
+  };
+
+  const handleRemoveLink = () => {
+    if (!restoreSavedLinkSelection()) {
+      setLinkError('Se perdió la selección del texto. Cierra este cuadro, selecciona el texto y vuelve a intentarlo.');
+      return;
+    }
+
+    document.execCommand('unlink', false);
+    persistEditedLink();
+    setLinkDialogOpen(false);
+    setLinkError(null);
+    savedLinkRangeRef.current = null;
   };
 
   const handleAlign = (align: 'left' | 'center' | 'right') => {
@@ -427,6 +505,95 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
           className={`min-h-[85px] p-2 -m-2 rounded-xl focus:outline-none transition-colors outline-none whitespace-pre-wrap break-words ${styleClass} ${alignClass}`}
         />
       </div>
+
+      {linkDialogOpen && (
+        <div className="fixed inset-0 z-[80] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="inline-link-dialog-title"
+            className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 space-y-4"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+                <LinkIcon className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <h3 id="inline-link-dialog-title" className="text-sm font-bold text-slate-900">
+                  Insertar hipervínculo
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Selecciona texto dentro del párrafo y escribe la dirección a la que debe llevar.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="inline-link-url" className="block text-xs font-semibold text-slate-700">
+                Dirección web, correo o teléfono
+              </label>
+              <input
+                id="inline-link-url"
+                type="text"
+                autoFocus
+                value={linkUrl}
+                onChange={(event) => {
+                  setLinkUrl(event.target.value);
+                  setLinkError(null);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleApplyLink();
+                  }
+                  if (event.key === 'Escape') {
+                    setLinkDialogOpen(false);
+                    setLinkError(null);
+                    savedLinkRangeRef.current = null;
+                  }
+                }}
+                placeholder="https://ejemplo.com"
+                className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+              />
+              {linkError && (
+                <p role="alert" className="text-xs text-rose-700 font-medium">{linkError}</p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={handleRemoveLink}
+                disabled={!savedLinkRangeRef.current || savedLinkRangeRef.current.collapsed}
+                className="px-3 py-2 rounded-lg text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:text-slate-300 disabled:cursor-not-allowed"
+              >
+                Quitar enlace
+              </button>
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLinkDialogOpen(false);
+                    setLinkError(null);
+                    savedLinkRangeRef.current = null;
+                  }}
+                  className="px-3.5 py-2 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleApplyLink}
+                  disabled={!savedLinkRangeRef.current || savedLinkRangeRef.current.collapsed}
+                  className="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold disabled:bg-slate-300 disabled:cursor-not-allowed"
+                >
+                  Aplicar enlace
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

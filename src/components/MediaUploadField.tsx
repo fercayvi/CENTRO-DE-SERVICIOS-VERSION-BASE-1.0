@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { 
   Trash2, Image as ImageIcon, 
   Video, FileDown, FileCheck, Check 
@@ -21,7 +21,7 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
   label,
   value,
   onChange,
-  placeholderUrl, // Ya no se usa directamente pero se mantiene por compatibilidad
+  placeholderUrl,
   helperText,
   titleValue,
   onTitleChange,
@@ -46,7 +46,10 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
     }
   };
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleClear = () => {
+    if (fileInputRef.current) fileInputRef.current.value = '';
     onChange('');
   };
 
@@ -67,6 +70,7 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
       <div className="space-y-1.5">
         <div className="relative flex items-center bg-white border border-slate-300 rounded-xl p-1.5 hover:border-blue-400 transition-colors focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-600">
           <input
+            ref={fileInputRef}
             id={`${idPrefix}-${type}-file-input`}
             type="file"
             accept={getAcceptType()}
@@ -85,12 +89,29 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
         </div>
         {!hasValue && (
           <p className="text-[10px] text-slate-500 mt-1 ml-1">
-            Selecciona tu archivo. El sistema guardará la ruta automáticamente.
+            Selecciona un archivo para registrar su ruta o escribe una URL pública.
           </p>
         )}
       </div>
 
-      {/* Vista previa en tiempo real cuando contiene una ruta */}
+      <div className="space-y-1.5">
+        <label htmlFor={`${idPrefix}-${type}-path-input`} className="block text-[11px] font-bold text-slate-700">
+          Ruta pública o URL completa
+        </label>
+        <input
+          id={`${idPrefix}-${type}-path-input`}
+          type="text"
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholderUrl || (type === 'image' ? '/imagen.png o https://...' : type === 'video' ? '/video.mp4 o https://...' : '/documento.pdf o https://...')}
+          className="w-full px-3 py-2.5 border border-slate-300 rounded-xl bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+        />
+        <p className="text-[10px] text-amber-800 bg-amber-50 border border-amber-200/80 rounded-lg p-2 leading-relaxed">
+          Importante: elegir un archivo solo registra su nombre y ruta; no lo sube ni lo copia. Si utilizas una ruta como <code>/archivo.ext</code>, copia el archivo manualmente a la carpeta <code>public/</code> de la aplicación y conserva el mismo nombre. También puedes pegar una URL pública completa.
+        </p>
+      </div>
+
+      {/* Vista previa en tiempo real cuando contiene una ruta o URL */}
       {hasValue && (
         <div className="p-3 bg-white border border-emerald-200/90 rounded-xl shadow-2xs flex items-center justify-between gap-3 animate-fadeIn mt-2">
           <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -120,9 +141,9 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
               <div className="flex items-center gap-1.5">
                 <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-extrabold uppercase tracking-wider">
                   <Check className="w-3 h-3" />
-                  Archivo Local
+                  Recurso referenciado
                 </span>
-                <span className="text-xs text-emerald-700 font-bold">Ruta lista</span>
+                <span className="text-xs text-emerald-700 font-bold">Ruta/URL configurada</span>
               </div>
               <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate mt-0.5">
                 {value}

@@ -75,9 +75,14 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   const initialBlocksRef = useRef<LayoutBlock[]>(JSON.parse(JSON.stringify(blocks)));
   const hasChanges = JSON.stringify(blocks) !== JSON.stringify(initialBlocksRef.current);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
 
   const executeCancel = () => {
-    onChange(initialBlocksRef.current);
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
+    onChange(JSON.parse(JSON.stringify(initialBlocksRef.current)));
     if (onCancel) {
       onCancel();
     } else {
@@ -103,28 +108,47 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   );
 
   // History State for Undo/Redo
-  const [history, setHistory] = useState<LayoutBlock[][]>([blocks]);
+  const [history, setHistory] = useState<LayoutBlock[][]>(() => [
+    JSON.parse(JSON.stringify(blocks)) as LayoutBlock[]
+  ]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
   const historyDebounceTimerRef = useRef<any>(null);
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
 
+  useEffect(() => {
+    return () => {
+      if (historyDebounceTimerRef.current) {
+        clearTimeout(historyDebounceTimerRef.current);
+        historyDebounceTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const handleUndo = useCallback(() => {
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
     if (historyIndex > 0) {
       const prevIdx = historyIndex - 1;
       const target = history[prevIdx];
       setHistoryIndex(prevIdx);
-      onChange(target);
+      onChange(JSON.parse(JSON.stringify(target)));
     }
   }, [historyIndex, history, onChange]);
 
   const handleRedo = useCallback(() => {
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1;
       const target = history[nextIdx];
       setHistoryIndex(nextIdx);
-      onChange(target);
+      onChange(JSON.parse(JSON.stringify(target)));
     }
   }, [historyIndex, history, onChange]);
 
@@ -159,31 +183,38 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleUndo, handleRedo]);
 
+  const pushHistorySnapshot = useCallback((newBlocks: LayoutBlock[]) => {
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
+
+    // Store detached snapshots so later nested edits cannot mutate earlier history entries.
+    const snapshot = JSON.parse(JSON.stringify(newBlocks)) as LayoutBlock[];
+    setHistory((prev) => {
+      const trimmed = prev.slice(0, historyIndex + 1);
+      return [...trimmed, snapshot].slice(-30);
+    });
+    setHistoryIndex((prev) => Math.min(prev + 1, 29));
+  }, [historyIndex]);
+
   const updateBlocksWithHistory = useCallback((newBlocks: LayoutBlock[], immediate: boolean = true) => {
     onChange(newBlocks);
 
+    if (historyDebounceTimerRef.current) {
+      clearTimeout(historyDebounceTimerRef.current);
+      historyDebounceTimerRef.current = null;
+    }
+
     if (immediate) {
-      if (historyDebounceTimerRef.current) {
-        clearTimeout(historyDebounceTimerRef.current);
-      }
-      setHistory((prev) => {
-        const trimmed = prev.slice(0, historyIndex + 1);
-        return [...trimmed, newBlocks].slice(-30);
-      });
-      setHistoryIndex((prev) => Math.min(prev + 1, 29));
+      pushHistorySnapshot(newBlocks);
     } else {
-      if (historyDebounceTimerRef.current) {
-        clearTimeout(historyDebounceTimerRef.current);
-      }
       historyDebounceTimerRef.current = setTimeout(() => {
-        setHistory((prev) => {
-          const trimmed = prev.slice(0, historyIndex + 1);
-          return [...trimmed, newBlocks].slice(-30);
-        });
-        setHistoryIndex((prev) => Math.min(prev + 1, 29));
+        historyDebounceTimerRef.current = null;
+        pushHistorySnapshot(newBlocks);
       }, 500);
     }
-  }, [historyIndex, onChange]);
+  }, [onChange, pushHistorySnapshot]);
 
   // Helper to create a new block given a template type
   const instantiateBlock = (type: string): LayoutBlock => {
@@ -380,12 +411,30 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
     }
   };
 
-  // Clear all blocks
+  // Reorder top-level blocks by dropping the selected drag handle onto a canvas slot.
+  const handleReorderBlock = (blockId: string, targetIndex: number) => {
+    const sourceIndex = blocks.findIndex((block) => block.id === blockId);
+    if (sourceIndex < 0 || targetIndex < 0 || targetIndex > blocks.length) return;
+
+    const insertionIndex = targetIndex > sourceIndex ? targetIndex - 1 : targetIndex;
+    if (insertionIndex === sourceIndex) return;
+
+    const nextBlocks = [...blocks];
+    const [movedBlock] = nextBlocks.splice(sourceIndex, 1);
+    nextBlocks.splice(insertionIndex, 0, movedBlock);
+    updateBlocksWithHistory(nextBlocks, true);
+    setSelectedBlockId(blockId);
+  };
+
+  // Clear all blocks only after an in-app confirmation.
   const handleClearCanvas = () => {
-    if (window.confirm('¿Deseas vaciar todos los bloques del lienzo? Esta acción no se puede deshacer.')) {
-      updateBlocksWithHistory([], true);
-      setSelectedBlockId(null);
-    }
+    setClearCanvasModalOpen(true);
+  };
+
+  const confirmClearCanvas = () => {
+    updateBlocksWithHistory([], true);
+    setSelectedBlockId(null);
+    setClearCanvasModalOpen(false);
   };
 
   // Find currently selected block (either root or nested)
@@ -670,6 +719,7 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
               onDeleteBlock={handleDeleteBlock}
               onDuplicateBlock={handleDuplicateBlock}
               onMoveBlock={handleMoveBlock}
+              onReorderBlock={handleReorderBlock}
               onAddBlockAt={handleAddBlockAt}
               serviceTitle={serviceTitle}
               deviceView={deviceView}
@@ -706,6 +756,41 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
             </div>
           ) : null}
         </DragOverlay>
+
+        {/* Clear Canvas Confirmation Modal */}
+        {clearCanvasModalOpen && (
+          <div className="fixed inset-0 z-[60] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+            <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-slate-900">¿Vaciar el lienzo?</h3>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Se quitarán todos los bloques de esta página. Podrás usar Deshacer para recuperarlos mientras el editor permanezca abierto.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setClearCanvasModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmClearCanvas}
+                  className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  Vaciar lienzo
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Cancel Confirmation Modal */}
         {cancelModalOpen && (

@@ -12,6 +12,7 @@ import {
   MarkerType,
   Node,
   Edge,
+  EdgeChange,
   Connection,
   NodeProps,
   BackgroundVariant,
@@ -60,9 +61,82 @@ export interface DecisionNodeData extends Record<string, unknown> {
   nodeType: 'category' | 'content' | 'step';
   contentData: ServiceNodeContentData;
   blocks?: LayoutBlock[];
+  /** Logical sibling order; independent from the node's visual canvas position. */
+  order?: number;
 }
 
 export type DecisionNodeType = Node<DecisionNodeData, 'decisionNode'>;
+
+interface GraphOrderOptions {
+  appendRootIds?: string[];
+  appendChildIdsBySource?: Record<string, string[]>;
+}
+
+/**
+ * Reassigns sibling order metadata after a structural graph change.
+ * Stored order is preferred; insertion order is a stable fallback, never canvas Y.
+ */
+function normalizeGraphSiblingOrders(
+  nodes: DecisionNodeType[],
+  edges: Edge[],
+  options: GraphOrderOptions = {}
+): DecisionNodeType[] {
+  const nodeMap = new Map<string, DecisionNodeType>();
+  const nodeIndex = new Map<string, number>();
+  nodes.forEach((node, index) => {
+    nodeMap.set(node.id, node);
+    nodeIndex.set(node.id, index);
+  });
+  const compareStoredOrder = (idA: string, idB: string): number => {
+    const orderA = nodeMap.get(idA)?.data.order;
+    const orderB = nodeMap.get(idB)?.data.order;
+    if (typeof orderA === 'number' && Number.isFinite(orderA) &&
+        typeof orderB === 'number' && Number.isFinite(orderB) &&
+        orderA !== orderB) {
+      return orderA - orderB;
+    }
+    return (nodeIndex.get(idA) ?? Number.MAX_SAFE_INTEGER) -
+      (nodeIndex.get(idB) ?? Number.MAX_SAFE_INTEGER);
+  };
+
+  const childrenBySource = new Map<string, string[]>();
+  const incomingIds = new Set<string>();
+  edges.forEach((edge) => {
+    const children = childrenBySource.get(edge.source) || [];
+    children.push(edge.target);
+    childrenBySource.set(edge.source, children);
+    incomingIds.add(edge.target);
+  });
+
+  const orderById = new Map<string, number>();
+  childrenBySource.forEach((childIds, sourceId) => {
+    const appendIds = (options.appendChildIdsBySource?.[sourceId] || [])
+      .filter((id) => childIds.includes(id));
+    const appendSet = new Set(appendIds);
+    const orderedChildren = childIds
+      .filter((id) => !appendSet.has(id))
+      .sort(compareStoredOrder)
+      .concat(appendIds);
+    orderedChildren.forEach((id, index) => orderById.set(id, index));
+  });
+
+  const appendedRootIds = (options.appendRootIds || []).filter(
+    (id) => nodeMap.has(id) && !incomingIds.has(id)
+  );
+  const appendedRootSet = new Set(appendedRootIds);
+  const rootIds = nodes
+    .filter((node) => !incomingIds.has(node.id) && !appendedRootSet.has(node.id))
+    .map((node) => node.id)
+    .sort(compareStoredOrder)
+    .concat(appendedRootIds);
+  rootIds.forEach((id, index) => orderById.set(id, index));
+
+  return nodes.map((node) => {
+    const nextOrder = orderById.get(node.id);
+    if (nextOrder === undefined || node.data.order === nextOrder) return node;
+    return { ...node, data: { ...node.data, order: nextOrder } };
+  });
+}
 
 /* =========================================================================
    ADAPTER FUNCTIONS: ServiceNode[] <-> React Flow (nodes, edges)
@@ -84,7 +158,8 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
         data: {
           title: 'Pregunta Inicial / Opción 1',
           nodeType: 'category',
-          contentData: { text: '', imageUrl: '', videoUrl: '' }
+          contentData: { text: '', imageUrl: '', videoUrl: '' },
+          order: 0
         }
       }
     ];
@@ -95,16 +170,16 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
   const flowNodes: DecisionNodeType[] = [];
   const flowEdges: Edge[] = [];
 
-  function traverse(node: ServiceNode, depth: number, parentId?: string): number {
+  function traverse(node: ServiceNode, depth: number, parentId?: string, siblingOrder: number = 0): number {
     const x = depth * 320 + 80;
     let nodeY = globalY;
 
     if ((node.nodeType === 'category' || node.nodeType === 'step') && node.children && node.children.length > 0) {
       const childYs: number[] = [];
-      for (const child of node.children) {
-        const childY = traverse(child, depth + 1, node.id);
+      node.children.forEach((child, childIndex) => {
+        const childY = traverse(child, depth + 1, node.id, childIndex);
         childYs.push(childY);
-      }
+      });
       // Center parent vertically relative to its children
       nodeY = (childYs[0] + childYs[childYs.length - 1]) / 2;
     } else {
@@ -114,9 +189,25 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
     }
 
     const normalizedBlocks = normalizeNodeLayoutBlocks(node);
-    const contentDataCopy: ServiceNodeContentData = node.contentData
-      ? { ...node.contentData }
-      : { text: node.text || '', imageUrl: node.imageUrl || '', videoUrl: node.videoUrl || '' };
+    const existingContentData = node.contentData || {};
+    const contentDataCopy: ServiceNodeContentData = {
+      ...existingContentData,
+      text: existingContentData.text?.trim()
+        ? existingContentData.text
+        : node.text?.trim()
+          ? node.text
+          : existingContentData.text || node.text || '',
+      imageUrl: existingContentData.imageUrl?.trim()
+        ? existingContentData.imageUrl
+        : node.imageUrl?.trim()
+          ? node.imageUrl
+          : existingContentData.imageUrl || node.imageUrl || '',
+      videoUrl: existingContentData.videoUrl?.trim()
+        ? existingContentData.videoUrl
+        : node.videoUrl?.trim()
+          ? node.videoUrl
+          : existingContentData.videoUrl || node.videoUrl || '',
+    };
 
     if (normalizedBlocks.length > 0) {
       contentDataCopy.layoutBlocks = normalizedBlocks;
@@ -130,7 +221,8 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
         title: node.title || 'Nueva Opción',
         nodeType: node.nodeType,
         contentData: contentDataCopy,
-        blocks: normalizedBlocks.length > 0 ? normalizedBlocks : undefined
+        blocks: normalizedBlocks.length > 0 ? normalizedBlocks : undefined,
+        order: siblingOrder
       }
     });
 
@@ -152,10 +244,10 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
     return nodeY;
   }
 
-  for (const root of tree) {
-    traverse(root, 0);
+  tree.forEach((root, rootIndex) => {
+    traverse(root, 0, undefined, rootIndex);
     globalY += 50; // Spacing between multiple top-level trees
-  }
+  });
 
   return { nodes: flowNodes, edges: flowEdges };
 }
@@ -167,7 +259,11 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
   if (!nodes || nodes.length === 0) return [];
 
   const nodeMap = new Map<string, DecisionNodeType>();
-  nodes.forEach(n => nodeMap.set(n.id, n));
+  const originalNodeOrder = new Map<string, number>();
+  nodes.forEach((node, index) => {
+    nodeMap.set(node.id, node);
+    originalNodeOrder.set(node.id, index);
+  });
 
   // Build adjacency list for parent -> children
   const childrenMap = new Map<string, string[]>();
@@ -182,20 +278,36 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
     incomingDegree.set(e.target, (incomingDegree.get(e.target) || 0) + 1);
   });
 
-  // Sort children by their visual Y position on canvas
+  // Logical order is independent of visual drag position; array order is a stable fallback.
+  const compareLogicalOrder = (idA: string, idB: string): number => {
+    const nodeA = nodeMap.get(idA);
+    const nodeB = nodeMap.get(idB);
+    const orderA = nodeA?.data.order;
+    const orderB = nodeB?.data.order;
+    if (typeof orderA === 'number' && Number.isFinite(orderA) &&
+        typeof orderB === 'number' && Number.isFinite(orderB) &&
+        orderA !== orderB) {
+      return orderA - orderB;
+    }
+
+    // Ties and old nodes without order metadata use stable graph insertion order,
+    // never current visual Y, so moving a card cannot silently reorder choices.
+    const indexA = originalNodeOrder.get(idA) ?? Number.MAX_SAFE_INTEGER;
+    const indexB = originalNodeOrder.get(idB) ?? Number.MAX_SAFE_INTEGER;
+    if (indexA !== indexB) return indexA - indexB;
+
+    return (nodeA?.position.y || 0) - (nodeB?.position.y || 0);
+  };
+
   childrenMap.forEach((childIds) => {
-    childIds.sort((a, b) => {
-      const nodeA = nodeMap.get(a);
-      const nodeB = nodeMap.get(b);
-      return (nodeA?.position.y || 0) - (nodeB?.position.y || 0);
-    });
+    childIds.sort(compareLogicalOrder);
   });
 
-  // Root nodes are those without incoming connections (or top-level if isolated)
+  // Root nodes are those without incoming connections (or top-level if isolated).
   const rootIds = nodes
     .filter(n => (incomingDegree.get(n.id) || 0) === 0)
-    .sort((a, b) => a.position.y - b.position.y)
-    .map(n => n.id);
+    .map(n => n.id)
+    .sort(compareLogicalOrder);
 
   const visited = new Set<string>();
 
@@ -215,9 +327,13 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
       nodeType: nodeType,
     };
 
-    if ((rawNode as any).text) serviceNode.text = (rawNode as any).text;
-    if ((rawNode as any).imageUrl) serviceNode.imageUrl = (rawNode as any).imageUrl;
-    if ((rawNode as any).videoUrl) serviceNode.videoUrl = (rawNode as any).videoUrl;
+    const directText = data.contentData?.text || (rawNode as any).text;
+    const directImageUrl = data.contentData?.imageUrl || (rawNode as any).imageUrl;
+    const directVideoUrl = data.contentData?.videoUrl || (rawNode as any).videoUrl;
+
+    if (typeof directText === 'string' && directText.trim()) serviceNode.text = directText;
+    if (typeof directImageUrl === 'string' && directImageUrl.trim()) serviceNode.imageUrl = directImageUrl;
+    if (typeof directVideoUrl === 'string' && directVideoUrl.trim()) serviceNode.videoUrl = directVideoUrl;
 
     if (nodeType === 'category' || nodeType === 'step') {
       const childIds = childrenMap.get(id) || [];
@@ -243,7 +359,13 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
       };
 
       // Conservar bloques legados intactos si existían en contentData
-      if (data.contentData?.blocks && Array.isArray(data.contentData.blocks) && data.contentData.blocks.length > 0) {
+      if (
+        normalizedBlocks.length === 0 &&
+        data.contentData?.blocks &&
+        Array.isArray(data.contentData.blocks) &&
+        data.contentData.blocks.length > 0
+      ) {
+        // Keep unconvertible legacy data rather than discarding content that could not be migrated.
         contentDataResult.blocks = data.contentData.blocks;
       }
 
@@ -265,6 +387,8 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
         serviceNode.contentData = { ...data.contentData };
         if (normalizedBlocks.length > 0) {
           serviceNode.contentData.layoutBlocks = normalizedBlocks;
+          // Once successfully migrated, the legacy array is no longer a fallback source.
+          delete serviceNode.contentData.blocks;
         }
       }
     }
@@ -461,7 +585,7 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   const initialGraph = useMemo(() => treeToFlow(tree), [tree]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<DecisionNodeType>(initialGraph.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialGraph.edges);
+  const [edges, setEdges, onEdgesChangeBase] = useEdgesState(initialGraph.edges);
 
   // Track if initial tree arrived empty
   const initialTreeWasEmptyRef = useRef<boolean>(!tree || tree.length === 0);
@@ -478,6 +602,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   ]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
   const debounceHistoryTimerRef = useRef<any>(null);
+  const pendingEdgeRemovalRef = useRef<{ pending: boolean; targetIds: string[] }>({
+    pending: false,
+    targetIds: [],
+  });
   const [showMinimap, setShowMinimap] = useState<boolean>(true);
 
   // In-app modal confirmation states (prevents silent iframe browser dialog suppression)
@@ -488,11 +616,16 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   } | null>(null);
   const [typeChangeModal, setTypeChangeModal] = useState<{
     outgoingCount: number;
+    descendantCount: number;
   } | null>(null);
   const [saveWarningsModal, setSaveWarningsModal] = useState<string[] | null>(null);
   const [cancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
 
   const pushHistorySnapshot = useCallback((newNodes: DecisionNodeType[], newEdges: Edge[]) => {
+    if (debounceHistoryTimerRef.current) {
+      clearTimeout(debounceHistoryTimerRef.current);
+      debounceHistoryTimerRef.current = null;
+    }
     setHistory((prev) => {
       const trimmed = prev.slice(0, historyIndex + 1);
       return [...trimmed, { nodes: newNodes, edges: newEdges }].slice(-30);
@@ -509,10 +642,52 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
     }, 500);
   }, [pushHistorySnapshot]);
 
+  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+    const removedTargetIds = changes
+      .filter((change) => change.type === 'remove')
+      .map((change) => edges.find((edge) => edge.id === change.id)?.target)
+      .filter((id): id is string => Boolean(id));
+
+    if (changes.some((change) => change.type === 'remove')) {
+      pendingEdgeRemovalRef.current = {
+        pending: true,
+        targetIds: [...new Set([...pendingEdgeRemovalRef.current.targetIds, ...removedTargetIds])],
+      };
+    }
+
+    // Let React Flow process changes first. A separate effect normalizes ordering after
+    // simultaneous node/edge deletions have both been applied.
+    onEdgesChangeBase(changes);
+  }, [onEdgesChangeBase, edges]);
+
+  useEffect(() => {
+    if (!pendingEdgeRemovalRef.current.pending) return;
+
+    const appendedRootIds = pendingEdgeRemovalRef.current.targetIds;
+    pendingEdgeRemovalRef.current = { pending: false, targetIds: [] };
+    const orderedNodes = normalizeGraphSiblingOrders(nodes, edges, { appendRootIds: appendedRootIds });
+
+    setNodes(orderedNodes);
+    pushHistorySnapshot(orderedNodes, edges);
+  }, [nodes, edges, setNodes, pushHistorySnapshot]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceHistoryTimerRef.current) {
+        clearTimeout(debounceHistoryTimerRef.current);
+        debounceHistoryTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
 
   const handleUndo = useCallback(() => {
+    if (debounceHistoryTimerRef.current) {
+      clearTimeout(debounceHistoryTimerRef.current);
+      debounceHistoryTimerRef.current = null;
+    }
     if (historyIndex > 0) {
       const prevIdx = historyIndex - 1;
       const target = history[prevIdx];
@@ -523,6 +698,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   }, [historyIndex, history, setNodes, setEdges]);
 
   const handleRedo = useCallback(() => {
+    if (debounceHistoryTimerRef.current) {
+      clearTimeout(debounceHistoryTimerRef.current);
+      debounceHistoryTimerRef.current = null;
+    }
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1;
       const target = history[nextIdx];
@@ -607,10 +786,14 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       };
 
       const nextEdges = addEdge(newEdge, edges);
+      const nextNodes = normalizeGraphSiblingOrders(nodes, nextEdges, {
+        appendChildIdsBySource: { [params.source!]: [params.target!] },
+      });
+      setNodes(nextNodes);
       setEdges(nextEdges);
-      pushHistorySnapshot(nodes, nextEdges);
+      pushHistorySnapshot(nextNodes, nextEdges);
     },
-    [isValidConnection, edges, nodes, setEdges, pushHistorySnapshot]
+    [isValidConnection, edges, nodes, setNodes, setEdges, pushHistorySnapshot]
   );
 
   // Registrar movimiento de nodos en el historial al soltar
@@ -685,7 +868,11 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       if (newType === 'content' && (currentType === 'category' || currentType === 'step')) {
         const outgoingEdges = edges.filter((e) => e.source === selectedNode.id);
         if (outgoingEdges.length > 0) {
-          setTypeChangeModal({ outgoingCount: outgoingEdges.length });
+          const descendantCount = Math.max(0, getDescendants(selectedNode.id, edges).size - 1);
+          setTypeChangeModal({
+            outgoingCount: outgoingEdges.length,
+            descendantCount,
+          });
           return;
         }
       }
@@ -698,11 +885,27 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   const confirmTypeChange = useCallback(() => {
     if (!selectedNode || !typeChangeModal) return;
 
-    const nextEdges = edges.filter((e) => e.source !== selectedNode.id);
+    const descendantsToDelete = getDescendants(selectedNode.id, edges);
+    descendantsToDelete.delete(selectedNode.id);
+
+    const remainingNodes = nodes
+      .filter((node) => !descendantsToDelete.has(node.id))
+      .map((node) => node.id === selectedNode.id
+        ? { ...node, data: { ...node.data, nodeType: 'content' as const } }
+        : node);
+
+    const nextEdges = edges.filter(
+      (edge) => !descendantsToDelete.has(edge.source) &&
+                !descendantsToDelete.has(edge.target) &&
+                edge.source !== selectedNode.id
+    );
+    const nextNodes = normalizeGraphSiblingOrders(remainingNodes, nextEdges);
+
+    setNodes(nextNodes);
     setEdges(nextEdges);
-    updateSelectedNodeData({ nodeType: 'content' }, true, nextEdges);
+    pushHistorySnapshot(nextNodes, nextEdges);
     setTypeChangeModal(null);
-  }, [selectedNode, typeChangeModal, edges, setEdges, updateSelectedNodeData]);
+  }, [selectedNode, typeChangeModal, edges, nodes, setNodes, setEdges, pushHistorySnapshot]);
 
   // Add a new branch/child connected to the selected category node
   const handleAddChildBranch = useCallback(() => {
@@ -724,7 +927,8 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       data: {
         title: isStepParent ? 'Siguiente' : 'Nueva Opción',
         nodeType: isStepParent ? 'step' : 'category',
-        contentData: { text: '', imageUrl: '', videoUrl: '' }
+        contentData: { text: '', imageUrl: '', videoUrl: '' },
+        order: existingChildrenEdges.length
       }
     };
 
@@ -738,8 +942,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' }
     };
 
-    const nextNodes = [...nodes, newNode];
     const nextEdges = [...edges, newEdge];
+    const nextNodes = normalizeGraphSiblingOrders([...nodes, newNode], nextEdges, {
+      appendChildIdsBySource: { [selectedNode.id]: [newId] },
+    });
     setNodes(nextNodes);
     setEdges(nextEdges);
     pushHistorySnapshot(nextNodes, nextEdges);
@@ -752,6 +958,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
     const lowestY = nodes.reduce((max, n) => Math.max(max, n.position.y), 0);
     const newY = lowestY > 0 ? lowestY + 140 : 80;
 
+    const rootOrder = nodes.filter(
+      (node) => !edges.some((edge) => edge.target === node.id)
+    ).length;
+
     const newNode: DecisionNodeType = {
       id: newId,
       type: 'decisionNode',
@@ -759,11 +969,14 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
       data: {
         title: 'Nueva Pregunta / Opción Raíz',
         nodeType: 'category',
-        contentData: { text: '', imageUrl: '', videoUrl: '' }
+        contentData: { text: '', imageUrl: '', videoUrl: '' },
+        order: rootOrder
       }
     };
 
-    const nextNodes = [...nodes, newNode];
+    const nextNodes = normalizeGraphSiblingOrders([...nodes, newNode], edges, {
+      appendRootIds: [newId],
+    });
     setNodes(nextNodes);
     pushHistorySnapshot(nextNodes, edges);
     setSelectedNodeId(newId);
@@ -787,8 +1000,9 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
     if (!deleteModal) return;
 
     const toDelete = getDescendants(deleteModal.nodeId, edges);
-    const nextNodes = nodes.filter((n) => !toDelete.has(n.id));
+    const remainingNodes = nodes.filter((n) => !toDelete.has(n.id));
     const nextEdges = edges.filter((e) => !toDelete.has(e.source) && !toDelete.has(e.target));
+    const nextNodes = normalizeGraphSiblingOrders(remainingNodes, nextEdges);
 
     setNodes(nextNodes);
     setEdges(nextEdges);
@@ -822,21 +1036,34 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
 
   const handleSaveAndClosePageBuilder = useCallback((blocksToSave: LayoutBlock[]) => {
     if (!selectedNode) return;
+
     const nextNodes = nodes.map((node) => {
-      if (node.id === selectedNode.id) {
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            blocks: blocksToSave.length > 0 ? blocksToSave : undefined,
-            contentData: {
-              ...node.data.contentData,
-              layoutBlocks: blocksToSave.length > 0 ? blocksToSave : undefined,
-            },
-          },
-        };
+      if (node.id !== selectedNode.id) return node;
+
+      const nextContentData: ServiceNodeContentData = {
+        ...node.data.contentData,
+        layoutBlocks: blocksToSave.length > 0 ? blocksToSave : undefined,
+      };
+
+      // The page builder has now normalized the editable content. Remove the stale legacy
+      // representation so it cannot reappear if modern blocks are subsequently deleted.
+      delete nextContentData.blocks;
+
+      // An empty save is an intentional deletion, not a request to fall back to legacy fields.
+      if (blocksToSave.length === 0) {
+        nextContentData.text = '';
+        nextContentData.imageUrl = '';
+        nextContentData.videoUrl = '';
       }
-      return node;
+
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          blocks: blocksToSave.length > 0 ? blocksToSave : undefined,
+          contentData: nextContentData,
+        },
+      };
     });
 
     setNodes(nextNodes);
@@ -846,12 +1073,24 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
 
   const handleSaveNodeBlocks = useCallback((newBlocks: LayoutBlock[]) => {
     if (!selectedNode) return;
+
+    const nextContentData: ServiceNodeContentData = {
+      ...selectedNode.data.contentData,
+      layoutBlocks: newBlocks.length > 0 ? newBlocks : undefined,
+    };
+    delete nextContentData.blocks;
+    // Explicit undefined overrides the legacy array when updateSelectedNodeData merges objects.
+    nextContentData.blocks = undefined;
+
+    if (newBlocks.length === 0) {
+      nextContentData.text = '';
+      nextContentData.imageUrl = '';
+      nextContentData.videoUrl = '';
+    }
+
     updateSelectedNodeData({
-      blocks: newBlocks,
-      contentData: {
-        ...selectedNode.data.contentData,
-        layoutBlocks: newBlocks,
-      }
+      blocks: newBlocks.length > 0 ? newBlocks : undefined,
+      contentData: nextContentData,
     });
   }, [selectedNode, updateSelectedNodeData]);
 
@@ -1417,10 +1656,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
                 </p>
                 <div className="mt-2.5 text-xs text-slate-600 bg-red-50/60 border border-red-100/80 rounded-xl p-3">
                   {deleteModal.count === 1 ? (
-                    <p>Esta acción eliminará este nodo del diagrama y no se puede deshacer.</p>
+                    <p>Esta acción eliminará este nodo del diagrama. Puedes recuperarlo con Deshacer mientras el editor permanezca abierto.</p>
                   ) : (
                     <p>
-                      Se eliminarán <strong className="text-red-700 font-bold">{deleteModal.count} nodos en total</strong> (el nodo seleccionado y todas sus ramas descendientes conectadas).
+                      Se eliminarán <strong className="text-red-700 font-bold">{deleteModal.count} nodos en total</strong> (el nodo seleccionado y todas sus ramas descendientes conectadas). Puedes recuperarlos con Deshacer mientras el editor permanezca abierto.
                     </p>
                   )}
                 </div>
@@ -1463,10 +1702,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
                   Cambiar a Contenido Final
                 </h3>
                 <p className="text-xs text-slate-600 mt-1">
-                  Este nodo tiene <strong className="text-slate-900">{typeChangeModal.outgoingCount} {typeChangeModal.outgoingCount === 1 ? 'rama conectada' : 'ramas conectadas'}</strong>. Un nodo de tipo "Contenido" es terminal y no puede tener ramas descendientes.
+                  Este nodo tiene <strong className="text-slate-900">{typeChangeModal.outgoingCount} {typeChangeModal.outgoingCount === 1 ? 'rama directa' : 'ramas directas'}</strong>, con un total de <strong className="text-slate-900">{typeChangeModal.descendantCount} nodos descendientes</strong>. Un nodo de tipo "Contenido" es terminal y no puede tener ramas descendientes.
                 </p>
                 <p className="text-xs text-amber-800 font-medium bg-amber-50 rounded-xl p-2.5 mt-2 border border-amber-200/60">
-                  ¿Deseas cambiar el tipo a Contenido y eliminar las ramas conectadas?
+                  ¿Deseas cambiar el tipo a Contenido y eliminar todos los nodos descendientes de esas ramas?
                 </p>
               </div>
             </div>
@@ -1484,7 +1723,7 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
                 onClick={confirmTypeChange}
                 className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
               >
-                Cambiar y eliminar ramas
+                Cambiar y eliminar {typeChangeModal.descendantCount} {typeChangeModal.descendantCount === 1 ? 'nodo descendiente' : 'nodos descendientes'}
               </button>
             </div>
           </div>
