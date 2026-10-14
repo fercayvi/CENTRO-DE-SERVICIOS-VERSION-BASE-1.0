@@ -325,7 +325,7 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
             </span>
             {!previewMode && (
               <span className="text-[10px] text-slate-400 font-medium">
-                Modo Lienzo Libre • Haz clic en los bloques para editarlos
+                Modo Lienzo Libre • Selecciona un bloque; arrastra su asa para reordenar
               </span>
             )}
           </div>
