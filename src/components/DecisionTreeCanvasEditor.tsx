@@ -597,6 +597,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   ]);
   const [historyIndex, setHistoryIndex] = useState<number>(0);
   const debounceHistoryTimerRef = useRef<any>(null);
+  const pendingEdgeRemovalRef = useRef<{ pending: boolean; targetIds: string[] }>({
+    pending: false,
+    targetIds: [],
+  });
   const [showMinimap, setShowMinimap] = useState<boolean>(true);
 
   // In-app modal confirmation states (prevents silent iframe browser dialog suppression)
@@ -634,30 +638,33 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   }, [pushHistorySnapshot]);
 
   const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-    if (!changes.some((change) => change.type === 'remove')) {
-      onEdgesChangeBase(changes);
-      return;
-    }
-
-    const previousRootIds = new Set(
-      nodes
-        .filter((node) => !edges.some((edge) => edge.target === node.id))
-        .map((node) => node.id)
-    );
     const removedTargetIds = changes
       .filter((change) => change.type === 'remove')
       .map((change) => edges.find((edge) => edge.id === change.id)?.target)
       .filter((id): id is string => Boolean(id));
-    const nextEdges = applyEdgeChanges(changes, edges);
-    const appendedRootIds = [...new Set(removedTargetIds)].filter(
-      (id) => !previousRootIds.has(id) && !nextEdges.some((edge) => edge.target === id)
-    );
-    const nextNodes = normalizeGraphSiblingOrders(nodes, nextEdges, { appendRootIds: appendedRootIds });
 
-    setNodes(nextNodes);
-    setEdges(nextEdges);
-    pushHistorySnapshot(nextNodes, nextEdges);
-  }, [onEdgesChangeBase, nodes, edges, setNodes, setEdges, pushHistorySnapshot]);
+    if (changes.some((change) => change.type === 'remove')) {
+      pendingEdgeRemovalRef.current = {
+        pending: true,
+        targetIds: [...new Set([...pendingEdgeRemovalRef.current.targetIds, ...removedTargetIds])],
+      };
+    }
+
+    // Let React Flow process changes first. A separate effect normalizes ordering after
+    // simultaneous node/edge deletions have both been applied.
+    onEdgesChangeBase(changes);
+  }, [onEdgesChangeBase, edges]);
+
+  useEffect(() => {
+    if (!pendingEdgeRemovalRef.current.pending) return;
+
+    const appendedRootIds = pendingEdgeRemovalRef.current.targetIds;
+    pendingEdgeRemovalRef.current = { pending: false, targetIds: [] };
+    const orderedNodes = normalizeGraphSiblingOrders(nodes, edges, { appendRootIds: appendedRootIds });
+
+    setNodes(orderedNodes);
+    pushHistorySnapshot(orderedNodes, edges);
+  }, [nodes, edges, setNodes, pushHistorySnapshot]);
 
   useEffect(() => {
     return () => {
