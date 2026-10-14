@@ -81,8 +81,12 @@ function normalizeGraphSiblingOrders(
   edges: Edge[],
   options: GraphOrderOptions = {}
 ): DecisionNodeType[] {
-  const nodeMap = new Map(nodes.map((node) => [node.id, node]));
-  const nodeIndex = new Map(nodes.map((node, index) => [node.id, index]));
+  const nodeMap = new Map<string, DecisionNodeType>();
+  const nodeIndex = new Map<string, number>();
+  nodes.forEach((node, index) => {
+    nodeMap.set(node.id, node);
+    nodeIndex.set(node.id, index);
+  });
   const compareStoredOrder = (idA: string, idB: string): number => {
     const orderA = nodeMap.get(idA)?.data.order;
     const orderB = nodeMap.get(idB)?.data.order;
