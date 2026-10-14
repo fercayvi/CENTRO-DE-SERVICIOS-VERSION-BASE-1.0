@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { ServiceNode, LayoutBlock } from '../types';
 import { LayoutBlocksRenderer } from './LayoutBlocksRenderer';
+import { normalizeNodeLayoutBlocks } from '../utils/layoutBlocks';
 
 interface DecisionTreeNavigatorProps {
   tree: ServiceNode[];
@@ -15,83 +16,7 @@ interface DecisionTreeNavigatorProps {
 }
 
 function getNodeBlocks(node: ServiceNode): LayoutBlock[] {
-  if (node.blocks && node.blocks.length > 0) return node.blocks;
-  if (node.contentData?.layoutBlocks && node.contentData.layoutBlocks.length > 0) return node.contentData.layoutBlocks;
-  if (node.text) {
-    return [{
-      id: `legacy-txt-${node.id}`,
-      type: 'text',
-      content: node.text,
-      align: 'left',
-      style: 'normal'
-    }];
-  }
-
-  const fallback: LayoutBlock[] = [];
-  if (node.contentData?.blocks && node.contentData.blocks.length > 0) {
-    node.contentData.blocks.forEach((b, idx) => {
-      if (b.text) {
-        fallback.push({
-          id: `legacy-txt-${b.id || idx}`,
-          type: 'text',
-          content: b.text,
-          align: 'left',
-          style: 'normal'
-        });
-      }
-      if (b.imageUrl) {
-        fallback.push({
-          id: `legacy-img-${b.id || idx}`,
-          type: 'media',
-          mediaType: 'image',
-          url: b.imageUrl,
-          size: 'full',
-          alignment: 'center'
-        });
-      }
-      if (b.videoUrl) {
-        fallback.push({
-          id: `legacy-vid-${b.id || idx}`,
-          type: 'media',
-          mediaType: 'video',
-          url: b.videoUrl,
-          size: 'full',
-          alignment: 'center'
-        });
-      }
-    });
-  } else if (node.contentData) {
-    if (node.contentData.text) {
-      fallback.push({
-        id: `legacy-txt-${node.id}`,
-        type: 'text',
-        content: node.contentData.text,
-        align: 'left',
-        style: 'normal'
-      });
-    }
-    if (node.contentData.imageUrl) {
-      fallback.push({
-        id: `legacy-img-${node.id}`,
-        type: 'media',
-        mediaType: 'image',
-        url: node.contentData.imageUrl,
-        size: 'full',
-        alignment: 'center'
-      });
-    }
-    if (node.contentData.videoUrl) {
-      fallback.push({
-        id: `legacy-vid-${node.id}`,
-        type: 'media',
-        mediaType: 'video',
-        url: node.contentData.videoUrl,
-        size: 'full',
-        alignment: 'center'
-      });
-    }
-  }
-  return fallback;
+  return normalizeNodeLayoutBlocks(node);
 }
 
 // Helper to check if a title is generic/empty or placeholder

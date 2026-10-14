@@ -45,6 +45,7 @@ import {
 } from 'lucide-react';
 import { ServiceNode, ServiceNodeContentData, ContentBlock, LayoutBlock } from '../types';
 import { PageBuilderFullScreenEditor } from './PageBuilderFullScreenEditor';
+import { normalizeNodeLayoutBlocks } from '../utils/layoutBlocks';
 
 interface DecisionTreeCanvasEditorProps {
   tree: ServiceNode[];
@@ -112,6 +113,15 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
       globalY += 130;
     }
 
+    const normalizedBlocks = normalizeNodeLayoutBlocks(node);
+    const contentDataCopy: ServiceNodeContentData = node.contentData
+      ? { ...node.contentData }
+      : { text: node.text || '', imageUrl: node.imageUrl || '', videoUrl: node.videoUrl || '' };
+
+    if (normalizedBlocks.length > 0) {
+      contentDataCopy.layoutBlocks = normalizedBlocks;
+    }
+
     flowNodes.push({
       id: node.id,
       type: 'decisionNode',
@@ -119,8 +129,8 @@ export function treeToFlow(tree: ServiceNode[]): { nodes: DecisionNodeType[]; ed
       data: {
         title: node.title || 'Nueva Opción',
         nodeType: node.nodeType,
-        contentData: node.contentData ? { ...node.contentData } : { text: '', imageUrl: '', videoUrl: '' },
-        blocks: node.blocks || node.contentData?.layoutBlocks || []
+        contentData: contentDataCopy,
+        blocks: normalizedBlocks.length > 0 ? normalizedBlocks : undefined
       }
     });
 
@@ -203,8 +213,11 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
       id: rawNode.id,
       title: data.title || 'Opción',
       nodeType: nodeType,
-      blocks: data.blocks && data.blocks.length > 0 ? data.blocks : undefined,
     };
+
+    if ((rawNode as any).text) serviceNode.text = (rawNode as any).text;
+    if ((rawNode as any).imageUrl) serviceNode.imageUrl = (rawNode as any).imageUrl;
+    if ((rawNode as any).videoUrl) serviceNode.videoUrl = (rawNode as any).videoUrl;
 
     if (nodeType === 'category' || nodeType === 'step') {
       const childIds = childrenMap.get(id) || [];
@@ -216,22 +229,43 @@ export function flowToTree(nodes: DecisionNodeType[], edges: Edge[]): ServiceNod
       serviceNode.children = children;
     }
 
-    if (nodeType === 'content' || nodeType === 'step') {
-      const layoutBlocks = data.blocks && data.blocks.length > 0
-        ? data.blocks
-        : data.contentData?.layoutBlocks && data.contentData.layoutBlocks.length > 0
-          ? data.contentData.layoutBlocks
-          : undefined;
+    const normalizedBlocks = normalizeNodeLayoutBlocks({
+      id: rawNode.id,
+      blocks: data.blocks,
+      contentData: data.contentData,
+    });
 
-      serviceNode.contentData = {
+    if (nodeType === 'content' || nodeType === 'step') {
+      const contentDataResult: ServiceNodeContentData = {
         text: data.contentData?.text || '',
         imageUrl: data.contentData?.imageUrl || '',
         videoUrl: data.contentData?.videoUrl || '',
-        ...(layoutBlocks ? { layoutBlocks } : {})
       };
 
-      if (layoutBlocks) {
-        serviceNode.blocks = layoutBlocks;
+      // Conservar bloques legados intactos si existían en contentData
+      if (data.contentData?.blocks && Array.isArray(data.contentData.blocks) && data.contentData.blocks.length > 0) {
+        contentDataResult.blocks = data.contentData.blocks;
+      }
+
+      if (normalizedBlocks.length > 0) {
+        contentDataResult.layoutBlocks = normalizedBlocks;
+        serviceNode.blocks = normalizedBlocks;
+      } else if (data.contentData?.layoutBlocks && data.contentData.layoutBlocks.length > 0) {
+        contentDataResult.layoutBlocks = data.contentData.layoutBlocks;
+        serviceNode.blocks = data.contentData.layoutBlocks;
+      }
+
+      serviceNode.contentData = contentDataResult;
+    } else {
+      // Para nodos category, conservar bloques o contentData si los tuvieran
+      if (normalizedBlocks.length > 0) {
+        serviceNode.blocks = normalizedBlocks;
+      }
+      if (data.contentData) {
+        serviceNode.contentData = { ...data.contentData };
+        if (normalizedBlocks.length > 0) {
+          serviceNode.contentData.layoutBlocks = normalizedBlocks;
+        }
       }
     }
 
@@ -776,108 +810,39 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   const [isPageBuilderOpen, setIsPageBuilderOpen] = useState(false);
   const [editorBlocks, setEditorBlocks] = useState<LayoutBlock[]>([]);
 
-  // Compute LayoutBlock[] for selectedNode, migrating legacy contentData if needed
+  // Compute LayoutBlock[] for selectedNode using unified normalization
   const selectedNodeBlocks: LayoutBlock[] = useMemo(() => {
     if (!selectedNode) return [];
-    if (selectedNode.data.blocks && selectedNode.data.blocks.length > 0) {
-      return selectedNode.data.blocks;
-    }
-    if ((selectedNode as any).blocks && (selectedNode as any).blocks.length > 0) {
-      return (selectedNode as any).blocks;
-    }
-    if (selectedNode.data.contentData?.layoutBlocks && selectedNode.data.contentData.layoutBlocks.length > 0) {
-      return selectedNode.data.contentData.layoutBlocks;
-    }
-    // Fallback: migrate legacy contentData into LayoutBlock[]
-    const fallback: LayoutBlock[] = [];
-    if (selectedNode.data.contentData?.blocks && selectedNode.data.contentData.blocks.length > 0) {
-      selectedNode.data.contentData.blocks.forEach((b, idx) => {
-        if (b.text) {
-          fallback.push({
-            id: `b_txt_${b.id || idx}`,
-            type: 'text',
-            content: b.text,
-            align: 'left',
-            style: 'normal'
-          });
-        }
-        if (b.imageUrl) {
-          fallback.push({
-            id: `b_img_${b.id || idx}`,
-            type: 'media',
-            mediaType: 'image',
-            url: b.imageUrl,
-            size: 'full',
-            alignment: 'center'
-          });
-        }
-        if (b.videoUrl) {
-          fallback.push({
-            id: `b_vid_${b.id || idx}`,
-            type: 'media',
-            mediaType: 'video',
-            url: b.videoUrl,
-            size: 'full',
-            alignment: 'center'
-          });
-        }
-      });
-    } else if (selectedNode.data.contentData) {
-      if (selectedNode.data.contentData.text) {
-        fallback.push({
-          id: `b_txt_${selectedNode.id}`,
-          type: 'text',
-          content: selectedNode.data.contentData.text,
-          align: 'left',
-          style: 'normal'
-        });
-      }
-      if (selectedNode.data.contentData.imageUrl) {
-        fallback.push({
-          id: `b_img_${selectedNode.id}`,
-          type: 'media',
-          mediaType: 'image',
-          url: selectedNode.data.contentData.imageUrl,
-          size: 'full',
-          alignment: 'center'
-        });
-      }
-      if (selectedNode.data.contentData.videoUrl) {
-        fallback.push({
-          id: `b_vid_${selectedNode.id}`,
-          type: 'media',
-          mediaType: 'video',
-          url: selectedNode.data.contentData.videoUrl,
-          size: 'full',
-          alignment: 'center'
-        });
-      }
-    }
-    return fallback;
+    return normalizeNodeLayoutBlocks({
+      id: selectedNode.id,
+      blocks: selectedNode.data.blocks,
+      contentData: selectedNode.data.contentData
+    });
   }, [selectedNode]);
 
   const handleSaveAndClosePageBuilder = useCallback((blocksToSave: LayoutBlock[]) => {
     if (!selectedNode) return;
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id === selectedNode.id) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              blocks: blocksToSave,
-              contentData: {
-                ...node.data.contentData,
-                layoutBlocks: blocksToSave,
-              },
+    const nextNodes = nodes.map((node) => {
+      if (node.id === selectedNode.id) {
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            blocks: blocksToSave.length > 0 ? blocksToSave : undefined,
+            contentData: {
+              ...node.data.contentData,
+              layoutBlocks: blocksToSave.length > 0 ? blocksToSave : undefined,
             },
-          };
-        }
-        return node;
-      })
-    );
+          },
+        };
+      }
+      return node;
+    });
+
+    setNodes(nextNodes);
+    pushHistorySnapshot(nextNodes, edges);
     setIsPageBuilderOpen(false);
-  }, [selectedNode, setNodes]);
+  }, [selectedNode, nodes, edges, setNodes, pushHistorySnapshot]);
 
   const handleSaveNodeBlocks = useCallback((newBlocks: LayoutBlock[]) => {
     if (!selectedNode) return;
@@ -938,9 +903,12 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
     // Nodos de Contenido o Paso sin bloques de contenido
     const emptyContentNodes = nodes.filter((n) => {
       if (n.data.nodeType !== 'content' && n.data.nodeType !== 'step') return false;
-      const blks = n.data.blocks || n.data.contentData?.layoutBlocks || [];
-      const txt = n.data.contentData?.text?.trim() || '';
-      return blks.length === 0 && !txt;
+      const blks = normalizeNodeLayoutBlocks({
+        id: n.id,
+        blocks: n.data.blocks,
+        contentData: n.data.contentData
+      });
+      return blks.length === 0;
     });
     if (emptyContentNodes.length > 0) {
       warnings.push(`• ${emptyContentNodes.length} ${emptyContentNodes.length === 1 ? 'nodo de Contenido o Paso sin bloques de contenido' : 'nodos de Contenido o Paso sin bloques de contenido'}.`);
@@ -1320,7 +1288,7 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
                       <button
                         type="button"
                         onClick={() => {
-                          const blocksToEdit = selectedNode.data.blocks || (selectedNode as any).blocks || selectedNodeBlocks;
+                          const blocksToEdit = selectedNodeBlocks;
                           setEditorBlocks(blocksToEdit);
                           setIsPageBuilderOpen(true);
                         }}

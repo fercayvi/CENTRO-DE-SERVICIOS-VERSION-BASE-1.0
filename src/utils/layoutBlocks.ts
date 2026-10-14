@@ -8,7 +8,8 @@ import {
   ButtonLayoutBlock,
   DividerLayoutBlock,
   ColumnSlot, 
-  Service 
+  Service,
+  ServiceNodeContentData 
 } from '../types';
 
 export function generateBlockId(prefix: string = 'block'): string {
@@ -231,3 +232,133 @@ export function ensureServiceLayoutBlocks(service: Partial<Service>): LayoutBloc
 
   return blocks;
 }
+
+/**
+ * Normaliza y recupera de forma segura los bloques editables de un nodo de árbol de decisiones.
+ * Prioridad de resolución estricta contra pérdida de contenido:
+ * 1. Bloques modernos existentes en node.blocks (si contienen elementos).
+ * 2. Bloques modernos existentes en contentData.layoutBlocks (si contienen elementos).
+ * 3. Conversión de contentData.blocks del formato legado al formato LayoutBlock[].
+ * 4. Conversión de campos directos (text, imageUrl, videoUrl) de contentData o del nodo cuando tengan contenido.
+ * 5. Si no existe contenido recuperable, devuelve un arreglo vacío.
+ */
+export function normalizeNodeLayoutBlocks(node?: {
+  id?: string;
+  blocks?: LayoutBlock[];
+  contentData?: ServiceNodeContentData;
+  text?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+} | null): LayoutBlock[] {
+  if (!node) return [];
+
+  // 1. Utilizar los bloques modernos existentes en ServiceNode.blocks, si contienen elementos.
+  if (Array.isArray(node.blocks) && node.blocks.length > 0) {
+    return node.blocks.map(b => ({ ...b }));
+  }
+
+  // 2. Si no existen, utilizar contentData.layoutBlocks, si contiene elementos.
+  if (Array.isArray(node.contentData?.layoutBlocks) && node.contentData.layoutBlocks.length > 0) {
+    return node.contentData.layoutBlocks.map(b => ({ ...b }));
+  }
+
+  // 3. Si tampoco existen, convertir contentData.blocks del formato legado al formato LayoutBlock[].
+  if (Array.isArray(node.contentData?.blocks) && node.contentData.blocks.length > 0) {
+    const convertedFromBlocks: LayoutBlock[] = [];
+    node.contentData.blocks.forEach((b, idx) => {
+      const stableSuffix = b.id ? (b.id.startsWith('b_') ? b.id : `b_${b.id}`) : `${node.id || 'blk'}_${idx}`;
+
+      if (typeof b.text === 'string' && b.text.trim().length > 0) {
+        convertedFromBlocks.push({
+          id: `txt_${stableSuffix}`,
+          type: 'text',
+          content: b.text,
+          align: 'left',
+          style: 'normal'
+        });
+      }
+
+      if (typeof b.imageUrl === 'string' && b.imageUrl.trim().length > 0) {
+        convertedFromBlocks.push({
+          id: `img_${stableSuffix}`,
+          type: 'media',
+          mediaType: 'image',
+          url: b.imageUrl.trim(),
+          size: 'full',
+          alignment: 'center'
+        });
+      }
+
+      if (typeof b.videoUrl === 'string' && b.videoUrl.trim().length > 0) {
+        convertedFromBlocks.push({
+          id: `vid_${stableSuffix}`,
+          type: 'media',
+          mediaType: 'video',
+          url: b.videoUrl.trim(),
+          size: 'full',
+          alignment: 'center'
+        });
+      }
+    });
+
+    if (convertedFromBlocks.length > 0) {
+      return convertedFromBlocks;
+    }
+  }
+
+  // 4. Si no hay bloques en esos formatos, recuperar los campos directos de texto, imagen o video, cuando tengan contenido.
+  const directText = (typeof node.contentData?.text === 'string' && node.contentData.text.trim().length > 0)
+    ? node.contentData.text
+    : (typeof node.text === 'string' && node.text.trim().length > 0 ? node.text : undefined);
+
+  const directImageUrl = (typeof node.contentData?.imageUrl === 'string' && node.contentData.imageUrl.trim().length > 0)
+    ? node.contentData.imageUrl.trim()
+    : (typeof node.imageUrl === 'string' && node.imageUrl.trim().length > 0 ? node.imageUrl.trim() : undefined);
+
+  const directVideoUrl = (typeof node.contentData?.videoUrl === 'string' && node.contentData.videoUrl.trim().length > 0)
+    ? node.contentData.videoUrl.trim()
+    : (typeof node.videoUrl === 'string' && node.videoUrl.trim().length > 0 ? node.videoUrl.trim() : undefined);
+
+  const directBlocks: LayoutBlock[] = [];
+  const nodeId = node.id || 'node';
+
+  if (directText) {
+    directBlocks.push({
+      id: `txt_dir_${nodeId}`,
+      type: 'text',
+      content: directText,
+      align: 'left',
+      style: 'normal'
+    });
+  }
+
+  if (directImageUrl) {
+    directBlocks.push({
+      id: `img_dir_${nodeId}`,
+      type: 'media',
+      mediaType: 'image',
+      url: directImageUrl,
+      size: 'full',
+      alignment: 'center'
+    });
+  }
+
+  if (directVideoUrl) {
+    directBlocks.push({
+      id: `vid_dir_${nodeId}`,
+      type: 'media',
+      mediaType: 'video',
+      url: directVideoUrl,
+      size: 'full',
+      alignment: 'center'
+    });
+  }
+
+  if (directBlocks.length > 0) {
+    return directBlocks;
+  }
+
+  // 5. Si realmente no existe contenido, devolver un arreglo vacío.
+  return [];
+}
+
