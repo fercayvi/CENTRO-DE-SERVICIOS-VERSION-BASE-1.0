@@ -511,6 +511,18 @@ export default function ServiceDetail({
     return JSON.stringify(draft) !== JSON.stringify(getPreparedDraft(service));
   }, [draft, service]);
 
+  useEffect(() => {
+    if (!isEditing || !isModified) return;
+
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', warnBeforeUnload);
+    return () => window.removeEventListener('beforeunload', warnBeforeUnload);
+  }, [isEditing, isModified]);
+
   // Toast feedback helper
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -671,8 +683,22 @@ export default function ServiceDetail({
   };
 
   const handleCancelEdit = () => {
+    if (isModified && !window.confirm('Tienes cambios sin guardar. ¿Quieres descartarlos y salir de la edición?')) {
+      return;
+    }
     setDraft(getPreparedDraft(service));
     setIsEditing(false);
+  };
+
+  const handleRequestExit = () => {
+    if (isEditing && isModified && !window.confirm('Tienes cambios sin guardar. ¿Quieres salir sin guardar?')) {
+      return;
+    }
+    if (isEditing && isModified) {
+      setDraft(getPreparedDraft(service));
+      setIsEditing(false);
+    }
+    onBack();
   };
 
   const videoInfo = getEmbedVideoInfo(draft.videoUrl);
@@ -699,7 +725,7 @@ export default function ServiceDetail({
         }`}>
           <div className="flex items-center gap-3 min-w-0">
             <button 
-              onClick={onBack}
+              onClick={handleRequestExit}
               className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all shrink-0 cursor-pointer"
               title="Volver"
             >
@@ -1166,7 +1192,7 @@ export default function ServiceDetail({
               <button 
                 id="btn-service-back"
                 type="button"
-                onClick={onBack}
+                onClick={handleRequestExit}
                 className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center gap-1 active:scale-95 transition-all shrink-0 border border-slate-300 shadow-2xs cursor-pointer min-h-[38px]"
                 title="Volver al menú"
               >
