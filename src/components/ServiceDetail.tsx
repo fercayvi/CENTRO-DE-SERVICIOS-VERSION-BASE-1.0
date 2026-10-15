@@ -13,7 +13,7 @@ import { MediaUploadField } from './MediaUploadField';
 import { ImageLightboxModal } from './ImageLightboxModal';
 import { DecisionTreeBuilder } from './DecisionTreeBuilder';
 import { DecisionTreeNavigator } from './DecisionTreeNavigator';
-import { DecisionTreeCanvasEditor } from './DecisionTreeCanvasEditor';
+const DecisionTreeCanvasEditor = React.lazy(() => import('./DecisionTreeCanvasEditor').then(module => ({ default: module.DecisionTreeCanvasEditor })));
 import { BlockBuilder } from './BlockBuilder';
 import { PageBuilderFullScreenEditor } from './PageBuilderFullScreenEditor';
 import { LayoutBlocksRenderer } from './LayoutBlocksRenderer';
@@ -1222,16 +1222,18 @@ export default function ServiceDetail({
 
       {/* Fullscreen Flowchart Canvas Editor */}
       {isFlowEditorOpen && (
-        <DecisionTreeCanvasEditor
-          tree={draft.decisionTree || []}
-          serviceTitle={draft.title}
-          onSave={(newTree) => {
-            setDraft(prev => ({ ...prev, decisionTree: newTree }));
-            setIsFlowEditorOpen(false);
-            showToast('Árbol de decisiones actualizado en el borrador');
-          }}
-          onClose={() => setIsFlowEditorOpen(false)}
-        />
+        <React.Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-white text-sm text-slate-500">Cargando editor de diagrama…</div>}>
+          <DecisionTreeCanvasEditor
+            tree={draft.decisionTree || []}
+            serviceTitle={draft.title}
+            onSave={(newTree) => {
+              setDraft(prev => ({ ...prev, decisionTree: newTree }));
+              setIsFlowEditorOpen(false);
+              showToast('Árbol de decisiones actualizado en el borrador');
+            }}
+            onClose={() => setIsFlowEditorOpen(false)}
+          />
+        </React.Suspense>
       )}
 
       {/* Fullscreen Page Builder Editor */}
