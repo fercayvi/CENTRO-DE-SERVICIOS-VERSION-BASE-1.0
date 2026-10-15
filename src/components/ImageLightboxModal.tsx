@@ -65,7 +65,10 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
   const handleResetZoom = () => setZoom(1);
 
   return (
-    <div 
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={title || 'Vista ampliada de imagen'}
       className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-md flex flex-col h-[100dvh] w-screen top-0 left-0 animate-fadeIn select-none overflow-hidden"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -97,6 +100,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               disabled={zoom <= 0.5}
               className="min-w-10 min-h-10 p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer"
               title="Reducir zoom (-)"
+              aria-label="Reducir zoom"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
@@ -109,6 +113,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               disabled={zoom >= 3}
               className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer"
               title="Aumentar zoom (+)"
+              aria-label="Aumentar zoom"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
@@ -118,6 +123,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
                 onClick={handleResetZoom}
                 className="min-w-10 min-h-10 p-2 ml-1 rounded-lg text-blue-400 hover:text-blue-300 hover:bg-slate-700 transition-colors cursor-pointer"
                 title="Restablecer a 100% (0)"
+                aria-label="Restablecer zoom"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
@@ -130,6 +136,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
             onClick={onClose}
             className="min-w-11 min-h-11 p-2 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white transition-colors cursor-pointer ml-1 shadow-xs"
             title="Cerrar vista ampliada (Esc)"
+            aria-label="Cerrar imagen ampliada"
           >
             <X className="w-5 h-5" />
           </button>
@@ -154,6 +161,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
             disabled={!hasPrev}
             className="absolute left-2 sm:left-4 z-20 min-w-11 min-h-11 p-2 sm:p-3 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white disabled:opacity-30 disabled:hover:bg-slate-900/80 transition-all border border-slate-700 shadow-xl cursor-pointer"
             title="Imagen anterior (←)"
+            aria-label="Imagen anterior"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -182,6 +190,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
             disabled={!hasNext}
             className="absolute right-2 sm:right-4 z-20 min-w-11 min-h-11 p-2 sm:p-3 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white disabled:opacity-30 disabled:hover:bg-slate-900/80 transition-all border border-slate-700 shadow-xl cursor-pointer"
             title="Siguiente imagen (→)"
+            aria-label="Siguiente imagen"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
