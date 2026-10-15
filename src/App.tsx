@@ -5,7 +5,8 @@ import { initialServices, initialNews, initialContact, defaultCategories, siteSe
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
-import ServiceDetail from './components/ServiceDetail';
+const loadServiceDetail = () => import('./components/ServiceDetail');
+const ServiceDetail = React.lazy(loadServiceDetail);
 const NewsTab = React.lazy(() => import('./components/NewsTab'));
 const AsistenteTab = React.lazy(() => import('./components/AsistenteTab'));
 const SearchTab = React.lazy(() => import('./components/SearchTab'));
@@ -14,6 +15,14 @@ import ScrollProgressBar from './components/ScrollProgressBar';
 
 export default function App() {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Descargar el detalle en segundo plano después del primer render del catálogo.
+  // Mantiene ligero el bundle inicial y evita esperar al clic en condiciones normales.
+  useEffect(() => {
+    void loadServiceDetail().catch((error) => {
+      console.error('No se pudo precargar el detalle de trámites:', error);
+    });
+  }, []);
   const [currentTab, setCurrentTab] = useState<'inicio' | 'buscar' | 'noticias' | 'asistente'>('inicio');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedService, setSelectedService] = useState<(Service & { hidden?: boolean }) | null>(null);
