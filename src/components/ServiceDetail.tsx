@@ -460,11 +460,15 @@ export default function ServiceDetail({
       pdfTitle: s.pdfTitle ?? computed.pdfTitle,
       attachments: s.attachments ?? computed.attachments,
       alertNotice: s.alertNotice ?? computed.alertNotice,
-      layoutBlocks: s.layoutBlocks && s.layoutBlocks.length > 0 ? s.layoutBlocks : undefined
+      // Un arreglo explícitamente vacío significa que el administrador vació el lienzo.
+      // Solo los servicios antiguos sin la propiedad layoutBlocks deben reconstruirla desde campos heredados.
+      layoutBlocks: Array.isArray(s.layoutBlocks) ? s.layoutBlocks : undefined
     };
     return {
       ...hydrated,
-      layoutBlocks: ensureServiceLayoutBlocks(hydrated)
+      layoutBlocks: Array.isArray(hydrated.layoutBlocks)
+        ? hydrated.layoutBlocks
+        : ensureServiceLayoutBlocks(hydrated)
     };
   };
 
