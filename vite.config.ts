@@ -63,7 +63,7 @@ export default defineConfig(() => {
                   !content.startsWith(expectedImport) ||
                   !content.includes('export const initialServices: Service[] = ') ||
                   !content.includes('export const initialNews: NewsItem[] = ') ||
-                  !content.endsWith('export const faqsData: FAQ[] = [];\n')
+                  !content.includes('export const faqsData: FAQ[] = ')
                 ) {
                   res.statusCode = 400;
                   res.end(JSON.stringify({ error: 'El contenido no coincide con el formato esperado de src/data.ts.' }));
