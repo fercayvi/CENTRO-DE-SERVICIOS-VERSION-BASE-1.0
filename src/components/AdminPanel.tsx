@@ -61,7 +61,7 @@ import { SERVICE_ICON_MAP } from './ServiceCard';
 import { MediaUploadField } from './MediaUploadField';
 import { DecisionTreeBuilder } from './DecisionTreeBuilder';
 import { DecisionTreeNavigator } from './DecisionTreeNavigator';
-import { DecisionTreeCanvasEditor } from './DecisionTreeCanvasEditor';
+const DecisionTreeCanvasEditor = React.lazy(() => import('./DecisionTreeCanvasEditor').then(module => ({ default: module.DecisionTreeCanvasEditor })));
 
 interface SortableServiceItemProps {
   key?: React.Key;
@@ -2131,15 +2131,17 @@ const handleOpenNewNewsModal = () => {
 
       {/* Fullscreen Flowchart Canvas Editor */}
       {isFlowEditorOpen && editingService && (
-        <DecisionTreeCanvasEditor
-          tree={editingService.decisionTree || []}
-          serviceTitle={editingService.title}
-          onSave={(newTree) => {
-            setEditingService(prev => prev ? ({ ...prev, decisionTree: newTree }) : prev);
-            setIsFlowEditorOpen(false);
-          }}
-          onClose={() => setIsFlowEditorOpen(false)}
-        />
+        <React.Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-white text-sm text-slate-500">Cargando editor de diagrama…</div>}>
+          <DecisionTreeCanvasEditor
+            tree={editingService.decisionTree || []}
+            serviceTitle={editingService.title}
+            onSave={(newTree) => {
+              setEditingService(prev => prev ? ({ ...prev, decisionTree: newTree }) : prev);
+              setIsFlowEditorOpen(false);
+            }}
+            onClose={() => setIsFlowEditorOpen(false)}
+          />
+        </React.Suspense>
       )}
 
       {/* --- MODAL FOR ADDING / EDITING NEWS --- */}
