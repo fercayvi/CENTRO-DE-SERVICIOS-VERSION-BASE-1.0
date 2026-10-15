@@ -592,6 +592,32 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
   // Track initial serialized tree for Cancel confirmation
   const initialTreeJsonRef = useRef<string>(JSON.stringify(tree || []));
 
+  useEffect(() => {
+    const currentTree = flowToTree(nodes, edges);
+    const isUntouchedStarterNode =
+      initialTreeWasEmptyRef.current &&
+      nodes.length === 1 &&
+      edges.length === 0 &&
+      nodes[0]?.data.title === 'Pregunta Inicial / Opción 1' &&
+      nodes[0]?.data.nodeType === 'category' &&
+      (!nodes[0]?.data.blocks || nodes[0].data.blocks.length === 0) &&
+      (!nodes[0]?.data.contentData?.text || nodes[0].data.contentData.text.trim() === '');
+
+    const hasUnsavedChanges =
+      !isUntouchedStarterNode &&
+      JSON.stringify(currentTree) !== initialTreeJsonRef.current;
+
+    if (!hasUnsavedChanges) return;
+
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', warnBeforeUnload);
+    return () => window.removeEventListener('beforeunload', warnBeforeUnload);
+  }, [nodes, edges]);
+
   // History State for Undo/Redo
   interface HistoryStep {
     nodes: DecisionNodeType[];
@@ -1182,10 +1208,10 @@ export const DecisionTreeCanvasEditor: React.FC<DecisionTreeCanvasEditorProps> =
             type="button"
             onClick={handleSaveAndClose}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-xs transition-all cursor-pointer active:scale-95"
-            title="Guardar cambios y volver a la vista anterior"
+            title="Aplicar cambios al borrador del trámite"
           >
             <Save className="w-4 h-4" />
-            <span>Cerrar y Guardar</span>
+            <span>Aplicar cambios</span>
           </button>
 
           <button
