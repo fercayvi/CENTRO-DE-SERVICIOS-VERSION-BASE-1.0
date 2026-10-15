@@ -133,9 +133,12 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
       clearTimeout(historyDebounceTimerRef.current);
       historyDebounceTimerRef.current = null;
       const snapshot = JSON.parse(JSON.stringify(blocks)) as LayoutBlock[];
-      setHistory((prev) => [...prev.slice(0, historyIndex + 1), snapshot].slice(-30));
       const target = history[historyIndex];
-      setHistoryIndex(Math.min(historyIndex + 1, 29) - 1);
+      const nextHistory = [...history.slice(0, historyIndex + 1), snapshot].slice(-30);
+      setHistory(nextHistory);
+      // When the history is full, trimming drops its oldest entry, so keep the
+      // index aligned with the previous snapshot that Undo restores.
+      setHistoryIndex(Math.max(0, nextHistory.length - 2));
       if (target) onChange(JSON.parse(JSON.stringify(target)));
       return;
     }
