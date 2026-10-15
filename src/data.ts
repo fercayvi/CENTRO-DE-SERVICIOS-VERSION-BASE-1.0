@@ -1,4 +1,4 @@
-import { ServiceId, Service, FAQ, NewsItem, Aviso, UserProfile, MonthlyRecognition, ContactInfo, CategoryConfig, SiteSettings } from './types';
+import { ServiceId, Service, FAQ, NewsItem, Aviso, MonthlyRecognition, ContactInfo, CategoryConfig, SiteSettings } from './types';
 
 export const siteSettings: SiteSettings = {
   "defaultHomeView": "categories"
@@ -634,14 +634,6 @@ export const initialServices: Service[] = [
 
 export const allServices: Service[] = initialServices;
 export const servicesData = initialServices;
-
-export const userProfileData: UserProfile = {
-  "name": "Colaborador Planta",
-  "position": "Operador de Ensamble A",
-  "department": "Producción - Línea 3",
-  "supervisor": "Ing. Héctor Ramírez",
-  "shift": "Primer Turno (06:00 AM - 02:00 PM)"
-};
 
 export const initialNews: NewsItem[] = [
   {
