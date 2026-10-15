@@ -425,25 +425,28 @@ export const faqsData: FAQ[] = [];
 `;
   };
 
-  const handleCopyCode = async () => {
+  const handleWriteDataFile = async () => {
+    setIsCopied(false);
     try {
-      const code = generateSourceCode();
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(code);
-      } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = code;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
+      const response = await fetch('/__admin/write-data-ts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: generateSourceCode() }),
+      });
+      const result = await response.json() as { success?: boolean; error?: string };
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'No se pudo actualizar src/data.ts.');
       }
+
       setIsCopied(true);
-      showToast('¡Código para src/data.ts copiado al portapapeles!');
-      setTimeout(() => setIsCopied(false), 2500);
+      showToast('¡src/data.ts actualizado en el workspace de Codespaces!');
+      window.setTimeout(() => setIsCopied(false), 2500);
     } catch (err) {
-      console.error('Error al copiar al portapapeles:', err);
-      showToast('No se pudo copiar automáticamente.');
+      console.error('Error al actualizar src/data.ts:', err);
+      showToast(err instanceof Error
+        ? err.message
+        : 'No se pudo actualizar src/data.ts. Verifica que el servidor de desarrollo esté activo.');
     }
   };
 
@@ -1470,7 +1473,7 @@ const handleOpenNewNewsModal = () => {
               <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
               <div className="text-xs text-slate-600 leading-relaxed">
                 <span className="font-bold text-slate-800">Persistencia y Sincronización: </span>
-                Esta configuración se guarda automáticamente en este dispositivo. Para que perdure en la versión pública, ve a la pestaña <span className="font-bold text-slate-800">"Sincronizar"</span> y copia el código generado hacia tu archivo <code className="px-1 py-0.5 bg-slate-200/80 rounded font-mono text-[11px] text-slate-900">src/data.ts</code>.
+                Esta configuración se guarda automáticamente en este dispositivo. Para registrar los datos actuales en el código fuente de esta versión privada, utiliza la pestaña <span className="font-bold text-slate-800">"Sincronizar"</span>. La transferencia a la versión pública sigue siendo un proceso separado.
               </div>
             </div>
           </div>
@@ -1490,10 +1493,10 @@ const handleOpenNewNewsModal = () => {
             {/* Título y descripción */}
             <div className="space-y-2 max-w-lg mx-auto">
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900 font-display">
-                Sincronizar con Visual Studio Code
+                Actualizar archivo src/data.ts
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                Exporta la versión actualizada de tus trámites, árboles de decisión, categorías y configuración para guardarla permanentemente en el archivo <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 text-xs font-semibold">src/data.ts</code> de tu proyecto.
+                Escribe los trámites, árboles de decisión, categorías, noticias y configuración actuales directamente en <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 text-xs font-semibold">src/data.ts</code> dentro del workspace de Codespaces. No modifica la versión pública ni copia imágenes.
               </p>
             </div>
 
@@ -1501,8 +1504,8 @@ const handleOpenNewNewsModal = () => {
             <div className="pt-2">
               <button
                 type="button"
-                id="btn-copy-source-code"
-                onClick={handleCopyCode}
+                id="btn-write-source-code"
+                onClick={handleWriteDataFile}
                 className={`w-full sm:w-auto px-8 py-4 rounded-2xl text-sm sm:text-base font-bold flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer mx-auto min-h-[52px] ${
                   isCopied
                     ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
@@ -1512,12 +1515,12 @@ const handleOpenNewNewsModal = () => {
                 {isCopied ? (
                   <>
                     <Check className="w-5 h-5" />
-                    <span>¡Código Copiado al Portapapeles!</span>
+                    <span>¡Archivo actualizado!</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-5 h-5" />
-                    <span>Copiar Código para src/data.ts</span>
+                    <Save className="w-5 h-5" />
+                    <span>Actualizar src/data.ts</span>
                   </>
                 )}
               </button>
@@ -1526,7 +1529,7 @@ const handleOpenNewNewsModal = () => {
             {/* Instrucciones de Ayuda */}
             <div className="pt-4 border-t border-slate-100 text-xs text-slate-400 max-w-md mx-auto space-y-1.5">
               <p className="leading-relaxed">
-                Abre tu proyecto en <span className="font-semibold text-slate-600">Visual Studio Code</span>, ve al archivo <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code>, selecciona todo su contenido y pega el código copiado para sincronizar los cambios de forma definitiva.
+                El archivo se escribe en el workspace donde está ejecutándose el servidor de desarrollo de Vite. Revisa el diff de <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code> en Codespaces antes de confirmar el cambio con Git. Las imágenes siguen copiándose manualmente a <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">public/</code>.
               </p>
             </div>
 
