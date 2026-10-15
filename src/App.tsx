@@ -5,35 +5,16 @@ import { initialServices, initialNews, initialContact, defaultCategories, siteSe
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
-const loadServiceDetail = () => import('./components/ServiceDetail');
-const loadNewsTab = () => import('./components/NewsTab');
-const loadAsistenteTab = () => import('./components/AsistenteTab');
-const loadSearchTab = () => import('./components/SearchTab');
-
-const ServiceDetail = React.lazy(loadServiceDetail);
-const NewsTab = React.lazy(loadNewsTab);
-const AsistenteTab = React.lazy(loadAsistenteTab);
-const SearchTab = React.lazy(loadSearchTab);
+import ServiceDetail from './components/ServiceDetail';
+import NewsTab from './components/NewsTab';
+import AsistenteTab from './components/AsistenteTab';
+import SearchTab from './components/SearchTab';
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 import ScrollProgressBar from './components/ScrollProgressBar';
 
 export default function App() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Precargar en segundo plano las vistas pequeñas que se usan con frecuencia.
-  // Se conservan en chunks separados para no aumentar el paquete JavaScript inicial.
-  useEffect(() => {
-    const preload = (name: string, loader: () => Promise<unknown>) => {
-      void loader().catch((error) => {
-        console.error(`No se pudo precargar ${name}:`, error);
-      });
-    };
-
-    preload('el detalle de trámites', loadServiceDetail);
-    preload('la búsqueda', loadSearchTab);
-    preload('las noticias', loadNewsTab);
-    preload('el contacto/asistente', loadAsistenteTab);
-  }, []);
   const [currentTab, setCurrentTab] = useState<'inicio' | 'buscar' | 'noticias' | 'asistente'>('inicio');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedService, setSelectedService] = useState<(Service & { hidden?: boolean }) | null>(null);
@@ -431,34 +412,28 @@ export default function App() {
 
                   {/* TAB: BÚSQUEDA GLOBAL */}
                   {currentTab === 'buscar' && (
-                    <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando búsqueda…</div>}>
-                      <SearchTab 
-                        services={services}
-                        searchQuery={searchQuery}
-                        onSearchQueryChange={setSearchQuery}
-                        onSelectService={(service) => handleSelectService(service, false)}
-                        categories={categories}
-                      />
-                    </React.Suspense>
+                    <SearchTab 
+                      services={services}
+                      searchQuery={searchQuery}
+                      onSearchQueryChange={setSearchQuery}
+                      onSelectService={(service) => handleSelectService(service, false)}
+                      categories={categories}
+                    />
                   )}
 
                   {/* TAB 2: NOTICIAS */}
                   {currentTab === 'noticias' && (
-                    <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando noticias…</div>}>
-                      <NewsTab 
-                        newsList={news} 
-                        onUnreadCountChange={setUnreadNewsCount}
-                      />
-                    </React.Suspense>
+                    <NewsTab 
+                    newsList={news} 
+                    onUnreadCountChange={setUnreadNewsCount}
+                  />
                   )}
 
                   {/* TAB 3: ASISTENTE */}
                   {currentTab === 'asistente' && (
-                    <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando asistente…</div>}>
-                      <AsistenteTab 
-                        contactInfo={contactInfo} 
-                      />
-                    </React.Suspense>
+                    <AsistenteTab 
+                    contactInfo={contactInfo} 
+                  />
                   )}
                 </>
               )
