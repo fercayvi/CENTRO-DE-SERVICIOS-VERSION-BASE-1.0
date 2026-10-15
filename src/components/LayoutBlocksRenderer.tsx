@@ -17,31 +17,66 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { LayoutBlock } from '../types';
+import { isSafeNavigationUrl } from '../utils/safeUrl';
+
 
 export function getEmbedVideoInfo(url?: string | null): { type: 'youtube' | 'vimeo' | 'direct'; embedUrl: string } | null {
   if (!url || typeof url !== 'string' || !url.trim()) return null;
   const cleanUrl = url.trim();
 
-  // Strip query params and hash when checking direct video extension
-  const urlPath = cleanUrl.split(/[?#]/)[0];
-
-  // Base64 Data URL video or direct MP4/WebM/OGG file (even with params e.g. video.mp4?v=2)
-  if (cleanUrl.startsWith('data:video') || urlPath.match(/\.(mp4|webm|ogg)$/i)) {
+  // Only allow explicit video data URLs; arbitrary data MIME types must not become media sources.
+  if (/^data:video\/(mp4|webm|ogg);/i.test(cleanUrl)) {
     return { type: 'direct', embedUrl: cleanUrl };
   }
 
-  // YouTube
-  const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const ytMatch = cleanUrl.match(ytRegExp);
-  if (ytMatch && ytMatch[2].length === 11) {
-    return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${ytMatch[2]}` };
+  let parsedUrl: URL;
+  try {
+    // Relative paths such as /video.mp4 are intentional for files in public/.
+    parsedUrl = new URL(cleanUrl, window.location.origin);
+  } catch {
+    return null;
   }
 
-  // Vimeo
-  const vimeoRegExp = /(vimeo\.com\/)(\d+)/;
-  const vimeoMatch = cleanUrl.match(vimeoRegExp);
-  if (vimeoMatch && vimeoMatch[2]) {
-    return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${vimeoMatch[2]}` };
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) return null;
+
+  const urlPath = parsedUrl.pathname;
+  if (/\.(mp4|webm|ogg)$/i.test(urlPath)) {
+    return { type: 'direct', embedUrl: cleanUrl };
+  }
+
+  const hostname = parsedUrl.hostname.toLowerCase();
+  const isYouTubeHost = hostname === 'youtube.com'
+    || hostname.endsWith('.youtube.com')
+    || hostname === 'youtube-nocookie.com'
+    || hostname.endsWith('.youtube-nocookie.com')
+    || hostname === 'youtu.be';
+
+  if (isYouTubeHost) {
+    let videoId: string | null = null;
+
+    if (hostname === 'youtu.be') {
+      videoId = parsedUrl.pathname.split('/').filter(Boolean)[0] || null;
+    } else if (parsedUrl.pathname === '/watch') {
+      videoId = parsedUrl.searchParams.get('v');
+    } else {
+      const match = parsedUrl.pathname.match(/^\/(?:embed|shorts|live|v)\/([\w-]{11})\/?$/);
+      videoId = match?.[1] || null;
+    }
+
+    if (videoId && /^[\w-]{11}$/.test(videoId)) {
+      return { type: 'youtube', embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}` };
+    }
+  }
+
+  const isVimeoHost = hostname === 'vimeo.com'
+    || hostname.endsWith('.vimeo.com');
+  if (isVimeoHost) {
+    // Vimeo public videos use /123456789; unlisted videos may add a privacy hash.
+    const match = parsedUrl.pathname.match(/^\/(\d+)(?:\/([a-zA-Z0-9]+))?\/?$/);
+    if (match) {
+      const privacyHash = match[2] ? `?h=${encodeURIComponent(match[2])}` : '';
+      return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${match[1]}${privacyHash}` };
+    }
   }
 
   return null;
@@ -156,9 +191,11 @@ function MediaImageBlock({
   }
 
   return (
-    <div 
-      onClick={() => onOpenLightbox && onOpenLightbox(url, title || serviceTitle)}
-      className="relative cursor-pointer overflow-hidden rounded-xl border border-slate-100 bg-slate-50"
+    <button
+      type="button"
+      onClick={() => onOpenLightbox?.(url, title || serviceTitle)}
+      aria-label={`Ampliar imagen: ${title || serviceTitle || 'Contenido multimedia'}`}
+      className="relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-slate-100 bg-slate-50 p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
     >
       <img 
         src={url} 
@@ -167,7 +204,7 @@ function MediaImageBlock({
         onError={() => setHasError(true)}
         className="w-full h-auto max-w-full rounded-xl object-contain shadow-2xs mx-auto max-h-[500px]" 
       />
-    </div>
+    </button>
   );
 }
 
@@ -434,7 +471,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
           // PDF / FORMATO
           if (mediaType === 'pdf') {
             const rawPdfUrl = (block.url || '').trim();
-            const hasValidPdf = Boolean(rawPdfUrl && rawPdfUrl !== 'https://' && rawPdfUrl !== 'http://');
+            const hasValidPdf = isSafeNavigationUrl(rawPdfUrl, ['application/pdf']);
 
             if (!hasValidPdf) {
               return null;
@@ -532,7 +569,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         // ==================== 6. BUTTON BLOCK ====================
         if (block.type === 'button') {
           const rawBtnUrl = (block.url || '').trim();
-          if (!rawBtnUrl || rawBtnUrl === 'https://' || rawBtnUrl === 'http://') {
+          if (!isSafeNavigationUrl(rawBtnUrl)) {
             return null;
           }
 

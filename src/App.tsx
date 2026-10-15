@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
-import { Service, NewsItem, UserProfile, ContactInfo, CategoryConfig, SiteSettings } from './types';
-import { initialServices, initialNews, userProfileData, initialContact, defaultCategories, siteSettings } from './data';
+import { Service, NewsItem, ContactInfo, CategoryConfig, SiteSettings } from './types';
+import { initialServices, initialNews, initialContact, defaultCategories, siteSettings } from './data';
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
@@ -9,11 +9,12 @@ import ServiceDetail from './components/ServiceDetail';
 import NewsTab from './components/NewsTab';
 import AsistenteTab from './components/AsistenteTab';
 import SearchTab from './components/SearchTab';
-import AdminPanel from './components/AdminPanel';
+const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 import ScrollProgressBar from './components/ScrollProgressBar';
 
 export default function App() {
   const scrollRef = useRef<HTMLDivElement>(null);
+
   const [currentTab, setCurrentTab] = useState<'inicio' | 'buscar' | 'noticias' | 'asistente'>('inicio');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedService, setSelectedService] = useState<(Service & { hidden?: boolean }) | null>(null);
@@ -25,21 +26,9 @@ export default function App() {
   const [isImageZoomed, setIsImageZoomed] = useState<boolean>(false);
   const [unreadNewsCount, setUnreadNewsCount] = useState<number>(0);
 
-  // Configuración general del sitio (persistencia de vista principal)
-  const [settings, setSettings] = useState<SiteSettings>(() => {
-    try {
-      const saved = localStorage.getItem('cc-site-settings-v1');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && (parsed.defaultHomeView === 'categories' || parsed.defaultHomeView === 'all_services')) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Error cargando siteSettings de localStorage:', e);
-    }
-    return siteSettings;
-  });
+  // src/data.ts es la fuente inicial de verdad; localStorage solo conserva
+  // cambios temporales durante la sesión y no debe sobrescribir la configuración versionada.
+  const [settings, setSettings] = useState<SiteSettings>(siteSettings);
 
   useEffect(() => {
     try {
@@ -49,83 +38,15 @@ export default function App() {
     }
   }, [settings]);
 
-  // Inicialización de estados: src/data.ts es la fuente de verdad principal y prioritaria
-  const [services, setServices] = useState<(Service & { hidden?: boolean })[]>(() => {
-    if (initialServices && initialServices.length > 0) {
-      return initialServices;
-    }
-    try {
-      const saved = localStorage.getItem('cc-services-cms-v1');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((s: Service) => {
-            if (!s.tags || s.tags.length === 0) {
-              const defaultMatch = initialServices.find(init => init.id === s.id);
-              if (defaultMatch && defaultMatch.tags) {
-                return { ...s, tags: defaultMatch.tags };
-              }
-            }
-            return s;
-          });
-        }
-      }
-    } catch (e) {
-      console.error('Error al cargar trámites desde localStorage:', e);
-    }
-    return initialServices || [];
-  });
+  // src/data.ts define el catálogo inicial; localStorage solo refleja el estado temporal
+  // que se va sincronizando durante la sesión y nunca reemplaza el catálogo versionado.
+  const [services, setServices] = useState<(Service & { hidden?: boolean })[]>(initialServices);
 
-  const [news, setNews] = useState<NewsItem[]>(() => {
-    if (initialNews && initialNews.length > 0) {
-      return initialNews;
-    }
-    try {
-      const saved = localStorage.getItem('cc-news');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Error al cargar noticias desde localStorage:', e);
-    }
-    return initialNews || [];
-  });
+  const [news, setNews] = useState<NewsItem[]>(initialNews);
 
-  const [contactInfo, setContactInfo] = useState<ContactInfo>(() => {
-    if (initialContact && Object.keys(initialContact).length > 0) {
-      return initialContact;
-    }
-    try {
-      const saved = localStorage.getItem('portalContactInfo') || localStorage.getItem('cc-contact');
-      if (saved) {
-        return { ...initialContact, ...JSON.parse(saved) };
-      }
-    } catch (e) {
-      console.error('Error al cargar contacto desde localStorage:', e);
-    }
-    return initialContact;
-  });
+  const [contactInfo, setContactInfo] = useState<ContactInfo>(initialContact);
 
-  const [categories, setCategories] = useState<CategoryConfig[]>(() => {
-    if (defaultCategories && defaultCategories.length > 0) {
-      return defaultCategories;
-    }
-    try {
-      const saved = localStorage.getItem('cc-categories');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Error al cargar categorías desde localStorage:', e);
-    }
-    return defaultCategories || [];
-  });
+  const [categories, setCategories] = useState<CategoryConfig[]>(defaultCategories);
 
   const handleUpdateCategories = (newCategories: CategoryConfig[], updatedServices?: (Service & { hidden?: boolean })[]) => {
     setCategories(newCategories);
@@ -176,8 +97,6 @@ export default function App() {
     }
   }, [contactInfo]);
 
-  // Public user context
-  const user: UserProfile = userProfileData;
 
   // Global Kiosk Inactivity Reset Timer (90 seconds)
   useEffect(() => {
@@ -295,7 +214,6 @@ export default function App() {
                 <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
                   <ServiceDetail 
                     service={selectedService} 
-                    user={user} 
                     onBack={() => {
                       setSelectedService(null);
                       setServiceEditMode(false);
@@ -311,23 +229,25 @@ export default function App() {
             ) : (
               /* ADMIN PANEL OR PUBLIC TABS */
               isAdminLoggedIn ? (
-                <AdminPanel
-                  services={services}
-                  onUpdateServices={handleUpdateServices}
-                  onSelectService={handleSelectService}
-                  news={news}
-                  onUpdateNews={setNews}
-                  contactInfo={contactInfo}
-                  onUpdateContact={handleUpdateContact}
-                  categories={categories}
-                  onUpdateCategories={handleUpdateCategories}
-                  onLogout={() => {
-                    setIsAdminLoggedIn(false);
-                    setSelectedService(null);
-                  }}
-                  settings={settings}
-                  setSettings={setSettings}
-                />
+                <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando panel de administración…</div>}>
+                  <AdminPanel
+                    services={services}
+                    onUpdateServices={handleUpdateServices}
+                    onSelectService={handleSelectService}
+                    news={news}
+                    onUpdateNews={setNews}
+                    contactInfo={contactInfo}
+                    onUpdateContact={handleUpdateContact}
+                    categories={categories}
+                    onUpdateCategories={handleUpdateCategories}
+                    onLogout={() => {
+                      setIsAdminLoggedIn(false);
+                      setSelectedService(null);
+                    }}
+                    settings={settings}
+                    setSettings={setSettings}
+                  />
+                </React.Suspense>
               ) : (
                 <>
                   {/* TopBar with Navigation & Direct Admin Access */}
@@ -424,17 +344,16 @@ export default function App() {
                   {/* TAB 2: NOTICIAS */}
                   {currentTab === 'noticias' && (
                     <NewsTab 
-                      newsList={news} 
-                      onUnreadCountChange={setUnreadNewsCount}
-                    />
+                    newsList={news} 
+                    onUnreadCountChange={setUnreadNewsCount}
+                  />
                   )}
 
                   {/* TAB 3: ASISTENTE */}
                   {currentTab === 'asistente' && (
                     <AsistenteTab 
-                      user={user} 
-                      contactInfo={contactInfo} 
-                    />
+                    contactInfo={contactInfo} 
+                  />
                   )}
                 </>
               )

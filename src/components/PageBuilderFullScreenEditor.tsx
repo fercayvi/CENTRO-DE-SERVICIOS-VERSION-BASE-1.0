@@ -127,30 +127,49 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   }, []);
 
   const handleUndo = useCallback(() => {
+    // If a text edit is still waiting for the debounce, commit it before undoing.
+    // Otherwise Ctrl+Z can cancel the timer without registering the latest edit.
     if (historyDebounceTimerRef.current) {
       clearTimeout(historyDebounceTimerRef.current);
       historyDebounceTimerRef.current = null;
+      const snapshot = JSON.parse(JSON.stringify(blocks)) as LayoutBlock[];
+      const target = history[historyIndex];
+      const nextHistory = [...history.slice(0, historyIndex + 1), snapshot].slice(-30);
+      setHistory(nextHistory);
+      // When the history is full, trimming drops its oldest entry, so keep the
+      // index aligned with the previous snapshot that Undo restores.
+      setHistoryIndex(Math.max(0, nextHistory.length - 2));
+      if (target) onChange(JSON.parse(JSON.stringify(target)));
+      return;
     }
+
     if (historyIndex > 0) {
       const prevIdx = historyIndex - 1;
       const target = history[prevIdx];
       setHistoryIndex(prevIdx);
       onChange(JSON.parse(JSON.stringify(target)));
     }
-  }, [historyIndex, history, onChange]);
+  }, [blocks, historyIndex, history, onChange]);
 
   const handleRedo = useCallback(() => {
     if (historyDebounceTimerRef.current) {
+      // A new edit after undo invalidates the redo branch. Preserve the edit
+      // and register it instead of replacing it with an older redo snapshot.
       clearTimeout(historyDebounceTimerRef.current);
       historyDebounceTimerRef.current = null;
+      const snapshot = JSON.parse(JSON.stringify(blocks)) as LayoutBlock[];
+      setHistory((prev) => [...prev.slice(0, historyIndex + 1), snapshot].slice(-30));
+      setHistoryIndex(Math.min(historyIndex + 1, 29));
+      return;
     }
+
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1;
       const target = history[nextIdx];
       setHistoryIndex(nextIdx);
       onChange(JSON.parse(JSON.stringify(target)));
     }
-  }, [historyIndex, history, onChange]);
+  }, [blocks, historyIndex, history, onChange]);
 
   // Keyboard shortcuts: Ctrl+Z / Cmd+Z for Undo, Ctrl+Y / Ctrl+Shift+Z / Cmd+Shift+Z for Redo
   useEffect(() => {
@@ -524,11 +543,11 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
               type="button"
               onClick={onClose}
               className="flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 shrink-0 shadow-xs"
-              title="Guardar cambios y cerrar"
+              title="Aplicar cambios al borrador del trámite"
             >
               <Check className="w-4 h-4 text-emerald-400" />
-              <span className="hidden sm:inline">Guardar y Cerrar</span>
-              <span className="sm:hidden">Guardar</span>
+              <span className="hidden sm:inline">Aplicar cambios</span>
+              <span className="sm:hidden">Aplicar</span>
             </button>
 
             <button

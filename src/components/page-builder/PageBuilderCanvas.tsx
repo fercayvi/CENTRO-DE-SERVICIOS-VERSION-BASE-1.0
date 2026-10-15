@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { isSafeNavigationUrl } from '../../utils/safeUrl';
 import { useDroppable } from '@dnd-kit/core';
 import { 
   Plus, 
@@ -205,22 +206,56 @@ const NestedColumnDroppable: React.FC<{
                   />
                 )}
 
-                {/* Image inside column */}
+                {/* Multimedia dentro de columnas: representar cada tipo correctamente */}
                 {childBlock.type === 'media' && (() => {
                   const m = childBlock as MediaLayoutBlock;
+                  const mediaType = m.mediaType || 'image';
                   const alignClass = m.alignment === 'left' ? 'mr-auto' : m.alignment === 'right' ? 'ml-auto' : 'mx-auto';
                   const widthStyle = m.widthPercent ? { width: `${m.widthPercent}%` } : undefined;
-                  return m.url ? (
+
+                  if (mediaType === 'image') {
+                    return m.url ? (
+                      <div className={`${alignClass}`} style={widthStyle}>
+                        <img
+                          src={m.url}
+                          alt={m.title || 'Foto'}
+                          loading="lazy"
+                          className="w-full rounded-lg object-contain max-h-48 mx-auto"
+                        />
+                        {m.caption && <p className="mt-1 text-xs text-slate-500 text-center italic">{m.caption}</p>}
+                      </div>
+                    ) : (
+                      <div className="p-4 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-center text-xs text-slate-400">
+                        Sin imagen (haz clic para configurar)
+                      </div>
+                    );
+                  }
+
+                  if (mediaType === 'video') {
+                    return (
+                      <div className={`${alignClass}`} style={widthStyle}>
+                        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                          <Video className="w-8 h-8 shrink-0 text-emerald-600" />
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-slate-800">{m.title || 'Video tutorial'}</p>
+                            <p className="text-[11px] text-slate-500 truncate">{m.url || 'Sin video configurado'}</p>
+                          </div>
+                        </div>
+                        {m.caption && <p className="mt-1 text-xs text-slate-500 text-center italic">{m.caption}</p>}
+                      </div>
+                    );
+                  }
+
+                  return (
                     <div className={`${alignClass}`} style={widthStyle}>
-                      <img 
-                        src={m.url} 
-                        alt={m.title || 'Foto'} 
-                        className="w-full rounded-lg object-contain max-h-48 mx-auto" 
-                      />
-                    </div>
-                  ) : (
-                    <div className="p-4 bg-slate-50 border border-dashed border-slate-200 rounded-lg text-center text-xs text-slate-400">
-                      Sin imagen (haz clic para configurar)
+                      <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+                        <FileDown className="w-8 h-8 shrink-0 text-blue-600" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-800">{m.title || 'Documento PDF'}</p>
+                          <p className="text-[11px] text-slate-500 truncate">{m.url || 'Sin PDF configurado'}</p>
+                        </div>
+                      </div>
+                      {m.caption && <p className="mt-1 text-xs text-slate-500 text-center italic">{m.caption}</p>}
                     </div>
                   );
                 })()}
@@ -235,9 +270,9 @@ const NestedColumnDroppable: React.FC<{
                   return (
                     <div className={alignClass}>
                       <a
-                        href={btn.url || '#'}
+                        href={isSafeNavigationUrl(btn.url) ? btn.url : '#'}
                         onClick={(e) => {
-                          if (!previewMode) e.preventDefault();
+                          if (!previewMode || !isSafeNavigationUrl(btn.url)) e.preventDefault();
                         }}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -676,9 +711,9 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
                   return (
                     <div className={alignClass}>
                       <a
-                        href={btn.url || '#'}
+                        href={isSafeNavigationUrl(btn.url) ? btn.url : '#'}
                         onClick={(e) => {
-                          if (!previewMode) e.preventDefault();
+                          if (!previewMode || !isSafeNavigationUrl(btn.url)) e.preventDefault();
                         }}
                         target="_blank"
                         rel="noopener noreferrer"

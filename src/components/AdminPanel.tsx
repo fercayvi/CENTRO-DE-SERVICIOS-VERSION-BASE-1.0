@@ -56,12 +56,12 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Service, NewsItem, ServiceId, StepItem, ServiceFAQ, ContactInfo, CategoryConfig, SiteSettings } from '../types';
-import { getDefaultServiceDetails, initialContact, defaultCategories, initialRecognitions, userProfileData, siteSettings as defaultSiteSettings } from '../data';
+import { getDefaultServiceDetails, initialContact, defaultCategories, initialRecognitions, avisosData, faqsData, siteSettings as defaultSiteSettings } from '../data';
 import { SERVICE_ICON_MAP } from './ServiceCard';
 import { MediaUploadField } from './MediaUploadField';
 import { DecisionTreeBuilder } from './DecisionTreeBuilder';
 import { DecisionTreeNavigator } from './DecisionTreeNavigator';
-import { DecisionTreeCanvasEditor } from './DecisionTreeCanvasEditor';
+const DecisionTreeCanvasEditor = React.lazy(() => import('./DecisionTreeCanvasEditor').then(module => ({ default: module.DecisionTreeCanvasEditor })));
 
 interface SortableServiceItemProps {
   key?: React.Key;
@@ -268,41 +268,17 @@ export default function AdminPanel({
   const currentSettings = settings || defaultSiteSettings;
 
   // Categories Form State
-  const [categoryForms, setCategoryForms] = useState<CategoryConfig[]>(() => {
-    if (categories && categories.length > 0) return categories;
-    try {
-      const saved = localStorage.getItem('cc-categories');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (e) {
-      console.error('Error al leer categorías en AdminPanel:', e);
-    }
-    return defaultCategories;
-  });
+  const [categoryForms, setCategoryForms] = useState<CategoryConfig[]>(() => categories ?? defaultCategories);
 
-  // Sync categoryForms if props change
+  // Mantener sincronizado el formulario incluso cuando el catálogo versionado está vacío.
   React.useEffect(() => {
-    if (categories && categories.length > 0) {
+    if (categories !== undefined) {
       setCategoryForms(categories);
     }
   }, [categories]);
 
   // Contact Form State
-  const [contactForm, setContactForm] = useState<ContactInfo>(() => {
-    if (contactInfo) return contactInfo;
-    if (initialContact) return initialContact;
-    try {
-      const saved = localStorage.getItem('portalContactInfo') || localStorage.getItem('cc-contact');
-      if (saved) {
-        return { ...initialContact, ...JSON.parse(saved) };
-      }
-    } catch (e) {
-      console.error('Error al leer contacto desde localStorage:', e);
-    }
-    return initialContact;
-  });
+  const [contactForm, setContactForm] = useState<ContactInfo>(() => contactInfo ?? initialContact);
 
   // Sync contactForm if props change
   React.useEffect(() => {
@@ -365,44 +341,23 @@ export default function AdminPanel({
 
   // Generador de código para sincronización y exportación a src/data.ts
   const generateSourceCode = (): string => {
-    let categoriesData: any[] = [];
-    let servicesData: any[] = [];
-
-    try {
-      const rawCategories = localStorage.getItem('cc-categories') || localStorage.getItem('activeCategories');
-      if (rawCategories) {
-        const parsed = JSON.parse(rawCategories);
-        categoriesData = Array.isArray(parsed) ? parsed : [];
-      } else if (categoryForms && categoryForms.length > 0) {
-        categoriesData = categoryForms;
-      }
-    } catch (e) {
-      console.error('Error leyendo categorías de localStorage:', e);
-      categoriesData = categoryForms || [];
-    }
-
-    try {
-      const rawServices = localStorage.getItem('cc-services-cms-v1') || localStorage.getItem('allServices') || localStorage.getItem('services');
-      if (rawServices) {
-        const parsed = JSON.parse(rawServices);
-        servicesData = Array.isArray(parsed) ? parsed : [];
-      } else if (services && services.length > 0) {
-        servicesData = services;
-      }
-    } catch (e) {
-      console.error('Error leyendo servicios de localStorage:', e);
-      servicesData = services || [];
-    }
+    // Exportar desde el estado actual del panel evita copiar datos antiguos de localStorage.
+    // Las ediciones visibles en React son la fuente de verdad durante esta sesión.
+    const categoriesData = categoryForms;
+    const servicesData = services;
 
     const settingsJson = JSON.stringify(currentSettings, null, 2);
-    const categoriesJson = JSON.stringify(categoriesData.length > 0 ? categoriesData : defaultCategories, null, 2);
-    const servicesJson = JSON.stringify(servicesData.length > 0 ? servicesData : services, null, 2);
+    // Exportar exactamente el estado editado evita reintroducir datos predeterminados
+    // o aplicar fallbacks implícitos durante la sincronización.
+    const categoriesJson = JSON.stringify(categoriesData, null, 2);
+    const servicesJson = JSON.stringify(servicesData, null, 2);
     const contactJson = JSON.stringify(contactForm || initialContact, null, 2);
     const recognitionsJson = JSON.stringify(initialRecognitions || [], null, 2);
-    const userProfileJson = JSON.stringify(userProfileData || {}, null, 2);
-    const newsJson = JSON.stringify(news && news.length > 0 ? news : [], null, 2);
+    const newsJson = JSON.stringify(news || [], null, 2);
+    const noticesJson = JSON.stringify(avisosData || [], null, 2);
+    const faqsJson = JSON.stringify(faqsData || [], null, 2);
 
-    return `import { ServiceId, Service, FAQ, NewsItem, Aviso, UserProfile, MonthlyRecognition, ContactInfo, CategoryConfig, SiteSettings } from './types';
+    return `import { ServiceId, Service, FAQ, NewsItem, Aviso, MonthlyRecognition, ContactInfo, CategoryConfig, SiteSettings } from './types';
 
 export const siteSettings: SiteSettings = ${settingsJson};
 
@@ -422,12 +377,10 @@ export const initialServices: Service[] = ${servicesJson};
 export const allServices: Service[] = initialServices;
 export const servicesData = initialServices;
 
-export const userProfileData: UserProfile = ${userProfileJson};
-
 export const initialNews: NewsItem[] = ${newsJson};
 export const newsData = initialNews;
 
-export const avisosData: Aviso[] = [];
+export const avisosData: Aviso[] = ${noticesJson};
 
 export function getDefaultServiceDetails(service: Service) {
   return {
@@ -448,29 +401,32 @@ export function getDefaultServiceDetails(service: Service) {
   };
 }
 
-export const faqsData: FAQ[] = [];
+export const faqsData: FAQ[] = ${faqsJson};
 `;
   };
 
-  const handleCopyCode = async () => {
+  const handleWriteDataFile = async () => {
+    setIsCopied(false);
     try {
-      const code = generateSourceCode();
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(code);
-      } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = code;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
+      const response = await fetch('/__admin/write-data-ts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: generateSourceCode() }),
+      });
+      const result = await response.json() as { success?: boolean; error?: string };
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'No se pudo actualizar src/data.ts.');
       }
+
       setIsCopied(true);
-      showToast('¡Código para src/data.ts copiado al portapapeles!');
-      setTimeout(() => setIsCopied(false), 2500);
+      showToast('¡src/data.ts actualizado en el workspace de Codespaces!');
+      window.setTimeout(() => setIsCopied(false), 2500);
     } catch (err) {
-      console.error('Error al copiar al portapapeles:', err);
-      showToast('No se pudo copiar automáticamente.');
+      console.error('Error al actualizar src/data.ts:', err);
+      showToast(err instanceof Error
+        ? err.message
+        : 'No se pudo actualizar src/data.ts. Verifica que el servidor de desarrollo esté activo.');
     }
   };
 
@@ -516,7 +472,7 @@ export const faqsData: FAQ[] = [];
     let updatedServices = [...services];
     let servicesChanged = false;
 
-    const currentSavedCategories = categories && categories.length > 0 ? categories : defaultCategories;
+    const currentSavedCategories = categories ?? defaultCategories;
 
     categoryForms.forEach(newCat => {
       const oldCat = currentSavedCategories.find(c => c.id === newCat.id);
@@ -586,15 +542,15 @@ export const faqsData: FAQ[] = [];
       id: `custom_${Date.now()}` as ServiceId,
       title: 'Nuevo Trámite',
       iconName: 'FileText',
-      shortDesc: 'Descripción corta para la tarjeta del catálogo...',
+      shortDesc: '',
       category: defaultCategory,
-      fullDescription: 'Descripción completa del procedimiento...',
-      steps: [{ num: 1, title: 'Primer paso del trámite', desc: 'Instrucción inicial para el trabajador...' }],
-      requirements: ['Gafete oficial activo'],
-      location: 'Planta Baja • Edificio de Recursos Humanos',
-      schedule: 'Lunes a Viernes de 8:00 AM a 5:00 PM',
-      contact: 'Recursos Humanos - Ext. 200',
-      faqs: [{ question: '¿Cómo inicio este trámite?', answer: 'Presentándote en la ventanilla de Recursos Humanos.' }],
+      fullDescription: '',
+      steps: [],
+      requirements: [],
+      location: '',
+      schedule: '',
+      contact: '',
+      faqs: [],
       imageUrl: '',
       videoUrl: '',
       pdfUrl: '',
@@ -602,6 +558,8 @@ export const faqsData: FAQ[] = [];
       attachments: [],
       alertNotice: '',
       decisionTree: [],
+      // Un trámite nuevo empieza con el lienzo vacío; el contenido se agrega explícitamente en el editor.
+      layoutBlocks: [],
       hidden: false
     };
 
@@ -771,19 +729,23 @@ export const faqsData: FAQ[] = [];
     setDeleteConfirmTarget(null);
   };
 
-  const handleOpenNewNewsModal = () => {
-    setIsNewNews(true);
-    setEditingNews({
-      id: `news_${Date.now()}`,
-      title: '',
-      summary: '',
-      content: '',
-      date: 'Hoy',
-      imageName: 'welcome_team',
-      category: 'comunicado'
-    });
-    setIsNewsModalOpen(true);
-  };
+const handleOpenNewNewsModal = () => {
+  setIsNewNews(true);
+  setEditingNews({
+    id: `news_${Date.now()}`,
+    title: '',
+    summary: '',
+    content: '',
+    date: new Date().toLocaleDateString('es-MX', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }),
+    imageName: 'welcome_team',
+    category: 'comunicado'
+  });
+  setIsNewsModalOpen(true);
+};
 
   const handleOpenEditNewsModal = (item: NewsItem) => {
     setIsNewNews(false);
@@ -791,20 +753,32 @@ export const faqsData: FAQ[] = [];
     setIsNewsModalOpen(true);
   };
 
-  const handleSaveNews = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingNews || !editingNews.title?.trim()) return;
+ const handleSaveNews = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!editingNews || !editingNews.title?.trim()) return;
 
-    if (isNewNews) {
-      onUpdateNews([editingNews, ...news]);
-      showToast('¡Nueva noticia publicada en el boletín!');
-    } else {
-      const updated = news.map(n => n.id === editingNews.id ? editingNews : n);
-      onUpdateNews(updated);
-      showToast('Noticia actualizada correctamente.');
-    }
-    setIsNewsModalOpen(false);
-  };
+  if (isNewNews) {
+    const publishedNews = {
+      ...editingNews,
+      date: new Date().toLocaleDateString('es-MX', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
+    };
+
+    onUpdateNews([publishedNews, ...news]);
+    showToast('¡Nueva noticia publicada en el boletín!');
+  } else {
+    const updated = news.map(n =>
+      n.id === editingNews.id ? editingNews : n
+    );
+    onUpdateNews(updated);
+    showToast('Noticia actualizada correctamente.');
+  }
+
+  setIsNewsModalOpen(false);
+};
 
   return (
     <div id="admin-panel-container" className="space-y-4 animate-fadeIn pb-12">
@@ -1479,7 +1453,7 @@ export const faqsData: FAQ[] = [];
               <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
               <div className="text-xs text-slate-600 leading-relaxed">
                 <span className="font-bold text-slate-800">Persistencia y Sincronización: </span>
-                Esta configuración se guarda automáticamente en este dispositivo. Para que perdure en la versión pública, ve a la pestaña <span className="font-bold text-slate-800">"Sincronizar"</span> y copia el código generado hacia tu archivo <code className="px-1 py-0.5 bg-slate-200/80 rounded font-mono text-[11px] text-slate-900">src/data.ts</code>.
+                Esta configuración se guarda automáticamente en este dispositivo. Para registrar los datos actuales en el código fuente de esta versión privada, utiliza la pestaña <span className="font-bold text-slate-800">"Sincronizar"</span>. La transferencia a la versión pública sigue siendo un proceso separado.
               </div>
             </div>
           </div>
@@ -1499,10 +1473,10 @@ export const faqsData: FAQ[] = [];
             {/* Título y descripción */}
             <div className="space-y-2 max-w-lg mx-auto">
               <h3 className="text-xl sm:text-2xl font-bold text-slate-900 font-display">
-                Sincronizar con Visual Studio Code
+                Actualizar archivo src/data.ts
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                Exporta la versión actualizada de tus trámites, árboles de decisión, categorías y configuración para guardarla permanentemente en el archivo <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 text-xs font-semibold">src/data.ts</code> de tu proyecto.
+                Escribe los trámites, árboles de decisión, categorías, noticias y configuración actuales directamente en <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 text-xs font-semibold">src/data.ts</code> dentro del workspace de Codespaces. No modifica la versión pública ni copia imágenes.
               </p>
             </div>
 
@@ -1510,8 +1484,8 @@ export const faqsData: FAQ[] = [];
             <div className="pt-2">
               <button
                 type="button"
-                id="btn-copy-source-code"
-                onClick={handleCopyCode}
+                id="btn-write-source-code"
+                onClick={handleWriteDataFile}
                 className={`w-full sm:w-auto px-8 py-4 rounded-2xl text-sm sm:text-base font-bold flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer mx-auto min-h-[52px] ${
                   isCopied
                     ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
@@ -1521,12 +1495,12 @@ export const faqsData: FAQ[] = [];
                 {isCopied ? (
                   <>
                     <Check className="w-5 h-5" />
-                    <span>¡Código Copiado al Portapapeles!</span>
+                    <span>¡Archivo actualizado!</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-5 h-5" />
-                    <span>Copiar Código para src/data.ts</span>
+                    <Save className="w-5 h-5" />
+                    <span>Actualizar src/data.ts</span>
                   </>
                 )}
               </button>
@@ -1535,7 +1509,7 @@ export const faqsData: FAQ[] = [];
             {/* Instrucciones de Ayuda */}
             <div className="pt-4 border-t border-slate-100 text-xs text-slate-400 max-w-md mx-auto space-y-1.5">
               <p className="leading-relaxed">
-                Abre tu proyecto en <span className="font-semibold text-slate-600">Visual Studio Code</span>, ve al archivo <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code>, selecciona todo su contenido y pega el código copiado para sincronizar los cambios de forma definitiva.
+                El archivo se escribe en el workspace donde está ejecutándose el servidor de desarrollo de Vite. Revisa el diff de <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code> en Codespaces antes de confirmar el cambio con Git. Las imágenes siguen copiándose manualmente a <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">public/</code>.
               </p>
             </div>
 
@@ -1994,10 +1968,10 @@ export const faqsData: FAQ[] = [];
                     <div className="border-b border-slate-100 pb-2">
                       <h4 className="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-2">
                         <ImageIcon className="w-4 h-4 text-blue-600" />
-                        <span>Archivos y Multimedia (Subida Local o Enlace URL)</span>
+                        <span>Archivos y Multimedia (Ruta local o enlace URL)</span>
                       </h4>
                       <p className="text-xs text-slate-500 mt-1">
-                        Carga archivos locales desde tu computadora (conversión Base64 instantánea sin servidor) o ingresa enlaces URL externos.
+                        Selecciona un archivo para registrar su nombre y ruta. Después, copia el archivo a la carpeta public/ de la aplicación, o utiliza una URL pública. La selección no carga ni convierte el archivo.
                       </p>
                     </div>
 
@@ -2142,15 +2116,17 @@ export const faqsData: FAQ[] = [];
 
       {/* Fullscreen Flowchart Canvas Editor */}
       {isFlowEditorOpen && editingService && (
-        <DecisionTreeCanvasEditor
-          tree={editingService.decisionTree || []}
-          serviceTitle={editingService.title}
-          onSave={(newTree) => {
-            setEditingService(prev => prev ? ({ ...prev, decisionTree: newTree }) : prev);
-            setIsFlowEditorOpen(false);
-          }}
-          onClose={() => setIsFlowEditorOpen(false)}
-        />
+        <React.Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-white text-sm text-slate-500">Cargando editor de diagrama…</div>}>
+          <DecisionTreeCanvasEditor
+            tree={editingService.decisionTree || []}
+            serviceTitle={editingService.title}
+            onSave={(newTree) => {
+              setEditingService(prev => prev ? ({ ...prev, decisionTree: newTree }) : prev);
+              setIsFlowEditorOpen(false);
+            }}
+            onClose={() => setIsFlowEditorOpen(false)}
+          />
+        </React.Suspense>
       )}
 
       {/* --- MODAL FOR ADDING / EDITING NEWS --- */}

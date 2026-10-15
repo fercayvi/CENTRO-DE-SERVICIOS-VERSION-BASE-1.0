@@ -1,5 +1,4 @@
 import React from 'react';
-import * as Icons from 'lucide-react';
 import {
   Banknote,
   Coins,
@@ -72,7 +71,7 @@ export default function ServiceCard({
 }: ServiceCardProps) {
   // Dynamically resolve icon from dictionary with fallback to FileText
   const iconKey = service.iconName || service.icon || 'FileText';
-  const IconComponent = SERVICE_ICON_MAP[iconKey] || (Icons as any)[iconKey] || FileText;
+  const IconComponent = SERVICE_ICON_MAP[iconKey] || FileText;
 
   const currentStatus = service.status || 'active';
 

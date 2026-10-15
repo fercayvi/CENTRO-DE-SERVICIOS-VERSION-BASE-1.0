@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { MapPin, Clock, Phone } from 'lucide-react';
-import { UserProfile, ContactInfo } from '../types';
+import { ContactInfo } from '../types';
 import { initialContact } from '../data';
 import { ImageLightboxModal } from './ImageLightboxModal';
 
 export interface AsistenteTabProps {
-  user?: UserProfile;
   contactInfo?: ContactInfo;
 }
 
 export default function AsistenteTab({ 
-  user, 
   contactInfo 
 }: AsistenteTabProps) {
   const info = contactInfo || initialContact;

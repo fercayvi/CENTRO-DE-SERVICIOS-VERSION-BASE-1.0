@@ -30,7 +30,8 @@ const fileContent = fs.readFileSync(dataFilePath, 'utf-8');
 
 // 3. Expresión regular para extraer rutas locales que comiencen con / y terminen en extensiones de medios
 // Filtra URLs remotas al requerir que el / no esté precedido por caracteres de protocolo o dominio
-const mediaRegex = /(?:^|[^a-zA-Z0-9_:/])(\/[^"'`\r\n<>]+?\.(?:png|jpg|jpeg|pdf|mp4|svg))(?=["'`\s<>)]|$)/gi;
+// Incluye formatos comunes y permite query strings o fragmentos al final de la ruta.
+const mediaRegex = /(?:^|[^a-zA-Z0-9_:/])(\/[^"'`\r\n<>]+?\.(?:png|jpe?g|pdf|mp4|svg|webp|gif|avif|mov|webm|m4v|ogv|mp3|wav|ogg)(?:[?#][^"'`\r\n<>]*)?)(?=["'`\s<>)]|$)/gi;
 
 const matches = [];
 let match;
@@ -53,13 +54,29 @@ const missingFiles = [];
 const verifiedFiles = [];
 
 for (const relativePath of uniquePaths) {
-  // Quitar el '/' inicial para resolver respecto a la carpeta public/
-  const cleanPath = relativePath.replace(/^\/+/, '');
-  // Decodificar posibles caracteres de URL (e.g. espacios o acentos)
-  const decodedPath = decodeURIComponent(cleanPath);
-  const targetFullPath = path.resolve(publicDir, decodedPath);
+  // Quitar el '/' inicial y los query strings/fragmentos usados en URLs.
+  const cleanPath = relativePath.replace(/^\/+/, '').split(/[?#]/, 1)[0];
 
-  // Verificar si existe físicamente dentro de public/
+  let decodedPath;
+  try {
+    // Decodificar caracteres de URL (por ejemplo, espacios o acentos).
+    decodedPath = decodeURIComponent(cleanPath);
+  } catch {
+    // Una secuencia % mal formada no debe detener toda la validación.
+    missingFiles.push(relativePath);
+    continue;
+  }
+
+  const targetFullPath = path.resolve(publicDir, decodedPath);
+  const relativeToPublic = path.relative(publicDir, targetFullPath);
+
+  // Evitar que una ruta con ../ se valide contra archivos fuera de public/.
+  if (relativeToPublic.startsWith('..') || path.isAbsolute(relativeToPublic)) {
+    missingFiles.push(relativePath);
+    continue;
+  }
+
+  // Verificar si existe físicamente dentro de public/.
   if (fs.existsSync(targetFullPath) && fs.statSync(targetFullPath).isFile()) {
     verifiedFiles.push(relativePath);
   } else {

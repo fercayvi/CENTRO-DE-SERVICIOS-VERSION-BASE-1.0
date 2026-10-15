@@ -6,14 +6,15 @@ import {
   ExternalLink, Download, Layers, Sparkles, GripVertical, ChevronUp, ChevronDown, Sliders, Info, ListOrdered,
   Maximize2, Minimize2, ZoomIn, LayoutGrid, Type, Columns
 } from 'lucide-react';
-import { Service, UserProfile, FAQ, StepItem, ServiceFAQ, ServiceAttachment, CategoryConfig } from '../types';
+import { Service, FAQ, StepItem, ServiceFAQ, ServiceAttachment, CategoryConfig } from '../types';
 import { getDefaultServiceDetails, defaultCategories } from '../data';
 import { SERVICE_ICON_MAP } from './ServiceCard';
 import { MediaUploadField } from './MediaUploadField';
 import { ImageLightboxModal } from './ImageLightboxModal';
 import { DecisionTreeBuilder } from './DecisionTreeBuilder';
 import { DecisionTreeNavigator } from './DecisionTreeNavigator';
-import { DecisionTreeCanvasEditor } from './DecisionTreeCanvasEditor';
+const loadDecisionTreeCanvasEditor = () => import('./DecisionTreeCanvasEditor').then(module => ({ default: module.DecisionTreeCanvasEditor }));
+const DecisionTreeCanvasEditor = React.lazy(loadDecisionTreeCanvasEditor);
 import { BlockBuilder } from './BlockBuilder';
 import { PageBuilderFullScreenEditor } from './PageBuilderFullScreenEditor';
 import { LayoutBlocksRenderer } from './LayoutBlocksRenderer';
@@ -401,7 +402,6 @@ function LivePreviewPanel({
 
 interface ServiceDetailProps {
   service: Service & { hidden?: boolean };
-  user?: UserProfile;
   onBack: () => void;
   isAdminLoggedIn?: boolean;
   onUpdateService?: (updatedService: Service & { hidden?: boolean }) => void;
@@ -411,7 +411,6 @@ interface ServiceDetailProps {
 
 export default function ServiceDetail({ 
   service, 
-  user, 
   onBack, 
   isAdminLoggedIn = false,
   onUpdateService,
@@ -419,6 +418,16 @@ export default function ServiceDetail({
   onLightboxToggle
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
+
+  // Precargar el editor pesado en segundo plano al entrar como administrador.
+  // Así, abrir el árbol no depende de descargar el chunk justo al hacer clic.
+  useEffect(() => {
+    if (isAdminLoggedIn) {
+      void loadDecisionTreeCanvasEditor().catch((error) => {
+        console.error('No se pudo precargar el editor del árbol de decisiones:', error);
+      });
+    }
+  }, [isAdminLoggedIn]);
   const [toastMsg, setToastMsg] = useState<string>('');
   const [editorTab, setEditorTab] = useState<'general' | 'arbol' | 'bloques'>('general');
   const [mobileViewMode, setMobileViewMode] = useState<'editor' | 'preview'>('editor');
@@ -462,11 +471,15 @@ export default function ServiceDetail({
       pdfTitle: s.pdfTitle ?? computed.pdfTitle,
       attachments: s.attachments ?? computed.attachments,
       alertNotice: s.alertNotice ?? computed.alertNotice,
-      layoutBlocks: s.layoutBlocks && s.layoutBlocks.length > 0 ? s.layoutBlocks : undefined
+      // Un arreglo explícitamente vacío significa que el administrador vació el lienzo.
+      // Solo los servicios antiguos sin la propiedad layoutBlocks deben reconstruirla desde campos heredados.
+      layoutBlocks: Array.isArray(s.layoutBlocks) ? s.layoutBlocks : undefined
     };
     return {
       ...hydrated,
-      layoutBlocks: ensureServiceLayoutBlocks(hydrated)
+      layoutBlocks: Array.isArray(hydrated.layoutBlocks)
+        ? hydrated.layoutBlocks
+        : ensureServiceLayoutBlocks(hydrated)
     };
   };
 
@@ -497,6 +510,18 @@ export default function ServiceDetail({
   const isModified = React.useMemo(() => {
     return JSON.stringify(draft) !== JSON.stringify(getPreparedDraft(service));
   }, [draft, service]);
+
+  useEffect(() => {
+    if (!isEditing || !isModified) return;
+
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', warnBeforeUnload);
+    return () => window.removeEventListener('beforeunload', warnBeforeUnload);
+  }, [isEditing, isModified]);
 
   // Toast feedback helper
   const showToast = (msg: string) => {
@@ -658,8 +683,22 @@ export default function ServiceDetail({
   };
 
   const handleCancelEdit = () => {
+    if (isModified && !window.confirm('Tienes cambios sin guardar. ¿Quieres descartarlos y salir de la edición?')) {
+      return;
+    }
     setDraft(getPreparedDraft(service));
     setIsEditing(false);
+  };
+
+  const handleRequestExit = () => {
+    if (isEditing && isModified && !window.confirm('Tienes cambios sin guardar. ¿Quieres salir sin guardar?')) {
+      return;
+    }
+    if (isEditing && isModified) {
+      setDraft(getPreparedDraft(service));
+      setIsEditing(false);
+    }
+    onBack();
   };
 
   const videoInfo = getEmbedVideoInfo(draft.videoUrl);
@@ -686,7 +725,7 @@ export default function ServiceDetail({
         }`}>
           <div className="flex items-center gap-3 min-w-0">
             <button 
-              onClick={onBack}
+              onClick={handleRequestExit}
               className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all shrink-0 cursor-pointer"
               title="Volver"
             >
@@ -1153,7 +1192,7 @@ export default function ServiceDetail({
               <button 
                 id="btn-service-back"
                 type="button"
-                onClick={onBack}
+                onClick={handleRequestExit}
                 className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center gap-1 active:scale-95 transition-all shrink-0 border border-slate-300 shadow-2xs cursor-pointer min-h-[38px]"
                 title="Volver al menú"
               >
@@ -1224,16 +1263,18 @@ export default function ServiceDetail({
 
       {/* Fullscreen Flowchart Canvas Editor */}
       {isFlowEditorOpen && (
-        <DecisionTreeCanvasEditor
-          tree={draft.decisionTree || []}
-          serviceTitle={draft.title}
-          onSave={(newTree) => {
-            setDraft(prev => ({ ...prev, decisionTree: newTree }));
-            setIsFlowEditorOpen(false);
-            showToast('Árbol de decisiones actualizado en el borrador');
-          }}
-          onClose={() => setIsFlowEditorOpen(false)}
-        />
+        <React.Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-white text-sm text-slate-500">Cargando editor de diagrama…</div>}>
+          <DecisionTreeCanvasEditor
+            tree={draft.decisionTree || []}
+            serviceTitle={draft.title}
+            onSave={(newTree) => {
+              setDraft(prev => ({ ...prev, decisionTree: newTree }));
+              setIsFlowEditorOpen(false);
+              showToast('Árbol de decisiones actualizado en el borrador');
+            }}
+            onClose={() => setIsFlowEditorOpen(false)}
+          />
+        </React.Suspense>
       )}
 
       {/* Fullscreen Page Builder Editor */}
