@@ -2007,10 +2007,10 @@ const handleOpenNewNewsModal = () => {
                     <div className="border-b border-slate-100 pb-2">
                       <h4 className="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-2">
                         <ImageIcon className="w-4 h-4 text-blue-600" />
-                        <span>Archivos y Multimedia (Subida Local o Enlace URL)</span>
+                        <span>Archivos y Multimedia (Ruta local o enlace URL)</span>
                       </h4>
                       <p className="text-xs text-slate-500 mt-1">
-                        Carga archivos locales desde tu computadora (conversión Base64 instantánea sin servidor) o ingresa enlaces URL externos.
+                        Selecciona un archivo para registrar su nombre y ruta. Después, copia el archivo a la carpeta public/ de la aplicación, o utiliza una URL pública. La selección no carga ni convierte el archivo.
                       </p>
                     </div>
 
