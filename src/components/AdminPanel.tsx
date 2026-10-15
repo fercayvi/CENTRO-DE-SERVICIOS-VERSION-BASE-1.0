@@ -371,8 +371,10 @@ export default function AdminPanel({
     const servicesData = services;
 
     const settingsJson = JSON.stringify(currentSettings, null, 2);
-    const categoriesJson = JSON.stringify(categoriesData.length > 0 ? categoriesData : defaultCategories, null, 2);
-    const servicesJson = JSON.stringify(servicesData.length > 0 ? servicesData : services, null, 2);
+    // Exportar exactamente el estado editado evita reintroducir datos predeterminados
+    // o aplicar fallbacks implícitos durante la sincronización.
+    const categoriesJson = JSON.stringify(categoriesData, null, 2);
+    const servicesJson = JSON.stringify(servicesData, null, 2);
     const contactJson = JSON.stringify(contactForm || initialContact, null, 2);
     const recognitionsJson = JSON.stringify(initialRecognitions || [], null, 2);
     const newsJson = JSON.stringify(news || [], null, 2);
