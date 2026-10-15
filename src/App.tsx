@@ -26,21 +26,9 @@ export default function App() {
   const [isImageZoomed, setIsImageZoomed] = useState<boolean>(false);
   const [unreadNewsCount, setUnreadNewsCount] = useState<number>(0);
 
-  // Configuración general del sitio (persistencia de vista principal)
-  const [settings, setSettings] = useState<SiteSettings>(() => {
-    try {
-      const saved = localStorage.getItem('cc-site-settings-v1');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && (parsed.defaultHomeView === 'categories' || parsed.defaultHomeView === 'all_services')) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Error cargando siteSettings de localStorage:', e);
-    }
-    return siteSettings;
-  });
+  // src/data.ts es la fuente inicial de verdad; localStorage solo conserva
+  // cambios temporales durante la sesión y no debe sobrescribir la configuración versionada.
+  const [settings, setSettings] = useState<SiteSettings>(siteSettings);
 
   useEffect(() => {
     try {
