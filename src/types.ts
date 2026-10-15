@@ -226,14 +226,6 @@ export interface MonthlyRecognition {
   date?: string;
 }
 
-export interface UserProfile {
-  name: string;
-  position: string;
-  department: string;
-  supervisor: string;
-  shift: string;
-}
-
 export interface ContactInfo {
   whatsapp: string;
   telefono: string;
