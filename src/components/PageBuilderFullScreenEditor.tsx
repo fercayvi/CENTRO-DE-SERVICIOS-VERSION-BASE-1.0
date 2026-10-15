@@ -127,30 +127,51 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
   }, []);
 
   const handleUndo = useCallback(() => {
+    // If a text edit is still waiting for the debounce, commit it before undoing.
+    // Otherwise Ctrl+Z can cancel the timer without registering the latest edit.
     if (historyDebounceTimerRef.current) {
       clearTimeout(historyDebounceTimerRef.current);
       historyDebounceTimerRef.current = null;
+      const snapshot = JSON.parse(JSON.stringify(blocks)) as LayoutBlock[];
+      setHistory((prev) => [...prev.slice(0, historyIndex + 1), snapshot].slice(-30));
+      if (historyIndex > 0 || history.length > 1) {
+        const target = history[historyIndex];
+        setHistoryIndex(Math.min(historyIndex + 1, 29) - 1);
+        if (target) onChange(JSON.parse(JSON.stringify(target)));
+      } else {
+        // The first edit has no earlier committed snapshot to undo to.
+        setHistoryIndex(1);
+      }
+      return;
     }
+
     if (historyIndex > 0) {
       const prevIdx = historyIndex - 1;
       const target = history[prevIdx];
       setHistoryIndex(prevIdx);
       onChange(JSON.parse(JSON.stringify(target)));
     }
-  }, [historyIndex, history, onChange]);
+  }, [blocks, historyIndex, history, onChange]);
 
   const handleRedo = useCallback(() => {
     if (historyDebounceTimerRef.current) {
+      // A new edit after undo invalidates the redo branch. Preserve the edit
+      // and register it instead of replacing it with an older redo snapshot.
       clearTimeout(historyDebounceTimerRef.current);
       historyDebounceTimerRef.current = null;
+      const snapshot = JSON.parse(JSON.stringify(blocks)) as LayoutBlock[];
+      setHistory((prev) => [...prev.slice(0, historyIndex + 1), snapshot].slice(-30));
+      setHistoryIndex(Math.min(historyIndex + 1, 29));
+      return;
     }
+
     if (historyIndex < history.length - 1) {
       const nextIdx = historyIndex + 1;
       const target = history[nextIdx];
       setHistoryIndex(nextIdx);
       onChange(JSON.parse(JSON.stringify(target)));
     }
-  }, [historyIndex, history, onChange]);
+  }, [blocks, historyIndex, history, onChange]);
 
   // Keyboard shortcuts: Ctrl+Z / Cmd+Z for Undo, Ctrl+Y / Ctrl+Shift+Z / Cmd+Shift+Z for Redo
   useEffect(() => {
