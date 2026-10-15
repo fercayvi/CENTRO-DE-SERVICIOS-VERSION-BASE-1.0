@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { isSafeNavigationUrl } from '../utils/safeUrl';
-import { X, ZoomIn, ZoomOut, RotateCcw, Download, ExternalLink, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ImageLightboxModalProps {
   isOpen: boolean;
@@ -65,20 +64,15 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
   const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.25, 0.5));
   const handleResetZoom = () => setZoom(1);
 
-  const isDataUrl = imageUrl.startsWith('data:');
-  const downloadFileName = isDataUrl 
-    ? `${(title || 'infografia').toLowerCase().replace(/[^a-z0-9]/gi, '_')}.png` 
-    : undefined;
-
   return (
     <div 
-      className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-md flex flex-col h-screen w-screen top-0 left-0 position-fixed animate-fadeIn select-none overflow-hidden"
+      className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-md flex flex-col h-[100dvh] w-screen top-0 left-0 animate-fadeIn select-none overflow-hidden"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       {/* Top Header Bar */}
-      <div className="bg-slate-900/95 border-b border-slate-800 px-4 py-3 flex items-center justify-between text-white shrink-0 gap-3 z-10 shadow-md">
+      <div className="bg-slate-900/95 border-b border-slate-800 px-3 sm:px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between text-white shrink-0 gap-3 z-10 shadow-md">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-lg bg-blue-600/30 border border-blue-400/30 flex items-center justify-center text-blue-400 shrink-0">
             <Maximize2 className="w-4 h-4" />
@@ -94,14 +88,14 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
         </div>
 
         {/* Toolbar controls */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0 w-full sm:w-auto">
           {/* Zoom controls */}
           <div className="flex items-center bg-slate-800 rounded-xl p-1 border border-slate-700">
             <button
               type="button"
               onClick={handleZoomOut}
               disabled={zoom <= 0.5}
-              className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer"
+              className="min-w-10 min-h-10 p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer"
               title="Reducir zoom (-)"
             >
               <ZoomOut className="w-4 h-4" />
@@ -122,7 +116,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               <button
                 type="button"
                 onClick={handleResetZoom}
-                className="p-1.5 ml-1 rounded-lg text-blue-400 hover:text-blue-300 hover:bg-slate-700 transition-colors cursor-pointer"
+                className="min-w-10 min-h-10 p-2 ml-1 rounded-lg text-blue-400 hover:text-blue-300 hover:bg-slate-700 transition-colors cursor-pointer"
                 title="Restablecer a 100% (0)"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -130,26 +124,11 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
             )}
           </div>
 
-          {/* Download button: never navigate to executable URL schemes. */}
-          {isSafeNavigationUrl(imageUrl, ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/avif']) && (
-            <a
-              href={imageUrl}
-              download={downloadFileName}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer"
-              title="Descargar imagen / infografía"
-            >
-              <Download className="w-4 h-4" />
-              <span className="hidden md:inline">Descargar</span>
-            </a>
-          )}
-
           {/* Close button */}
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white transition-colors cursor-pointer ml-1 shadow-xs"
+            className="min-w-11 min-h-11 p-2 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white transition-colors cursor-pointer ml-1 shadow-xs"
             title="Cerrar vista ampliada (Esc)"
           >
             <X className="w-5 h-5" />
@@ -159,7 +138,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
 
       {/* Main Image Stage (Smart Fitted & Centered with Zoom Support) */}
       <div 
-        className={`flex-1 flex items-center justify-center p-4 relative ${zoom > 1 ? 'overflow-auto' : 'overflow-hidden'} custom-scrollbar`}
+        className={`flex-1 min-h-0 flex items-center justify-center p-2 sm:p-4 relative ${zoom > 1 ? 'overflow-auto' : 'overflow-hidden'} custom-scrollbar`}
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
@@ -173,7 +152,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               onPrev();
             }}
             disabled={!hasPrev}
-            className="absolute left-4 z-20 p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white disabled:opacity-30 disabled:hover:bg-slate-900/80 transition-all border border-slate-700 shadow-xl cursor-pointer"
+            className="absolute left-2 sm:left-4 z-20 min-w-11 min-h-11 p-2 sm:p-3 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white disabled:opacity-30 disabled:hover:bg-slate-900/80 transition-all border border-slate-700 shadow-xl cursor-pointer"
             title="Imagen anterior (←)"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -188,7 +167,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
           <img
             src={imageUrl}
             alt={title || 'Infografía'}
-            className="max-h-[calc(100vh-120px)] w-auto max-w-full object-contain mx-auto rounded-lg shadow-2xl border border-slate-700/60 cursor-default bg-slate-900/40"
+            className="max-h-[calc(100dvh-170px)] sm:max-h-[calc(100dvh-130px)] w-auto max-w-full object-contain mx-auto rounded-lg shadow-2xl border border-slate-700/60 cursor-default bg-slate-900/40"
           />
         </div>
 
@@ -201,7 +180,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
               onNext();
             }}
             disabled={!hasNext}
-            className="absolute right-4 z-20 p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 text-white disabled:opacity-30 disabled:hover:bg-slate-900/80 transition-all border border-slate-700 shadow-xl cursor-pointer"
+            className="absolute right-2 sm:right-4 z-20 min-w-11 min-h-11 p-2 sm:p-3 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white disabled:opacity-30 disabled:hover:bg-slate-900/80 transition-all border border-slate-700 shadow-xl cursor-pointer"
             title="Siguiente imagen (→)"
           >
             <ChevronRight className="w-6 h-6" />
@@ -210,7 +189,7 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
       </div>
 
       {/* Bottom status bar */}
-      <div className="bg-slate-900/95 border-t border-slate-800 px-4 py-2 text-center text-[11px] text-slate-400 shrink-0">
+      <div className="bg-slate-900/95 border-t border-slate-800 px-3 sm:px-4 py-2 text-center text-[10px] sm:text-[11px] text-slate-400 shrink-0">
         💡 <strong>Tip:</strong> Puedes usar las flechas <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">←</kbd> <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">→</kbd> para navegar, <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">+</kbd> y <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">-</kbd> para zoom, o <kbd className="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">Esc</kbd> para cerrar.
       </div>
     </div>
