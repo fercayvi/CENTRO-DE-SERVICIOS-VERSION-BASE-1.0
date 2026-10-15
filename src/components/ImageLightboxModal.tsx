@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { isSafeNavigationUrl } from '../utils/safeUrl';
 import { X, ZoomIn, ZoomOut, RotateCcw, Download, ExternalLink, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ImageLightboxModalProps {
@@ -129,18 +130,20 @@ export const ImageLightboxModal: React.FC<ImageLightboxModalProps> = ({
             )}
           </div>
 
-          {/* Download button */}
-          <a
-            href={imageUrl}
-            download={downloadFileName}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer"
-            title="Descargar imagen / infografía"
-          >
-            <Download className="w-4 h-4" />
-            <span className="hidden md:inline">Descargar</span>
-          </a>
+          {/* Download button: never navigate to executable URL schemes. */}
+          {isSafeNavigationUrl(imageUrl, ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/avif']) && (
+            <a
+              href={imageUrl}
+              download={downloadFileName}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer"
+              title="Descargar imagen / infografía"
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden md:inline">Descargar</span>
+            </a>
+          )}
 
           {/* Close button */}
           <button
