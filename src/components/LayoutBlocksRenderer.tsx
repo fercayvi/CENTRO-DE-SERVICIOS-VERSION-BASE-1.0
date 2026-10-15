@@ -71,9 +71,11 @@ export function getEmbedVideoInfo(url?: string | null): { type: 'youtube' | 'vim
   const isVimeoHost = hostname === 'vimeo.com'
     || hostname.endsWith('.vimeo.com');
   if (isVimeoHost) {
-    const match = parsedUrl.pathname.match(/^\/(\d+)\/?$/);
+    // Vimeo public videos use /123456789; unlisted videos may add a privacy hash.
+    const match = parsedUrl.pathname.match(/^\/(\d+)(?:\/([a-zA-Z0-9]+))?\/?$/);
     if (match) {
-      return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${match[1]}` };
+      const privacyHash = match[2] ? `?h=${encodeURIComponent(match[2])}` : '';
+      return { type: 'vimeo', embedUrl: `https://player.vimeo.com/video/${match[1]}${privacyHash}` };
     }
   }
 
