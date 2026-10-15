@@ -2,6 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { writeFile } from 'node:fs/promises';
+import * as ts from 'typescript';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
@@ -57,16 +58,44 @@ export default defineConfig(() => {
                 const content = payload.content;
                 const expectedImport = "import { ServiceId, Service, FAQ, NewsItem, Aviso, MonthlyRecognition, ContactInfo, CategoryConfig, SiteSettings } from './types';";
 
+                const requiredDeclarations = [
+                  'export const siteSettings: SiteSettings = ',
+                  'export const defaultCategories: CategoryConfig[] = ',
+                  'export const initialContact: ContactInfo = ',
+                  'export const initialRecognitions: MonthlyRecognition[] = ',
+                  'export const initialServices: Service[] = ',
+                  'export const initialNews: NewsItem[] = ',
+                  'export const avisosData: Aviso[] = ',
+                  'export const faqsData: FAQ[] = ',
+                  'export function getDefaultServiceDetails(service: Service)',
+                ];
+
                 if (
+                  !payload ||
+                  typeof payload !== 'object' ||
                   typeof content !== 'string' ||
                   content.length > 1_500_000 ||
                   !content.startsWith(expectedImport) ||
-                  !content.includes('export const initialServices: Service[] = ') ||
-                  !content.includes('export const initialNews: NewsItem[] = ') ||
-                  !content.includes('export const faqsData: FAQ[] = ')
+                  !requiredDeclarations.every((declaration) => content.includes(declaration))
                 ) {
                   res.statusCode = 400;
                   res.end(JSON.stringify({ error: 'El contenido no coincide con el formato esperado de src/data.ts.' }));
+                  return;
+                }
+
+                // Parse the generated TypeScript before touching the repository source file.
+                // This catches malformed/truncated output without executing the submitted code.
+                const sourceFile = ts.createSourceFile(
+                  'src/data.ts',
+                  content,
+                  ts.ScriptTarget.Latest,
+                  true,
+                  ts.ScriptKind.TS
+                );
+
+                if (sourceFile.parseDiagnostics.length > 0) {
+                  res.statusCode = 400;
+                  res.end(JSON.stringify({ error: 'El contenido generado contiene errores de sintaxis TypeScript.' }));
                   return;
                 }
 
