@@ -5,7 +5,7 @@ import { initialServices, initialNews, initialContact, defaultCategories, siteSe
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
-const ServiceDetail = React.lazy(() => import('./components/ServiceDetail'));
+import ServiceDetail from './components/ServiceDetail';
 const NewsTab = React.lazy(() => import('./components/NewsTab'));
 const AsistenteTab = React.lazy(() => import('./components/AsistenteTab'));
 const SearchTab = React.lazy(() => import('./components/SearchTab'));
@@ -291,20 +291,18 @@ export default function App() {
 
                 {/* Service Detail Full-Width Kiosk Container */}
                 <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
-                  <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando trámite…</div>}>
-                    <ServiceDetail 
-                      service={selectedService} 
-                      onBack={() => {
-                        setSelectedService(null);
-                        setServiceEditMode(false);
-                        setIsImageZoomed(false);
-                      }} 
-                      isAdminLoggedIn={isAdminLoggedIn}
-                      onUpdateService={handleUpdateService}
-                      initialEditMode={serviceEditMode}
-                      onLightboxToggle={setIsImageZoomed}
-                    />
-                  </React.Suspense>
+                  <ServiceDetail 
+                    service={selectedService} 
+                    onBack={() => {
+                      setSelectedService(null);
+                      setServiceEditMode(false);
+                      setIsImageZoomed(false);
+                    }} 
+                    isAdminLoggedIn={isAdminLoggedIn}
+                    onUpdateService={handleUpdateService}
+                    initialEditMode={serviceEditMode}
+                    onLightboxToggle={setIsImageZoomed}
+                  />
                 </div>
               </div>
             ) : (
