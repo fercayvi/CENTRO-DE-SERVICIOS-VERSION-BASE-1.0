@@ -365,34 +365,10 @@ export default function AdminPanel({
 
   // Generador de código para sincronización y exportación a src/data.ts
   const generateSourceCode = (): string => {
-    let categoriesData: any[] = [];
-    let servicesData: any[] = [];
-
-    try {
-      const rawCategories = localStorage.getItem('cc-categories') || localStorage.getItem('activeCategories');
-      if (rawCategories) {
-        const parsed = JSON.parse(rawCategories);
-        categoriesData = Array.isArray(parsed) ? parsed : [];
-      } else if (categoryForms && categoryForms.length > 0) {
-        categoriesData = categoryForms;
-      }
-    } catch (e) {
-      console.error('Error leyendo categorías de localStorage:', e);
-      categoriesData = categoryForms || [];
-    }
-
-    try {
-      const rawServices = localStorage.getItem('cc-services-cms-v1') || localStorage.getItem('allServices') || localStorage.getItem('services');
-      if (rawServices) {
-        const parsed = JSON.parse(rawServices);
-        servicesData = Array.isArray(parsed) ? parsed : [];
-      } else if (services && services.length > 0) {
-        servicesData = services;
-      }
-    } catch (e) {
-      console.error('Error leyendo servicios de localStorage:', e);
-      servicesData = services || [];
-    }
+    // Exportar desde el estado actual del panel evita copiar datos antiguos de localStorage.
+    // Las ediciones visibles en React son la fuente de verdad durante esta sesión.
+    const categoriesData = categoryForms;
+    const servicesData = services;
 
     const settingsJson = JSON.stringify(currentSettings, null, 2);
     const categoriesJson = JSON.stringify(categoriesData.length > 0 ? categoriesData : defaultCategories, null, 2);
