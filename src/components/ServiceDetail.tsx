@@ -6,7 +6,7 @@ import {
   ExternalLink, Download, Layers, Sparkles, GripVertical, ChevronUp, ChevronDown, Sliders, Info, ListOrdered,
   Maximize2, Minimize2, ZoomIn, LayoutGrid, Type, Columns
 } from 'lucide-react';
-import { Service, UserProfile, FAQ, StepItem, ServiceFAQ, ServiceAttachment, CategoryConfig } from '../types';
+import { Service, FAQ, StepItem, ServiceFAQ, ServiceAttachment, CategoryConfig } from '../types';
 import { getDefaultServiceDetails, defaultCategories } from '../data';
 import { SERVICE_ICON_MAP } from './ServiceCard';
 import { MediaUploadField } from './MediaUploadField';
@@ -401,7 +401,6 @@ function LivePreviewPanel({
 
 interface ServiceDetailProps {
   service: Service & { hidden?: boolean };
-  user?: UserProfile;
   onBack: () => void;
   isAdminLoggedIn?: boolean;
   onUpdateService?: (updatedService: Service & { hidden?: boolean }) => void;
@@ -411,7 +410,6 @@ interface ServiceDetailProps {
 
 export default function ServiceDetail({ 
   service, 
-  user, 
   onBack, 
   isAdminLoggedIn = false,
   onUpdateService,
