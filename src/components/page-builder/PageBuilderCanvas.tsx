@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { isSafeNavigationUrl } from '../../utils/safeUrl';
 import { useDroppable } from '@dnd-kit/core';
 import { 
   Plus, 
@@ -235,9 +236,9 @@ const NestedColumnDroppable: React.FC<{
                   return (
                     <div className={alignClass}>
                       <a
-                        href={btn.url || '#'}
+                        href={isSafeNavigationUrl(btn.url) ? btn.url : '#'}
                         onClick={(e) => {
-                          if (!previewMode) e.preventDefault();
+                          if (!previewMode || !isSafeNavigationUrl(btn.url)) e.preventDefault();
                         }}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -676,9 +677,9 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
                   return (
                     <div className={alignClass}>
                       <a
-                        href={btn.url || '#'}
+                        href={isSafeNavigationUrl(btn.url) ? btn.url : '#'}
                         onClick={(e) => {
-                          if (!previewMode) e.preventDefault();
+                          if (!previewMode || !isSafeNavigationUrl(btn.url)) e.preventDefault();
                         }}
                         target="_blank"
                         rel="noopener noreferrer"
