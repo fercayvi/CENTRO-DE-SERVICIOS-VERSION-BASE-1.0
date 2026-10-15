@@ -85,15 +85,17 @@ export default defineConfig(() => {
 
                 // Parse the generated TypeScript before touching the repository source file.
                 // This catches malformed/truncated output without executing the submitted code.
-                const sourceFile = ts.createSourceFile(
-                  'src/data.ts',
-                  content,
-                  ts.ScriptTarget.Latest,
-                  true,
-                  ts.ScriptKind.TS
-                );
+                const parseResult = ts.transpileModule(content, {
+                  compilerOptions: {
+                    target: ts.ScriptTarget.Latest,
+                    module: ts.ModuleKind.ESNext
+                  },
+                  reportDiagnostics: true
+                });
 
-                if (sourceFile.parseDiagnostics.length > 0) {
+                if ((parseResult.diagnostics ?? []).some(
+                  (diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error
+                )) {
                   res.statusCode = 400;
                   res.end(JSON.stringify({ error: 'El contenido generado contiene errores de sintaxis TypeScript.' }));
                   return;
