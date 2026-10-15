@@ -559,15 +559,15 @@ export const faqsData: FAQ[] = [];
       id: `custom_${Date.now()}` as ServiceId,
       title: 'Nuevo Trámite',
       iconName: 'FileText',
-      shortDesc: 'Descripción corta para la tarjeta del catálogo...',
+      shortDesc: '',
       category: defaultCategory,
-      fullDescription: 'Descripción completa del procedimiento...',
-      steps: [{ num: 1, title: 'Primer paso del trámite', desc: 'Instrucción inicial para el trabajador...' }],
-      requirements: ['Gafete oficial activo'],
-      location: 'Planta Baja • Edificio de Recursos Humanos',
-      schedule: 'Lunes a Viernes de 8:00 AM a 5:00 PM',
-      contact: 'Recursos Humanos - Ext. 200',
-      faqs: [{ question: '¿Cómo inicio este trámite?', answer: 'Presentándote en la ventanilla de Recursos Humanos.' }],
+      fullDescription: '',
+      steps: [],
+      requirements: [],
+      location: '',
+      schedule: '',
+      contact: '',
+      faqs: [],
       imageUrl: '',
       videoUrl: '',
       pdfUrl: '',
@@ -575,6 +575,8 @@ export const faqsData: FAQ[] = [];
       attachments: [],
       alertNotice: '',
       decisionTree: [],
+      // Un trámite nuevo empieza con el lienzo vacío; el contenido se agrega explícitamente en el editor.
+      layoutBlocks: [],
       hidden: false
     };
 
