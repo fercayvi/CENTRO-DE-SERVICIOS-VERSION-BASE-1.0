@@ -472,7 +472,7 @@ export const faqsData: FAQ[] = ${faqsJson};
     let updatedServices = [...services];
     let servicesChanged = false;
 
-    const currentSavedCategories = categories && categories.length > 0 ? categories : defaultCategories;
+    const currentSavedCategories = categories ?? defaultCategories;
 
     categoryForms.forEach(newCat => {
       const oldCat = currentSavedCategories.find(c => c.id === newCat.id);
