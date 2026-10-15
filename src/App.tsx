@@ -6,9 +6,9 @@ import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
 const ServiceDetail = React.lazy(() => import('./components/ServiceDetail'));
-import NewsTab from './components/NewsTab';
-import AsistenteTab from './components/AsistenteTab';
-import SearchTab from './components/SearchTab';
+const NewsTab = React.lazy(() => import('./components/NewsTab'));
+const AsistenteTab = React.lazy(() => import('./components/AsistenteTab'));
+const SearchTab = React.lazy(() => import('./components/SearchTab'));
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 import ScrollProgressBar from './components/ScrollProgressBar';
 
@@ -413,28 +413,34 @@ export default function App() {
 
                   {/* TAB: BÚSQUEDA GLOBAL */}
                   {currentTab === 'buscar' && (
-                    <SearchTab 
-                      services={services}
-                      searchQuery={searchQuery}
-                      onSearchQueryChange={setSearchQuery}
-                      onSelectService={(service) => handleSelectService(service, false)}
-                      categories={categories}
-                    />
+                    <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando búsqueda…</div>}>
+                      <SearchTab 
+                        services={services}
+                        searchQuery={searchQuery}
+                        onSearchQueryChange={setSearchQuery}
+                        onSelectService={(service) => handleSelectService(service, false)}
+                        categories={categories}
+                      />
+                    </React.Suspense>
                   )}
 
                   {/* TAB 2: NOTICIAS */}
                   {currentTab === 'noticias' && (
-                    <NewsTab 
-                      newsList={news} 
-                      onUnreadCountChange={setUnreadNewsCount}
-                    />
+                    <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando noticias…</div>}>
+                      <NewsTab 
+                        newsList={news} 
+                        onUnreadCountChange={setUnreadNewsCount}
+                      />
+                    </React.Suspense>
                   )}
 
                   {/* TAB 3: ASISTENTE */}
                   {currentTab === 'asistente' && (
-                    <AsistenteTab 
-                      contactInfo={contactInfo} 
-                    />
+                    <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando asistente…</div>}>
+                      <AsistenteTab 
+                        contactInfo={contactInfo} 
+                      />
+                    </React.Suspense>
                   )}
                 </>
               )
