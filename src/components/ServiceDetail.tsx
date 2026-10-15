@@ -13,7 +13,8 @@ import { MediaUploadField } from './MediaUploadField';
 import { ImageLightboxModal } from './ImageLightboxModal';
 import { DecisionTreeBuilder } from './DecisionTreeBuilder';
 import { DecisionTreeNavigator } from './DecisionTreeNavigator';
-const DecisionTreeCanvasEditor = React.lazy(() => import('./DecisionTreeCanvasEditor').then(module => ({ default: module.DecisionTreeCanvasEditor })));
+const loadDecisionTreeCanvasEditor = () => import('./DecisionTreeCanvasEditor').then(module => ({ default: module.DecisionTreeCanvasEditor }));
+const DecisionTreeCanvasEditor = React.lazy(loadDecisionTreeCanvasEditor);
 import { BlockBuilder } from './BlockBuilder';
 import { PageBuilderFullScreenEditor } from './PageBuilderFullScreenEditor';
 import { LayoutBlocksRenderer } from './LayoutBlocksRenderer';
@@ -417,6 +418,16 @@ export default function ServiceDetail({
   onLightboxToggle
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
+
+  // Precargar el editor pesado en segundo plano al entrar como administrador.
+  // Así, abrir el árbol no depende de descargar el chunk justo al hacer clic.
+  useEffect(() => {
+    if (isAdminLoggedIn) {
+      void loadDecisionTreeCanvasEditor().catch((error) => {
+        console.error('No se pudo precargar el editor del árbol de decisiones:', error);
+      });
+    }
+  }, [isAdminLoggedIn]);
   const [toastMsg, setToastMsg] = useState<string>('');
   const [editorTab, setEditorTab] = useState<'general' | 'arbol' | 'bloques'>('general');
   const [mobileViewMode, setMobileViewMode] = useState<'editor' | 'preview'>('editor');
