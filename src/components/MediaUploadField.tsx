@@ -89,7 +89,7 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
         </div>
         {!hasValue && (
           <p className="text-[10px] text-slate-500 mt-1 ml-1">
-            Selecciona un archivo para registrar su ruta o escribe una URL pública.
+            Selecciona el archivo para completar su ruta; después cópialo manualmente a public/ o pega una URL pública.
           </p>
         )}
       </div>
