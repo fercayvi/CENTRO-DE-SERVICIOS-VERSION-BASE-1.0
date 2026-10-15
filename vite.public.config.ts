@@ -17,7 +17,7 @@ export default defineConfig({
     outDir: 'dist-public',
     emptyOutDir: true,
     rollupOptions: {
-      input: path.resolve(rootDir, 'public.html'),
+      input: { index: path.resolve(rootDir, 'public.html') },
     },
   },
 });
