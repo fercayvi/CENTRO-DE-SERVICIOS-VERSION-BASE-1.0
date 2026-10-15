@@ -18,6 +18,21 @@ import {
 } from 'lucide-react';
 import { LayoutBlock } from '../types';
 
+// Accept normal web/contact links and local paths, but never executable schemes such as javascript:.
+function isSafeNavigationUrl(value?: string | null, allowPdfDataUrl = false): boolean {
+  if (typeof value !== 'string' || !value.trim()) return false;
+  const url = value.trim();
+
+  if (allowPdfDataUrl && /^data:application\/pdf(?:;|,)/i.test(url)) return true;
+
+  try {
+    const parsed = new URL(url, 'https://portal.invalid');
+    return ['http:', 'https:', 'mailto:', 'tel:'].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
 export function getEmbedVideoInfo(url?: string | null): { type: 'youtube' | 'vimeo' | 'direct'; embedUrl: string } | null {
   if (!url || typeof url !== 'string' || !url.trim()) return null;
   const cleanUrl = url.trim();
@@ -434,7 +449,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
           // PDF / FORMATO
           if (mediaType === 'pdf') {
             const rawPdfUrl = (block.url || '').trim();
-            const hasValidPdf = Boolean(rawPdfUrl && rawPdfUrl !== 'https://' && rawPdfUrl !== 'http://');
+            const hasValidPdf = isSafeNavigationUrl(rawPdfUrl, true);
 
             if (!hasValidPdf) {
               return null;
@@ -532,7 +547,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         // ==================== 6. BUTTON BLOCK ====================
         if (block.type === 'button') {
           const rawBtnUrl = (block.url || '').trim();
-          if (!rawBtnUrl || rawBtnUrl === 'https://' || rawBtnUrl === 'http://') {
+          if (!isSafeNavigationUrl(rawBtnUrl)) {
             return null;
           }
 
