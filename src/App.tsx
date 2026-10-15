@@ -6,22 +6,33 @@ import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
 const loadServiceDetail = () => import('./components/ServiceDetail');
+const loadNewsTab = () => import('./components/NewsTab');
+const loadAsistenteTab = () => import('./components/AsistenteTab');
+const loadSearchTab = () => import('./components/SearchTab');
+
 const ServiceDetail = React.lazy(loadServiceDetail);
-const NewsTab = React.lazy(() => import('./components/NewsTab'));
-const AsistenteTab = React.lazy(() => import('./components/AsistenteTab'));
-const SearchTab = React.lazy(() => import('./components/SearchTab'));
+const NewsTab = React.lazy(loadNewsTab);
+const AsistenteTab = React.lazy(loadAsistenteTab);
+const SearchTab = React.lazy(loadSearchTab);
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 import ScrollProgressBar from './components/ScrollProgressBar';
 
 export default function App() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Descargar el detalle en segundo plano después del primer render del catálogo.
-  // Mantiene ligero el bundle inicial y evita esperar al clic en condiciones normales.
+  // Precargar en segundo plano las vistas pequeñas que se usan con frecuencia.
+  // Se conservan en chunks separados para no aumentar el paquete JavaScript inicial.
   useEffect(() => {
-    void loadServiceDetail().catch((error) => {
-      console.error('No se pudo precargar el detalle de trámites:', error);
-    });
+    const preload = (name: string, loader: () => Promise<unknown>) => {
+      void loader().catch((error) => {
+        console.error(`No se pudo precargar ${name}:`, error);
+      });
+    };
+
+    preload('el detalle de trámites', loadServiceDetail);
+    preload('la búsqueda', loadSearchTab);
+    preload('las noticias', loadNewsTab);
+    preload('el contacto/asistente', loadAsistenteTab);
   }, []);
   const [currentTab, setCurrentTab] = useState<'inicio' | 'buscar' | 'noticias' | 'asistente'>('inicio');
   const [searchQuery, setSearchQuery] = useState<string>('');
