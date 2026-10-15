@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
-import { Service, NewsItem, UserProfile, ContactInfo, CategoryConfig, SiteSettings } from './types';
-import { initialServices, initialNews, userProfileData, initialContact, defaultCategories, siteSettings } from './data';
+import { Service, NewsItem, ContactInfo, CategoryConfig, SiteSettings } from './types';
+import { initialServices, initialNews, initialContact, defaultCategories, siteSettings } from './data';
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
@@ -176,8 +176,6 @@ export default function App() {
     }
   }, [contactInfo]);
 
-  // Public user context
-  const user: UserProfile = userProfileData;
 
   // Global Kiosk Inactivity Reset Timer (90 seconds)
   useEffect(() => {
@@ -295,7 +293,6 @@ export default function App() {
                 <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
                   <ServiceDetail 
                     service={selectedService} 
-                    user={user} 
                     onBack={() => {
                       setSelectedService(null);
                       setServiceEditMode(false);
@@ -432,7 +429,6 @@ export default function App() {
                   {/* TAB 3: ASISTENTE */}
                   {currentTab === 'asistente' && (
                     <AsistenteTab 
-                      user={user} 
                       contactInfo={contactInfo} 
                     />
                   )}
