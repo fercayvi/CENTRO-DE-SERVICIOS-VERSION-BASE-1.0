@@ -5,11 +5,11 @@ import { initialServices, initialNews, initialContact, defaultCategories, siteSe
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
 import HomeTab from './components/HomeTab';
-import ServiceDetail from './components/ServiceDetail';
+const ServiceDetail = React.lazy(() => import('./components/ServiceDetail'));
 import NewsTab from './components/NewsTab';
 import AsistenteTab from './components/AsistenteTab';
 import SearchTab from './components/SearchTab';
-import AdminPanel from './components/AdminPanel';
+const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 import ScrollProgressBar from './components/ScrollProgressBar';
 
 export default function App() {
@@ -291,40 +291,44 @@ export default function App() {
 
                 {/* Service Detail Full-Width Kiosk Container */}
                 <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
-                  <ServiceDetail 
-                    service={selectedService} 
-                    onBack={() => {
-                      setSelectedService(null);
-                      setServiceEditMode(false);
-                      setIsImageZoomed(false);
-                    }} 
-                    isAdminLoggedIn={isAdminLoggedIn}
-                    onUpdateService={handleUpdateService}
-                    initialEditMode={serviceEditMode}
-                    onLightboxToggle={setIsImageZoomed}
-                  />
+                  <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando trámite…</div>}>
+                    <ServiceDetail 
+                      service={selectedService} 
+                      onBack={() => {
+                        setSelectedService(null);
+                        setServiceEditMode(false);
+                        setIsImageZoomed(false);
+                      }} 
+                      isAdminLoggedIn={isAdminLoggedIn}
+                      onUpdateService={handleUpdateService}
+                      initialEditMode={serviceEditMode}
+                      onLightboxToggle={setIsImageZoomed}
+                    />
+                  </React.Suspense>
                 </div>
               </div>
             ) : (
               /* ADMIN PANEL OR PUBLIC TABS */
               isAdminLoggedIn ? (
-                <AdminPanel
-                  services={services}
-                  onUpdateServices={handleUpdateServices}
-                  onSelectService={handleSelectService}
-                  news={news}
-                  onUpdateNews={setNews}
-                  contactInfo={contactInfo}
-                  onUpdateContact={handleUpdateContact}
-                  categories={categories}
-                  onUpdateCategories={handleUpdateCategories}
-                  onLogout={() => {
-                    setIsAdminLoggedIn(false);
-                    setSelectedService(null);
-                  }}
-                  settings={settings}
-                  setSettings={setSettings}
-                />
+                <React.Suspense fallback={<div className="py-12 text-center text-sm text-slate-500">Cargando panel de administración…</div>}>
+                  <AdminPanel
+                    services={services}
+                    onUpdateServices={handleUpdateServices}
+                    onSelectService={handleSelectService}
+                    news={news}
+                    onUpdateNews={setNews}
+                    contactInfo={contactInfo}
+                    onUpdateContact={handleUpdateContact}
+                    categories={categories}
+                    onUpdateCategories={handleUpdateCategories}
+                    onLogout={() => {
+                      setIsAdminLoggedIn(false);
+                      setSelectedService(null);
+                    }}
+                    settings={settings}
+                    setSettings={setSettings}
+                  />
+                </React.Suspense>
               ) : (
                 <>
                   {/* TopBar with Navigation & Direct Admin Access */}
