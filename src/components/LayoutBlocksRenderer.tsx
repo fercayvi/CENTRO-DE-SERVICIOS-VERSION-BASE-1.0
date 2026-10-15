@@ -191,9 +191,11 @@ function MediaImageBlock({
   }
 
   return (
-    <div 
-      onClick={() => onOpenLightbox && onOpenLightbox(url, title || serviceTitle)}
-      className="relative cursor-pointer overflow-hidden rounded-xl border border-slate-100 bg-slate-50"
+    <button
+      type="button"
+      onClick={() => onOpenLightbox?.(url, title || serviceTitle)}
+      aria-label={`Ampliar imagen: ${title || serviceTitle || 'Contenido multimedia'}`}
+      className="relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-slate-100 bg-slate-50 p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
     >
       <img 
         src={url} 
@@ -202,7 +204,7 @@ function MediaImageBlock({
         onError={() => setHasError(true)}
         className="w-full h-auto max-w-full rounded-xl object-contain shadow-2xs mx-auto max-h-[500px]" 
       />
-    </div>
+    </button>
   );
 }
 
