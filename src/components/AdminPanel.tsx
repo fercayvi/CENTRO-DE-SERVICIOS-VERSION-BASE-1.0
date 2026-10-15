@@ -771,19 +771,23 @@ export const faqsData: FAQ[] = [];
     setDeleteConfirmTarget(null);
   };
 
-  const handleOpenNewNewsModal = () => {
-    setIsNewNews(true);
-    setEditingNews({
-      id: `news_${Date.now()}`,
-      title: '',
-      summary: '',
-      content: '',
-      date: 'Hoy',
-      imageName: 'welcome_team',
-      category: 'comunicado'
-    });
-    setIsNewsModalOpen(true);
-  };
+const handleOpenNewNewsModal = () => {
+  setIsNewNews(true);
+  setEditingNews({
+    id: `news_${Date.now()}`,
+    title: '',
+    summary: '',
+    content: '',
+    date: new Date().toLocaleDateString('es-MX', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }),
+    imageName: 'welcome_team',
+    category: 'comunicado'
+  });
+  setIsNewsModalOpen(true);
+};
 
   const handleOpenEditNewsModal = (item: NewsItem) => {
     setIsNewNews(false);
@@ -791,20 +795,32 @@ export const faqsData: FAQ[] = [];
     setIsNewsModalOpen(true);
   };
 
-  const handleSaveNews = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingNews || !editingNews.title?.trim()) return;
+ const handleSaveNews = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!editingNews || !editingNews.title?.trim()) return;
 
-    if (isNewNews) {
-      onUpdateNews([editingNews, ...news]);
-      showToast('¡Nueva noticia publicada en el boletín!');
-    } else {
-      const updated = news.map(n => n.id === editingNews.id ? editingNews : n);
-      onUpdateNews(updated);
-      showToast('Noticia actualizada correctamente.');
-    }
-    setIsNewsModalOpen(false);
-  };
+  if (isNewNews) {
+    const publishedNews = {
+      ...editingNews,
+      date: new Date().toLocaleDateString('es-MX', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
+    };
+
+    onUpdateNews([publishedNews, ...news]);
+    showToast('¡Nueva noticia publicada en el boletín!');
+  } else {
+    const updated = news.map(n =>
+      n.id === editingNews.id ? editingNews : n
+    );
+    onUpdateNews(updated);
+    showToast('Noticia actualizada correctamente.');
+  }
+
+  setIsNewsModalOpen(false);
+};
 
   return (
     <div id="admin-panel-container" className="space-y-4 animate-fadeIn pb-12">
