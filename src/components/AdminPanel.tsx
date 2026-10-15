@@ -268,41 +268,17 @@ export default function AdminPanel({
   const currentSettings = settings || defaultSiteSettings;
 
   // Categories Form State
-  const [categoryForms, setCategoryForms] = useState<CategoryConfig[]>(() => {
-    if (categories && categories.length > 0) return categories;
-    try {
-      const saved = localStorage.getItem('cc-categories');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (e) {
-      console.error('Error al leer categorías en AdminPanel:', e);
-    }
-    return defaultCategories;
-  });
+  const [categoryForms, setCategoryForms] = useState<CategoryConfig[]>(() => categories ?? defaultCategories);
 
-  // Sync categoryForms if props change
+  // Mantener sincronizado el formulario incluso cuando el catálogo versionado está vacío.
   React.useEffect(() => {
-    if (categories && categories.length > 0) {
+    if (categories !== undefined) {
       setCategoryForms(categories);
     }
   }, [categories]);
 
   // Contact Form State
-  const [contactForm, setContactForm] = useState<ContactInfo>(() => {
-    if (contactInfo) return contactInfo;
-    if (initialContact) return initialContact;
-    try {
-      const saved = localStorage.getItem('portalContactInfo') || localStorage.getItem('cc-contact');
-      if (saved) {
-        return { ...initialContact, ...JSON.parse(saved) };
-      }
-    } catch (e) {
-      console.error('Error al leer contacto desde localStorage:', e);
-    }
-    return initialContact;
-  });
+  const [contactForm, setContactForm] = useState<ContactInfo>(() => contactInfo ?? initialContact);
 
   // Sync contactForm if props change
   React.useEffect(() => {
