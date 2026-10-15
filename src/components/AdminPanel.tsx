@@ -56,7 +56,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Service, NewsItem, ServiceId, StepItem, ServiceFAQ, ContactInfo, CategoryConfig, SiteSettings } from '../types';
-import { getDefaultServiceDetails, initialContact, defaultCategories, initialRecognitions, siteSettings as defaultSiteSettings } from '../data';
+import { getDefaultServiceDetails, initialContact, defaultCategories, initialRecognitions, avisosData, faqsData, siteSettings as defaultSiteSettings } from '../data';
 import { SERVICE_ICON_MAP } from './ServiceCard';
 import { MediaUploadField } from './MediaUploadField';
 import { DecisionTreeBuilder } from './DecisionTreeBuilder';
@@ -375,7 +375,9 @@ export default function AdminPanel({
     const servicesJson = JSON.stringify(servicesData.length > 0 ? servicesData : services, null, 2);
     const contactJson = JSON.stringify(contactForm || initialContact, null, 2);
     const recognitionsJson = JSON.stringify(initialRecognitions || [], null, 2);
-    const newsJson = JSON.stringify(news && news.length > 0 ? news : [], null, 2);
+    const newsJson = JSON.stringify(news || [], null, 2);
+    const noticesJson = JSON.stringify(avisosData || [], null, 2);
+    const faqsJson = JSON.stringify(faqsData || [], null, 2);
 
     return `import { ServiceId, Service, FAQ, NewsItem, Aviso, MonthlyRecognition, ContactInfo, CategoryConfig, SiteSettings } from './types';
 
@@ -400,7 +402,7 @@ export const servicesData = initialServices;
 export const initialNews: NewsItem[] = ${newsJson};
 export const newsData = initialNews;
 
-export const avisosData: Aviso[] = [];
+export const avisosData: Aviso[] = ${noticesJson};
 
 export function getDefaultServiceDetails(service: Service) {
   return {
@@ -421,7 +423,7 @@ export function getDefaultServiceDetails(service: Service) {
   };
 }
 
-export const faqsData: FAQ[] = [];
+export const faqsData: FAQ[] = ${faqsJson};
 `;
   };
 
