@@ -134,14 +134,9 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
       historyDebounceTimerRef.current = null;
       const snapshot = JSON.parse(JSON.stringify(blocks)) as LayoutBlock[];
       setHistory((prev) => [...prev.slice(0, historyIndex + 1), snapshot].slice(-30));
-      if (historyIndex > 0 || history.length > 1) {
-        const target = history[historyIndex];
-        setHistoryIndex(Math.min(historyIndex + 1, 29) - 1);
-        if (target) onChange(JSON.parse(JSON.stringify(target)));
-      } else {
-        // The first edit has no earlier committed snapshot to undo to.
-        setHistoryIndex(1);
-      }
+      const target = history[historyIndex];
+      setHistoryIndex(Math.min(historyIndex + 1, 29) - 1);
+      if (target) onChange(JSON.parse(JSON.stringify(target)));
       return;
     }
 
