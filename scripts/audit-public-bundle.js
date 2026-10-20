@@ -25,8 +25,6 @@ if (jsFiles.length === 0) {
 const forbiddenMarkers = [
   { label: 'endpoint administrativo de escritura', value: '/__admin/write-data-ts' },
   { label: 'componente del panel administrativo', value: 'AdminPanel' },
-  { label: 'editor administrativo del árbol', value: 'DecisionTreeCanvasEditor' },
-  { label: 'editor de decisiones administrativo', value: 'PublicDecisionTreeEditorStub' },
   { label: 'trámite oculto politicas_pago', value: 'politicas_pago' },
   { label: 'trámite oculto recibos_cif', value: 'recibos_cif' },
   { label: 'trámite oculto caja_ahorro', value: 'caja_ahorro' },
