@@ -31,7 +31,7 @@ function publicDataSanitizer(): Plugin {
 
       let removedServices = 0;
 
-      const transformed = ts.transform(sourceFile, (context) => {
+      const transformed = ts.transform(sourceFile, [(context) => {
         const visit = (node: ts.Node): ts.Node => {
           if (
             ts.isVariableDeclaration(node) &&
@@ -76,7 +76,7 @@ function publicDataSanitizer(): Plugin {
         };
 
         return (root) => ts.visitNode(root, visit) as ts.SourceFile;
-      });
+      }]);
 
       const output = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed })
         .printFile(transformed.transformed[0] as ts.SourceFile);
