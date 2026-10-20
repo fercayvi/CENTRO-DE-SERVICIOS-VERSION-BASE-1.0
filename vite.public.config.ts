@@ -2,7 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import ts from 'typescript';
+import * as ts from 'typescript';
 import { defineConfig, type Plugin } from 'vite';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
@@ -75,7 +75,7 @@ function publicDataSanitizer(): Plugin {
           return ts.visitEachChild(node, visit, context);
         };
 
-        return (root) => ts.visitNode(root, visit);
+        return (root) => ts.visitNode(root, visit) as ts.SourceFile;
       });
 
       const output = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed })
