@@ -7,11 +7,18 @@ import { defineConfig } from 'vite';
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 // Configuración separada: no carga el middleware de escritura del editor privado.
+// En el portal público, sustituye el editor pesado por un aviso de solo lectura.
 export default defineConfig({
   root: rootDir,
   plugins: [react(), tailwindcss()],
   resolve: {
-    alias: { '@': path.resolve(rootDir, '.') },
+    alias: [
+      { find: '@', replacement: path.resolve(rootDir, '.') },
+      {
+        find: /^\.\/DecisionTreeCanvasEditor$/,
+        replacement: path.resolve(rootDir, 'src/components/PublicDecisionTreeEditorStub.tsx'),
+      },
+    ],
   },
   build: {
     outDir: 'dist-public',
