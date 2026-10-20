@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { Service } from './types';
 import { initialServices, initialNews, initialContact, defaultCategories, siteSettings } from './data';
@@ -25,6 +25,42 @@ export default function PublicApp() {
   const [unreadNewsCount, setUnreadNewsCount] = useState(0);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
 
+  // En la versión pública, regresar automáticamente al menú tras 2 minutos sin actividad.
+  useEffect(() => {
+    if (!selectedService) return;
+
+    let idleTimeout: ReturnType<typeof setTimeout>;
+
+    const returnToMenu = () => {
+      setIsImageZoomed(false);
+      setSelectedService(null);
+      setSearchQuery('');
+      setCurrentTab('inicio');
+      setSelectedCategory(null);
+    };
+
+    const resetIdleTimeout = () => {
+      clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(returnToMenu, 2 * 60 * 1000);
+    };
+
+    const activityEvents: (keyof WindowEventMap)[] = [
+      'pointerdown', 'pointermove', 'keydown', 'touchstart', 'scroll', 'wheel'
+    ];
+
+    resetIdleTimeout();
+    activityEvents.forEach((eventName) => {
+      window.addEventListener(eventName, resetIdleTimeout, { passive: true });
+    });
+
+    return () => {
+      clearTimeout(idleTimeout);
+      activityEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, resetIdleTimeout);
+      });
+    };
+  }, [selectedService]);
+
   const handleSelectService = (service: Service & { hidden?: boolean }) => {
     window.scrollTo({ top: 0, behavior: 'instant' });
     const scrollContainer = document.getElementById('phone-main-scrollable-content');
@@ -42,6 +78,8 @@ export default function PublicApp() {
     window.scrollTo({ top: 0, behavior: 'instant' });
     scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
     setSelectedService(null);
+    setSearchQuery('');
+    setSelectedCategory(null);
     setCurrentTab('inicio');
   };
 
@@ -51,6 +89,21 @@ export default function PublicApp() {
         <div id="phone-screen-container" className="w-full flex-1 overflow-hidden flex flex-col relative">
           <div id="phone-main-scrollable-content" ref={scrollRef} className="flex-1 overflow-y-auto pt-2 sm:pt-3 relative pb-28">
             <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
+              <div className={selectedService ? 'hidden' : ''}>
+                <TopBar
+                  showAdminButton={false}
+                  currentTab={currentTab}
+                  setCurrentTab={handleTabChange}
+                  unreadNewsCount={unreadNewsCount}
+                  searchQuery={searchQuery}
+                  onSearch={(query) => {
+                    setSearchQuery(query);
+                    setCurrentTab('buscar');
+                    setSelectedService(null);
+                  }}
+                  onGoHome={goHome}
+                />
+              </div>
               {selectedService ? (
                 <div className="relative animate-fadeIn min-h-screen">
                   <div id="service-detail-backdrop" className="fixed inset-0 bg-slate-50 z-30 pointer-events-none" aria-hidden="true" />
@@ -68,20 +121,6 @@ export default function PublicApp() {
                 </div>
               ) : (
                 <>
-                  <TopBar
-                    showAdminButton={false}
-                    currentTab={currentTab}
-                    setCurrentTab={handleTabChange}
-                    unreadNewsCount={unreadNewsCount}
-                    searchQuery={searchQuery}
-                    onSearch={(query) => {
-                      setSearchQuery(query);
-                      setCurrentTab('buscar');
-                      setSelectedService(null);
-                    }}
-                    onGoHome={goHome}
-                  />
-
                   {currentTab === 'inicio' && (
                     <div className="space-y-4 animate-fadeIn">
                       <form
