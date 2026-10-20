@@ -72,6 +72,10 @@ export default function PublicApp() {
   const handleTabChange = (tab: 'inicio' | 'buscar' | 'noticias' | 'asistente') => {
     setCurrentTab(tab);
     setSelectedService(null);
+    if (tab === 'inicio') {
+      setSearchQuery('');
+      setSelectedCategory(null);
+    }
   };
 
   const goHome = () => {
