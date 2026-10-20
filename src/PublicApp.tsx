@@ -26,9 +26,9 @@ export default function PublicApp() {
   const [isImageZoomed, setIsImageZoomed] = useState(false);
 
   // En la versión pública, regresar automáticamente al inicio tras 2 minutos sin actividad,
-  // tanto al consultar un trámite como al permanecer en el buscador.
+  // tanto al consultar un trámite como al permanecer en cualquier sección de navegación.
   useEffect(() => {
-    if (!selectedService && currentTab !== 'buscar') return;
+    if (!selectedService && currentTab === 'inicio') return;
 
     let idleTimeout: ReturnType<typeof setTimeout>;
 
