@@ -10,6 +10,7 @@ export interface TopBarProps {
   searchQuery?: string;
   onSearch?: (query: string) => void;
   onGoHome?: () => void;
+  showAdminButton?: boolean;
 }
 
 export default function TopBar({ 
@@ -18,7 +19,8 @@ export default function TopBar({
   currentTab = 'inicio', 
   setCurrentTab,
   unreadNewsCount = 0,
-  onGoHome
+  onGoHome,
+  showAdminButton = true
 }: TopBarProps) {
   const handleHomeClick = () => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -120,8 +122,8 @@ export default function TopBar({
           </nav>
         )}
 
-        {/* Admin / Config Button */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Admin / Config Button: se oculta en la experiencia pública */}
+        {showAdminButton && <div className="flex items-center gap-2 shrink-0">
           <button 
             onClick={() => {
               if (onLoginClick) {
@@ -136,7 +138,7 @@ export default function TopBar({
             <Settings size={15} className="text-slate-500" /> 
             <span>Configuración</span>
           </button>
-        </div>
+        </div>}
       </div>
     </header>
   );

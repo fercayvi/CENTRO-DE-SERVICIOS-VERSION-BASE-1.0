@@ -1,0 +1,42 @@
+name: Public portal checks
+
+on:
+  push:
+    branches:
+      - "feat/**"
+      - "chore/**"
+      - "content/**"
+      - "release/**"
+      - "main"
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-portal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: TypeScript check
+        run: npm run lint
+      - name: Build public portal
+        run: npm run build:public
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+      - name: Package public static build
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-publico
+          path: dist-public/
+          if-no-files-found: error
+          retention-days: 14
