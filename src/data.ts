@@ -112,6 +112,14 @@ export const initialServices: Service[] = [
     "decisionTree": [],
     "layoutBlocks": [
       {
+        "id": "txt_1792531438135_98a3g",
+        "type": "text",
+        "title": "ESTA ES UNA PRUEBA DE CONTENIDO ESPERO QUE SALGA BIEN",
+        "content": "",
+        "align": "left",
+        "style": "normal"
+      },
+      {
         "id": "img_1789053857295_o2bxo",
         "type": "media",
         "mediaType": "image",
