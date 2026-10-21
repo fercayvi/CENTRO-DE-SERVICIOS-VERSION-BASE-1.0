@@ -1509,7 +1509,7 @@ const handleOpenNewNewsModal = () => {
             {/* Instrucciones de Ayuda */}
             <div className="pt-4 border-t border-slate-100 text-xs text-slate-400 max-w-md mx-auto space-y-1.5">
               <p className="leading-relaxed">
-                El archivo se escribe en el workspace donde está ejecutándose el servidor de desarrollo de Vite. Revisa el diff de <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code> en Codespaces antes de confirmar el cambio con Git. Las imágenes siguen copiándose manualmente a <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">public/</code>.
+                El archivo <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code> y los archivos multimedia guardados en <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">public/</code> quedan en el workspace de Codespaces. Revisa ambos en Control de código fuente y confirma/sube los cambios a GitHub para que se publiquen.
               </p>
             </div>
 
@@ -1971,7 +1971,7 @@ const handleOpenNewNewsModal = () => {
                         <span>Archivos y Multimedia (Ruta local o enlace URL)</span>
                       </h4>
                       <p className="text-xs text-slate-500 mt-1">
-                        Selecciona un archivo para registrar su nombre y ruta. Después, copia el archivo a la carpeta public/ de la aplicación, o utiliza una URL pública. La selección no carga ni convierte el archivo.
+                        Selecciona un archivo para guardarlo automáticamente en public/ mientras el servidor de desarrollo de Codespaces está activo, o utiliza una URL pública. La selección no carga ni convierte el archivo.
                       </p>
                     </div>
 
