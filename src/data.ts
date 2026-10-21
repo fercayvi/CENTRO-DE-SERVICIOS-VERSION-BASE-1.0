@@ -284,6 +284,16 @@ export const initialServices: Service[] = [
                                     "content": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
                                     "align": "left",
                                     "style": "normal"
+                                  },
+                                  {
+                                    "id": "img_1792593216660_hm3ls",
+                                    "type": "media",
+                                    "mediaType": "image",
+                                    "title": "",
+                                    "url": "/1792593223186-7.png",
+                                    "caption": "",
+                                    "alignment": "center",
+                                    "widthPercent": 100
                                   }
                                 ],
                                 "contentData": {
@@ -297,6 +307,16 @@ export const initialServices: Service[] = [
                                       "content": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
                                       "align": "left",
                                       "style": "normal"
+                                    },
+                                    {
+                                      "id": "img_1792593216660_hm3ls",
+                                      "type": "media",
+                                      "mediaType": "image",
+                                      "title": "",
+                                      "url": "/1792593223186-7.png",
+                                      "caption": "",
+                                      "alignment": "center",
+                                      "widthPercent": 100
                                     }
                                   ]
                                 }
@@ -309,6 +329,16 @@ export const initialServices: Service[] = [
                                 "content": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
                                 "align": "left",
                                 "style": "normal"
+                              },
+                              {
+                                "id": "img_1792593199461_mvyif",
+                                "type": "media",
+                                "mediaType": "image",
+                                "title": "",
+                                "url": "/1792593204728-6.png",
+                                "caption": "",
+                                "alignment": "center",
+                                "widthPercent": 100
                               }
                             ],
                             "contentData": {
@@ -322,6 +352,16 @@ export const initialServices: Service[] = [
                                   "content": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
                                   "align": "left",
                                   "style": "normal"
+                                },
+                                {
+                                  "id": "img_1792593199461_mvyif",
+                                  "type": "media",
+                                  "mediaType": "image",
+                                  "title": "",
+                                  "url": "/1792593204728-6.png",
+                                  "caption": "",
+                                  "alignment": "center",
+                                  "widthPercent": 100
                                 }
                               ]
                             }
@@ -334,6 +374,16 @@ export const initialServices: Service[] = [
                             "content": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
                             "align": "left",
                             "style": "normal"
+                          },
+                          {
+                            "id": "img_1792593186221_oqry6",
+                            "type": "media",
+                            "mediaType": "image",
+                            "title": "",
+                            "url": "/1792593191517-5.png",
+                            "caption": "",
+                            "alignment": "center",
+                            "widthPercent": 100
                           }
                         ],
                         "contentData": {
@@ -347,6 +397,16 @@ export const initialServices: Service[] = [
                               "content": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
                               "align": "left",
                               "style": "normal"
+                            },
+                            {
+                              "id": "img_1792593186221_oqry6",
+                              "type": "media",
+                              "mediaType": "image",
+                              "title": "",
+                              "url": "/1792593191517-5.png",
+                              "caption": "",
+                              "alignment": "center",
+                              "widthPercent": 100
                             }
                           ]
                         }
@@ -365,7 +425,7 @@ export const initialServices: Service[] = [
                         "type": "media",
                         "mediaType": "image",
                         "title": "",
-                        "url": "/4.png",
+                        "url": "/1792593172632-4.png",
                         "caption": "",
                         "alignment": "center",
                         "widthPercent": 100
@@ -388,7 +448,7 @@ export const initialServices: Service[] = [
                           "type": "media",
                           "mediaType": "image",
                           "title": "",
-                          "url": "/4.png",
+                          "url": "/1792593172632-4.png",
                           "caption": "",
                           "alignment": "center",
                           "widthPercent": 100
@@ -410,7 +470,7 @@ export const initialServices: Service[] = [
                     "type": "media",
                     "mediaType": "image",
                     "title": "",
-                    "url": "/3.png",
+                    "url": "/1792593161024-3.png",
                     "caption": "",
                     "alignment": "center",
                     "widthPercent": 100
@@ -433,7 +493,7 @@ export const initialServices: Service[] = [
                       "type": "media",
                       "mediaType": "image",
                       "title": "",
-                      "url": "/3.png",
+                      "url": "/1792593161024-3.png",
                       "caption": "",
                       "alignment": "center",
                       "widthPercent": 100
@@ -455,7 +515,7 @@ export const initialServices: Service[] = [
                 "type": "media",
                 "mediaType": "image",
                 "title": "",
-                "url": "/2.png",
+                "url": "/1792593147892-2.png",
                 "caption": "",
                 "alignment": "center",
                 "widthPercent": 100
@@ -478,7 +538,7 @@ export const initialServices: Service[] = [
                   "type": "media",
                   "mediaType": "image",
                   "title": "",
-                  "url": "/2.png",
+                  "url": "/1792593147892-2.png",
                   "caption": "",
                   "alignment": "center",
                   "widthPercent": 100
