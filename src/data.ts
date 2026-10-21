@@ -245,117 +245,243 @@ export const initialServices: Service[] = [
             "id": "node_1788446978640_awy8",
             "title": "¿Cómo registrar mi tarjeta?",
             "nodeType": "step",
+            "text": "1. Descarga la aplicación oficial Edenred en tu celular.\n",
             "children": [
               {
                 "id": "node_1788447025718_4lto",
                 "title": "Opción",
                 "nodeType": "step",
+                "text": "2. Selecciona la opción “Regístrate”",
                 "children": [
                   {
                     "id": "node_1788447179506_x8rv",
                     "title": "Opción",
                     "nodeType": "step",
+                    "text": "3. Ingresa tu correo electrónico y crea una contraseña segura\n",
                     "children": [
                       {
                         "id": "node_1788447195454_x0fa",
                         "title": "Opción",
                         "nodeType": "step",
+                        "text": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
                         "children": [
                           {
                             "id": "node_1788447209926_h15m",
                             "title": "Opción",
                             "nodeType": "step",
+                            "text": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
                             "children": [
                               {
                                 "id": "node_1788447230371_g53k",
                                 "title": "Opción",
                                 "nodeType": "step",
+                                "text": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
                                 "children": [],
+                                "blocks": [
+                                  {
+                                    "id": "txt_b_block_node_1788447230371_g53k_1",
+                                    "type": "text",
+                                    "content": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
+                                    "align": "left",
+                                    "style": "normal"
+                                  }
+                                ],
                                 "contentData": {
                                   "text": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
                                   "imageUrl": "",
                                   "videoUrl": "",
-                                  "blocks": [
+                                  "layoutBlocks": [
                                     {
-                                      "id": "block_node_1788447230371_g53k_1",
-                                      "text": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
-                                      "imageUrl": "",
-                                      "videoUrl": ""
+                                      "id": "txt_b_block_node_1788447230371_g53k_1",
+                                      "type": "text",
+                                      "content": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
+                                      "align": "left",
+                                      "style": "normal"
                                     }
                                   ]
                                 }
+                              }
+                            ],
+                            "blocks": [
+                              {
+                                "id": "txt_b_block_node_1788447209926_h15m_1",
+                                "type": "text",
+                                "content": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
+                                "align": "left",
+                                "style": "normal"
                               }
                             ],
                             "contentData": {
                               "text": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
                               "imageUrl": "",
                               "videoUrl": "",
-                              "blocks": [
+                              "layoutBlocks": [
                                 {
-                                  "id": "block_node_1788447209926_h15m_1",
-                                  "text": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
-                                  "imageUrl": "",
-                                  "videoUrl": ""
+                                  "id": "txt_b_block_node_1788447209926_h15m_1",
+                                  "type": "text",
+                                  "content": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
+                                  "align": "left",
+                                  "style": "normal"
                                 }
                               ]
                             }
+                          }
+                        ],
+                        "blocks": [
+                          {
+                            "id": "txt_b_block_node_1788447195454_x0fa_1",
+                            "type": "text",
+                            "content": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
+                            "align": "left",
+                            "style": "normal"
                           }
                         ],
                         "contentData": {
                           "text": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
                           "imageUrl": "",
                           "videoUrl": "",
-                          "blocks": [
+                          "layoutBlocks": [
                             {
-                              "id": "block_node_1788447195454_x0fa_1",
-                              "text": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
-                              "imageUrl": "",
-                              "videoUrl": ""
+                              "id": "txt_b_block_node_1788447195454_x0fa_1",
+                              "type": "text",
+                              "content": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
+                              "align": "left",
+                              "style": "normal"
                             }
                           ]
                         }
+                      }
+                    ],
+                    "blocks": [
+                      {
+                        "id": "txt_b_block_node_1788447179506_x8rv_1",
+                        "type": "text",
+                        "content": "3. Ingresa tu correo electrónico y crea una contraseña segura\n",
+                        "align": "left",
+                        "style": "normal"
+                      },
+                      {
+                        "id": "img_1792590399074_7aj4r",
+                        "type": "media",
+                        "mediaType": "image",
+                        "title": "",
+                        "url": "/4.png",
+                        "caption": "",
+                        "alignment": "center",
+                        "widthPercent": 100
                       }
                     ],
                     "contentData": {
                       "text": "3. Ingresa tu correo electrónico y crea una contraseña segura\n",
                       "imageUrl": "",
                       "videoUrl": "",
-                      "blocks": [
+                      "layoutBlocks": [
                         {
-                          "id": "block_node_1788447179506_x8rv_1",
-                          "text": "3. Ingresa tu correo electrónico y crea una contraseña segura\n",
-                          "imageUrl": "",
-                          "videoUrl": ""
+                          "id": "txt_b_block_node_1788447179506_x8rv_1",
+                          "type": "text",
+                          "content": "3. Ingresa tu correo electrónico y crea una contraseña segura\n",
+                          "align": "left",
+                          "style": "normal"
+                        },
+                        {
+                          "id": "img_1792590399074_7aj4r",
+                          "type": "media",
+                          "mediaType": "image",
+                          "title": "",
+                          "url": "/4.png",
+                          "caption": "",
+                          "alignment": "center",
+                          "widthPercent": 100
                         }
                       ]
                     }
+                  }
+                ],
+                "blocks": [
+                  {
+                    "id": "txt_b_block_node_1788447025718_4lto_1",
+                    "type": "text",
+                    "content": "2. Selecciona la opción “Regístrate”",
+                    "align": "left",
+                    "style": "normal"
+                  },
+                  {
+                    "id": "img_1792590372938_5gv57",
+                    "type": "media",
+                    "mediaType": "image",
+                    "title": "",
+                    "url": "/3.png",
+                    "caption": "",
+                    "alignment": "center",
+                    "widthPercent": 100
                   }
                 ],
                 "contentData": {
                   "text": "2. Selecciona la opción “Regístrate”",
                   "imageUrl": "",
                   "videoUrl": "",
-                  "blocks": [
+                  "layoutBlocks": [
                     {
-                      "id": "block_node_1788447025718_4lto_1",
-                      "text": "2. Selecciona la opción “Regístrate”",
-                      "imageUrl": "",
-                      "videoUrl": ""
+                      "id": "txt_b_block_node_1788447025718_4lto_1",
+                      "type": "text",
+                      "content": "2. Selecciona la opción “Regístrate”",
+                      "align": "left",
+                      "style": "normal"
+                    },
+                    {
+                      "id": "img_1792590372938_5gv57",
+                      "type": "media",
+                      "mediaType": "image",
+                      "title": "",
+                      "url": "/3.png",
+                      "caption": "",
+                      "alignment": "center",
+                      "widthPercent": 100
                     }
                   ]
                 }
+              }
+            ],
+            "blocks": [
+              {
+                "id": "txt_b_block_node_1788446978640_awy8_1",
+                "type": "text",
+                "content": "1. Descarga la aplicación oficial Edenred en tu celular.\n",
+                "align": "left",
+                "style": "normal"
+              },
+              {
+                "id": "img_1792590339173_c8ej0",
+                "type": "media",
+                "mediaType": "image",
+                "title": "",
+                "url": "/2.png",
+                "caption": "",
+                "alignment": "center",
+                "widthPercent": 100
               }
             ],
             "contentData": {
               "text": "1. Descarga la aplicación oficial Edenred en tu celular.\n",
               "imageUrl": "",
               "videoUrl": "",
-              "blocks": [
+              "layoutBlocks": [
                 {
-                  "id": "block_node_1788446978640_awy8_1",
-                  "text": "1. Descarga la aplicación oficial Edenred en tu celular.\n",
-                  "imageUrl": "",
-                  "videoUrl": ""
+                  "id": "txt_b_block_node_1788446978640_awy8_1",
+                  "type": "text",
+                  "content": "1. Descarga la aplicación oficial Edenred en tu celular.\n",
+                  "align": "left",
+                  "style": "normal"
+                },
+                {
+                  "id": "img_1792590339173_c8ej0",
+                  "type": "media",
+                  "mediaType": "image",
+                  "title": "",
+                  "url": "/2.png",
+                  "caption": "",
+                  "alignment": "center",
+                  "widthPercent": 100
                 }
               ]
             }
@@ -384,21 +510,37 @@ export const initialServices: Service[] = [
             "id": "node_1788456194021_kelg",
             "title": "Necesito una reposición",
             "nodeType": "content",
+            "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposición por un costo de $49 MXN.\n\n",
+            "blocks": [
+              {
+                "id": "txt_b_block_node_1788456194021_kelg_1",
+                "type": "text",
+                "content": "¿Necesitas reponer tu tarjeta de vales de despensa?\n\nSolicita tu reposición por un costo de $49 MXN.\n\n Acude al Módulo de Servicio al Personal para realizar el trámite.\n",
+                "align": "left",
+                "style": "normal"
+              }
+            ],
             "contentData": {
               "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposición por un costo de $49 MXN.\n\n",
               "imageUrl": "",
               "videoUrl": "",
-              "blocks": [
+              "layoutBlocks": [
                 {
-                  "id": "block_node_1788456194021_kelg_1",
-                  "text": "¿Necesitas reponer tu tarjeta de vales de despensa?\n\nSolicita tu reposición por un costo de $49 MXN.\n\n Acude al Módulo de Servicio al Personal para realizar el trámite.\n",
-                  "imageUrl": "",
-                  "videoUrl": ""
+                  "id": "txt_b_block_node_1788456194021_kelg_1",
+                  "type": "text",
+                  "content": "¿Necesitas reponer tu tarjeta de vales de despensa?\n\nSolicita tu reposición por un costo de $49 MXN.\n\n Acude al Módulo de Servicio al Personal para realizar el trámite.\n",
+                  "align": "left",
+                  "style": "normal"
                 }
               ]
             }
           }
-        ]
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": ""
+        }
       },
       {
         "id": "node_1788446917593_gy9a",
@@ -466,7 +608,12 @@ export const initialServices: Service[] = [
               ]
             }
           }
-        ]
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": ""
+        }
       }
     ],
     "location": "",
