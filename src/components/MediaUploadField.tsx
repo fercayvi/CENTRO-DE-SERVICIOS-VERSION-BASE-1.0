@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { 
   Trash2, Image as ImageIcon, 
   Video, FileDown, FileCheck, Check 
@@ -47,6 +47,8 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadMessage, setUploadMessage] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleClear = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -74,11 +76,34 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
             id={`${idPrefix}-${type}-file-input`}
             type="file"
             accept={getAcceptType()}
-            onChange={(e) => {
+            disabled={isUploading}
+            onChange={async (e) => {
               const file = e.target.files?.[0];
-              if (file) {
-                // Atrapa el nombre real y le pone la diagonal
-                onChange(`/${file.name}`);
+              if (!file) return;
+
+              setUploadMessage('');
+              setIsUploading(true);
+              try {
+                const response = await fetch('/__admin/upload-media', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/octet-stream',
+                    'X-File-Name': encodeURIComponent(file.name),
+                    'X-File-Type': type,
+                  },
+                  body: file,
+                });
+                const result = await response.json() as { success?: boolean; path?: string; error?: string };
+                if (!response.ok || !result.success || !result.path) {
+                  throw new Error(result.error || 'No se pudo guardar el archivo en public/.');
+                }
+                onChange(result.path);
+                setUploadMessage('Archivo guardado en public/. Recuerda sincronizar y subir los cambios del repositorio.');
+              } catch (error) {
+                setUploadMessage(error instanceof Error ? error.message : 'Error al cargar el archivo.');
+                if (fileInputRef.current) fileInputRef.current.value = '';
+              } finally {
+                setIsUploading(false);
               }
             }}
             className="w-full text-xs sm:text-sm font-medium text-slate-500 cursor-pointer 
@@ -89,7 +114,7 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
         </div>
         {!hasValue && (
           <p className="text-[10px] text-slate-500 mt-1 ml-1">
-            Selecciona el archivo para completar su ruta; después cópialo manualmente a public/ o pega una URL pública.
+            Selecciona el archivo para guardarlo automáticamente en public/ o pega una URL pública.
           </p>
         )}
       </div>
@@ -107,7 +132,7 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
           className="w-full px-3 py-2.5 border border-slate-300 rounded-xl bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
         />
         <p className="text-[10px] text-amber-800 bg-amber-50 border border-amber-200/80 rounded-lg p-2 leading-relaxed">
-          Importante: elegir un archivo solo registra su nombre y ruta; no lo sube ni lo copia. Si utilizas una ruta como <code>/archivo.ext</code>, copia el archivo manualmente a la carpeta <code>public/</code> de la aplicación y conserva el mismo nombre. También puedes pegar una URL pública completa.
+          Los archivos seleccionados se guardan en <code>public/</code> cuando el servidor de desarrollo de Codespaces está activo. También puedes pegar una URL pública completa.
         </p>
       </div>
 
@@ -181,6 +206,9 @@ export const MediaUploadField: React.FC<MediaUploadFieldProps> = ({
           />
         </div>
       )}
+
+      {isUploading && <p className="text-xs text-blue-700 font-medium">Guardando archivo en public/…</p>}
+      {uploadMessage && <p role="status" className={`text-xs font-medium ${uploadMessage.startsWith('Archivo guardado') ? 'text-emerald-700' : 'text-red-700'}`}>{uploadMessage}</p>}
 
       {/* Texto de ayuda */}
       {helperText && (
