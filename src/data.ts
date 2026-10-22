@@ -550,20 +550,178 @@ export const initialServices: Service[] = [
             "id": "node_1788447363434_2vxs",
             "title": "¿Dónde puedo utilizarla?",
             "nodeType": "content",
+            "blocks": [
+              {
+                "id": "txt_1792706388232_k52tm",
+                "type": "text",
+                "title": "",
+                "content": "<p>Edenred cuenta con una amplia red de establecimientos afiliados en México, incluyendo:<b><br></b></p>",
+                "align": "left",
+                "style": "normal"
+              },
+              {
+                "id": "img_1792706335045_l8iyb",
+                "type": "media",
+                "mediaType": "image",
+                "title": "",
+                "url": "/1792706364553-Captura-de-pantalla-2026-10-22-155615.png",
+                "caption": "",
+                "alignment": "center",
+                "widthPercent": 100
+              },
+              {
+                "id": "alt_1792706411428_6qs0v",
+                "type": "alert",
+                "level": "warning",
+                "title": "Aviso Importante",
+                "message": " La aceptación de la tarjeta puede variar según el establecimiento y la terminal disponible. Si un establecimiento no cuenta con terminal Edenred o la tarjeta no es aceptada, puedes intentar realizar tu compra en otra sucursal o establecimiento afiliado.\n"
+              }
+            ],
             "contentData": {
               "text": "",
               "imageUrl": "",
-              "videoUrl": ""
+              "videoUrl": "",
+              "layoutBlocks": [
+                {
+                  "id": "txt_1792706388232_k52tm",
+                  "type": "text",
+                  "title": "",
+                  "content": "<p>Edenred cuenta con una amplia red de establecimientos afiliados en México, incluyendo:<b><br></b></p>",
+                  "align": "left",
+                  "style": "normal"
+                },
+                {
+                  "id": "img_1792706335045_l8iyb",
+                  "type": "media",
+                  "mediaType": "image",
+                  "title": "",
+                  "url": "/1792706364553-Captura-de-pantalla-2026-10-22-155615.png",
+                  "caption": "",
+                  "alignment": "center",
+                  "widthPercent": 100
+                },
+                {
+                  "id": "alt_1792706411428_6qs0v",
+                  "type": "alert",
+                  "level": "warning",
+                  "title": "Aviso Importante",
+                  "message": " La aceptación de la tarjeta puede variar según el establecimiento y la terminal disponible. Si un establecimiento no cuenta con terminal Edenred o la tarjeta no es aceptada, puedes intentar realizar tu compra en otra sucursal o establecimiento afiliado.\n"
+                }
+              ]
             }
           },
           {
             "id": "node_1788456110529_r8d1",
             "title": "¿Cómo puedo obtenerlo?   ",
             "nodeType": "content",
+            "blocks": [
+              {
+                "id": "txt_1792707521425_jmq1l",
+                "type": "text",
+                "title": "¿Cómo ser acreedor al Vale de Despensa mensual?",
+                "content": "<p>El monto del beneficio dependerá de las faltas registradas durante el periodo correspondiente:<b><br></b></p>",
+                "align": "left",
+                "style": "normal"
+              },
+              {
+                "id": "cols_1792707552249_i2abt",
+                "type": "columns",
+                "columnsCount": 2,
+                "layout": "equal",
+                "backgroundColor": "white",
+                "columns": [
+                  {
+                    "id": "col_1_1792707552249_9oxil",
+                    "blocks": [
+                      {
+                        "id": "txt_1792707557194_83d94",
+                        "type": "text",
+                        "title": "",
+                        "content": "<p><b>Faltas durante el periodo</b></p><p>Sin faltas</p><p>1 falta</p><p>2 o más faltas<b><br></b></p>",
+                        "align": "center",
+                        "style": "normal"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "col_2_1792707552249_g7v3f",
+                    "blocks": [
+                      {
+                        "id": "txt_1792707558500_u58e1",
+                        "type": "text",
+                        "title": "",
+                        "content": "<p><b>Vale de despensa</b></p><p>$800</p><p>$600</p><p> No eres acreedor al beneficio<b><br></b></p>",
+                        "align": "center",
+                        "style": "normal"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "alt_1792707690957_pyeim",
+                "type": "alert",
+                "level": "warning",
+                "title": "Aviso Importante",
+                "message": "Si tienes alguna duda o consideras que existe un error en tus faltas, acude al Módulo de Atención, ubicado a un costado de la Ropería.\n\nRecuerda aclarar cualquier incidencia con tu supervisor inmediato y mantenerte al pendiente de tus registros durante el periodo correspondiente.\n"
+              }
+            ],
             "contentData": {
               "text": "",
               "imageUrl": "",
-              "videoUrl": ""
+              "videoUrl": "",
+              "layoutBlocks": [
+                {
+                  "id": "txt_1792707521425_jmq1l",
+                  "type": "text",
+                  "title": "¿Cómo ser acreedor al Vale de Despensa mensual?",
+                  "content": "<p>El monto del beneficio dependerá de las faltas registradas durante el periodo correspondiente:<b><br></b></p>",
+                  "align": "left",
+                  "style": "normal"
+                },
+                {
+                  "id": "cols_1792707552249_i2abt",
+                  "type": "columns",
+                  "columnsCount": 2,
+                  "layout": "equal",
+                  "backgroundColor": "white",
+                  "columns": [
+                    {
+                      "id": "col_1_1792707552249_9oxil",
+                      "blocks": [
+                        {
+                          "id": "txt_1792707557194_83d94",
+                          "type": "text",
+                          "title": "",
+                          "content": "<p><b>Faltas durante el periodo</b></p><p>Sin faltas</p><p>1 falta</p><p>2 o más faltas<b><br></b></p>",
+                          "align": "center",
+                          "style": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "col_2_1792707552249_g7v3f",
+                      "blocks": [
+                        {
+                          "id": "txt_1792707558500_u58e1",
+                          "type": "text",
+                          "title": "",
+                          "content": "<p><b>Vale de despensa</b></p><p>$800</p><p>$600</p><p> No eres acreedor al beneficio<b><br></b></p>",
+                          "align": "center",
+                          "style": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "alt_1792707690957_pyeim",
+                  "type": "alert",
+                  "level": "warning",
+                  "title": "Aviso Importante",
+                  "message": "Si tienes alguna duda o consideras que existe un error en tus faltas, acude al Módulo de Atención, ubicado a un costado de la Ropería.\n\nRecuerda aclarar cualquier incidencia con tu supervisor inmediato y mantenerte al pendiente de tus registros durante el periodo correspondiente.\n"
+                }
+              ]
             }
           },
           {
@@ -575,9 +733,10 @@ export const initialServices: Service[] = [
               {
                 "id": "txt_b_block_node_1788456194021_kelg_1",
                 "type": "text",
-                "content": "¿Necesitas reponer tu tarjeta de vales de despensa?\n\nSolicita tu reposición por un costo de $49 MXN.\n\n Acude al Módulo de Servicio al Personal para realizar el trámite.\n",
+                "content": "Solicita tu reposición por un<b> costo de $49 MXN</b>.<p><br></p><p>Acude al <b>Módulo de Servicio al Personal  </b>ubicado a un lado de ropería para realizar el trámite.</p><p><br></p><p></p><p><b>Horario de atención: </b>Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm - Sábados: 9:30 am a 12:30 pm</p><p></p><p></p><p></p>",
                 "align": "left",
-                "style": "normal"
+                "style": "normal",
+                "title": "¿Necesitas reponer tu tarjeta de vales de despensa?"
               }
             ],
             "contentData": {
@@ -588,9 +747,10 @@ export const initialServices: Service[] = [
                 {
                   "id": "txt_b_block_node_1788456194021_kelg_1",
                   "type": "text",
-                  "content": "¿Necesitas reponer tu tarjeta de vales de despensa?\n\nSolicita tu reposición por un costo de $49 MXN.\n\n Acude al Módulo de Servicio al Personal para realizar el trámite.\n",
+                  "content": "Solicita tu reposición por un<b> costo de $49 MXN</b>.<p><br></p><p>Acude al <b>Módulo de Servicio al Personal  </b>ubicado a un lado de ropería para realizar el trámite.</p><p><br></p><p></p><p><b>Horario de atención: </b>Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm - Sábados: 9:30 am a 12:30 pm</p><p></p><p></p><p></p>",
                   "align": "left",
-                  "style": "normal"
+                  "style": "normal",
+                  "title": "¿Necesitas reponer tu tarjeta de vales de despensa?"
                 }
               ]
             }
@@ -608,64 +768,46 @@ export const initialServices: Service[] = [
         "nodeType": "category",
         "children": [
           {
-            "id": "node_1788469413817_14yd",
-            "title": "Nueva Opción",
+            "id": "node_1792708530841_9ioz",
+            "title": "¿Cómo registrar tu tarjeta Banorte?",
             "nodeType": "content",
             "contentData": {
               "text": "",
               "imageUrl": "",
-              "videoUrl": "",
-              "blocks": [
-                {
-                  "id": "block_node_1788469413817_14yd_1",
-                  "text": "",
-                  "imageUrl": "",
-                  "videoUrl": ""
-                }
-              ]
+              "videoUrl": ""
             }
           },
           {
-            "id": "node_1788469449919_fart",
-            "title": "Nueva Opción",
-            "nodeType": "step",
-            "children": [
-              {
-                "id": "node_1788469469377_jted",
-                "title": "Siguiente",
-                "nodeType": "step",
-                "children": [],
-                "contentData": {
-                  "text": "",
-                  "imageUrl": "",
-                  "videoUrl": ""
-                }
-              }
-            ],
+            "id": "node_1792708536656_31fw",
+            "title": "¿Cómo activar tu tarjeta Banorte?",
+            "nodeType": "category",
+            "children": [],
             "contentData": {
               "text": "",
               "imageUrl": "",
-              "videoUrl": "",
-              "blocks": [
-                {
-                  "id": "block_node_1788469449919_fart_1",
-                  "text": "",
-                  "imageUrl": "",
-                  "videoUrl": ""
-                },
-                {
-                  "id": "block_1788469464004_rx19",
-                  "text": "",
-                  "imageUrl": "",
-                  "videoUrl": ""
-                },
-                {
-                  "id": "block_1788469466303_xvwu",
-                  "text": "",
-                  "imageUrl": "",
-                  "videoUrl": ""
-                }
-              ]
+              "videoUrl": ""
+            }
+          },
+          {
+            "id": "node_1792708543192_5l3p",
+            "title": "¿Cómo descargar Banorte Móvil?",
+            "nodeType": "category",
+            "children": [],
+            "contentData": {
+              "text": "",
+              "imageUrl": "",
+              "videoUrl": ""
+            }
+          },
+          {
+            "id": "node_1792708603174_a2lj",
+            "title": "¿Tienes una nueva tarjeta Banorte?",
+            "nodeType": "category",
+            "children": [],
+            "contentData": {
+              "text": "",
+              "imageUrl": "",
+              "videoUrl": ""
             }
           }
         ],
@@ -753,7 +895,7 @@ export const initialServices: Service[] = [
   },
   {
     "id": "incapacidades",
-    "title": "Incapacidades IMSS",
+    "title": "IMSS",
     "iconName": "Stethoscope",
     "icon": "Stethoscope",
     "shortDesc": "Tipos de incapacidad, documentación requerida del IMSS y proceso para reportarla.",
@@ -766,37 +908,7 @@ export const initialServices: Service[] = [
     "videoUrl": "",
     "pdfUrl": "",
     "pdfTitle": "",
-    "decisionTree": [
-      {
-        "id": "node_incap_tipo",
-        "title": "¿Qué tipo de incapacidad te otorgó el médico?",
-        "nodeType": "category",
-        "children": [
-          {
-            "id": "node_enf_gen",
-            "title": "Enfermedad General",
-            "nodeType": "category",
-            "children": []
-          },
-          {
-            "id": "node_riesgo_trabajo",
-            "title": "Accidente de Trabajo / Trayecto",
-            "nodeType": "category",
-            "children": []
-          },
-          {
-            "id": "node_maternidad",
-            "title": "Maternidad (Prenatal / Postnatal)",
-            "nodeType": "content",
-            "contentData": {
-              "text": "La incapacidad por Maternidad abarca 84 días naturales (42 días prenatal y 42 días postnatal) y se subsidia al 100% de tu salario registrado por el IMSS.\n\n• Acude a tu UMF entre las semanas 34 y 37 de gestación para la expedición de tu Certificado Único de Maternidad.\n• Entrega en RH la copia patronal inmediatamente tras recibirla para programar tu periodo de descanso.",
-              "imageUrl": "",
-              "videoUrl": ""
-            }
-          }
-        ]
-      }
-    ],
+    "decisionTree": [],
     "tags": [
       "incapacidad",
       "imss",
@@ -854,7 +966,15 @@ export const initialServices: Service[] = [
             "id": "txt_1792691012666_qfmod",
             "type": "text",
             "title": "¿El reloj checador no reconoce tu huella en tu área de trabajo o en el comedor?",
-            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li> <b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><p></p><p><br></p><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><br><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "txt_1792701792477_twhnr",
+            "type": "text",
+            "title": "Horario de atención:",
+            "content": "Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm\nSábados: 9:30 am a 12:30 pm\n",
             "align": "left",
             "style": "normal"
           },
@@ -875,7 +995,15 @@ export const initialServices: Service[] = [
               "id": "txt_1792691012666_qfmod",
               "type": "text",
               "title": "¿El reloj checador no reconoce tu huella en tu área de trabajo o en el comedor?",
-              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li> <b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><p></p><p><br></p><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><br><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "txt_1792701792477_twhnr",
+              "type": "text",
+              "title": "Horario de atención:",
+              "content": "Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm\nSábados: 9:30 am a 12:30 pm\n",
               "align": "left",
               "style": "normal"
             },
@@ -898,7 +1026,7 @@ export const initialServices: Service[] = [
             "id": "txt_1792694613901_lk8y2",
             "type": "text",
             "title": "¿El reloj checador está apagado, muestra un error o no responde cuando intentas registrar tu asistencia?",
-            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</p><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
             "align": "left",
             "style": "normal"
           },
@@ -919,7 +1047,7 @@ export const initialServices: Service[] = [
               "id": "txt_1792694613901_lk8y2",
               "type": "text",
               "title": "¿El reloj checador está apagado, muestra un error o no responde cuando intentas registrar tu asistencia?",
-              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</p><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
               "align": "left",
               "style": "normal"
             },
@@ -942,7 +1070,7 @@ export const initialServices: Service[] = [
             "id": "txt_1792694677433_qlrhj",
             "type": "text",
             "title": "¿Registraste tu entrada o salida en el reloj checador, pero no aparece en tu registro de asistencia?",
-            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</p><p><br></p><p></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
             "align": "left",
             "style": "normal"
           },
@@ -963,7 +1091,7 @@ export const initialServices: Service[] = [
               "id": "txt_1792694677433_qlrhj",
               "type": "text",
               "title": "¿Registraste tu entrada o salida en el reloj checador, pero no aparece en tu registro de asistencia?",
-              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</p><p><br></p><p></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
               "align": "left",
               "style": "normal"
             },
