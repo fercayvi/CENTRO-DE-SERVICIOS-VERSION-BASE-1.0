@@ -1,7 +1,7 @@
 import { ServiceId, Service, FAQ, NewsItem, Aviso, MonthlyRecognition, ContactInfo, CategoryConfig, SiteSettings } from './types';
 
 export const siteSettings: SiteSettings = {
-  "defaultHomeView": "categories"
+  "defaultHomeView": "all_services"
 };
 
 export const defaultCategories: CategoryConfig[] = [
@@ -823,7 +823,7 @@ export const initialServices: Service[] = [
     "icon": "Fingerprint",
     "shortDesc": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",
     "category": "Asistencia y Vacaciones",
-    "fullDescription": "",
+    "fullDescription": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",
     "steps": [],
     "requirements": [],
     "faqs": [],
@@ -843,7 +843,147 @@ export const initialServices: Service[] = [
       "incidencia",
       "marcas",
       "horario"
-    ]
+    ],
+    "decisionTree": [
+      {
+        "id": "node_root_1",
+        "title": "Mi huella no registra",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1792691012666_qfmod",
+            "type": "text",
+            "title": "¿El reloj checador no reconoce tu huella en tu área de trabajo o en el comedor?",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li> <b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><p></p><p><br></p><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1792691224731_yykrh",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Reporta el problema lo antes posible. Una falla en el registro de tu huella puede generar incidencias en tu asistencia y, según el caso, afectar tu pago."
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1792691012666_qfmod",
+              "type": "text",
+              "title": "¿El reloj checador no reconoce tu huella en tu área de trabajo o en el comedor?",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li> <b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><p></p><p><br></p><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1792691224731_yykrh",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Reporta el problema lo antes posible. Una falla en el registro de tu huella puede generar incidencias en tu asistencia y, según el caso, afectar tu pago."
+            }
+          ]
+        }
+      },
+      {
+        "id": "node_1792690440155_7pl0",
+        "title": "El reloj checador no funciona",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1792694613901_lk8y2",
+            "type": "text",
+            "title": "¿El reloj checador está apagado, muestra un error o no responde cuando intentas registrar tu asistencia?",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1792694643381_fw0zn",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Si no puedes registrar tu asistencia debido a una falla del equipo, repórtala lo antes posible para que puedan revisar tu situación y evitar posibles incidencias en tu registro."
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1792694613901_lk8y2",
+              "type": "text",
+              "title": "¿El reloj checador está apagado, muestra un error o no responde cuando intentas registrar tu asistencia?",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1792694643381_fw0zn",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Si no puedes registrar tu asistencia debido a una falla del equipo, repórtala lo antes posible para que puedan revisar tu situación y evitar posibles incidencias en tu registro."
+            }
+          ]
+        }
+      },
+      {
+        "id": "node_1792690460204_uge1",
+        "title": "Mi marcación no aparece",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1792694677433_qlrhj",
+            "type": "text",
+            "title": "¿Registraste tu entrada o salida en el reloj checador, pero no aparece en tu registro de asistencia?",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1792694720717_ohtc3",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Reporta la marcación faltante lo antes posible para que puedan revisar tu caso y determinar si existe una incidencia en tu asistencia."
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1792694677433_qlrhj",
+              "type": "text",
+              "title": "¿Registraste tu entrada o salida en el reloj checador, pero no aparece en tu registro de asistencia?",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</li></ul><p></p><p><br></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1792694720717_ohtc3",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Reporta la marcación faltante lo antes posible para que puedan revisar tu caso y determinar si existe una incidencia en tu asistencia."
+            }
+          ]
+        }
+      }
+    ],
+    "location": "",
+    "schedule": "",
+    "contact": "",
+    "attachments": [],
+    "alertNotice": "",
+    "layoutBlocks": []
   }
 ];
 
