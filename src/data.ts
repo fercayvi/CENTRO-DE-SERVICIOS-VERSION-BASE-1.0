@@ -769,23 +769,64 @@ export const initialServices: Service[] = [
         "children": [
           {
             "id": "node_1792708530841_9ioz",
-            "title": "¿Cómo registrar tu tarjeta Banorte?",
+            "title": "¿Cómo recoger y activar tu tarjeta Banorte?",
             "nodeType": "content",
+            "blocks": [
+              {
+                "id": "txt_1792775722444_5cx6j",
+                "type": "text",
+                "title": "¿Dónde recogerla?",
+                "content": "Recógela en el<b> Módulo de Servicio al Personal,</b> ubicado entre Talento<br>y Cultura y Ropería.",
+                "align": "left",
+                "style": "normal"
+              },
+              {
+                "id": "txt_1792775819826_w8w9n",
+                "type": "text",
+                "title": "Horarios de atención: ",
+                "content": "<p>Jueves y/o Viernes </p><p>6:30 a.m.– 7:30 a.m. </p><p>9:00 a.m.– 12:00 p.m.</p><p></p><p></p>",
+                "align": "center",
+                "style": "normal"
+              },
+              {
+                "id": "txt_1792776142823_5skk7",
+                "type": "text",
+                "title": "¿Cómo puedes activarla?",
+                "content": "¡Activa tu tarjeta en unos sencillos pasos!<p><br></p><p></p><ol><li>Inserta tu tarjeta en cualquier cajero automático.</li><li>Ingresa el NIP que aparece en el desprendible de la tarjeta.</li><li>El cajero automático te solicitará cambiar el NIP por uno</li><li>nuevo que solo tú conozcas.</li></ol><p></p>",
+                "align": "left",
+                "style": "normal"
+              }
+            ],
             "contentData": {
               "text": "",
               "imageUrl": "",
-              "videoUrl": ""
-            }
-          },
-          {
-            "id": "node_1792708536656_31fw",
-            "title": "¿Cómo activar tu tarjeta Banorte?",
-            "nodeType": "category",
-            "children": [],
-            "contentData": {
-              "text": "",
-              "imageUrl": "",
-              "videoUrl": ""
+              "videoUrl": "",
+              "layoutBlocks": [
+                {
+                  "id": "txt_1792775722444_5cx6j",
+                  "type": "text",
+                  "title": "¿Dónde recogerla?",
+                  "content": "Recógela en el<b> Módulo de Servicio al Personal,</b> ubicado entre Talento<br>y Cultura y Ropería.",
+                  "align": "left",
+                  "style": "normal"
+                },
+                {
+                  "id": "txt_1792775819826_w8w9n",
+                  "type": "text",
+                  "title": "Horarios de atención: ",
+                  "content": "<p>Jueves y/o Viernes </p><p>6:30 a.m.– 7:30 a.m. </p><p>9:00 a.m.– 12:00 p.m.</p><p></p><p></p>",
+                  "align": "center",
+                  "style": "normal"
+                },
+                {
+                  "id": "txt_1792776142823_5skk7",
+                  "type": "text",
+                  "title": "¿Cómo puedes activarla?",
+                  "content": "¡Activa tu tarjeta en unos sencillos pasos!<p><br></p><p></p><ol><li>Inserta tu tarjeta en cualquier cajero automático.</li><li>Ingresa el NIP que aparece en el desprendible de la tarjeta.</li><li>El cajero automático te solicitará cambiar el NIP por uno</li><li>nuevo que solo tú conozcas.</li></ol><p></p>",
+                  "align": "left",
+                  "style": "normal"
+                }
+              ]
             }
           },
           {
