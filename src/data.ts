@@ -954,10 +954,34 @@ export const initialServices: Service[] = [
         "id": "node_root_1",
         "title": " ¿Cómo dar de alta a tus beneficiarios en tu clínica del IMSS?",
         "nodeType": "content",
+        "blocks": [
+          {
+            "id": "img_1793053898722_j7ehu",
+            "type": "media",
+            "mediaType": "image",
+            "title": "",
+            "url": "/1793053977399-Captura-de-pantalla-2026-10-23-112642.png",
+            "caption": "",
+            "alignment": "center",
+            "widthPercent": 100
+          }
+        ],
         "contentData": {
           "text": "",
           "imageUrl": "",
-          "videoUrl": ""
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "img_1793053898722_j7ehu",
+              "type": "media",
+              "mediaType": "image",
+              "title": "",
+              "url": "/1793053977399-Captura-de-pantalla-2026-10-23-112642.png",
+              "caption": "",
+              "alignment": "center",
+              "widthPercent": 100
+            }
+          ]
         }
       },
       {
@@ -997,7 +1021,8 @@ export const initialServices: Service[] = [
     "icon": "Fingerprint",
     "shortDesc": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",
     "category": "Asistencia y Vacaciones",
-    "fullDescription": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",    "steps": [],
+    "fullDescription": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",
+    "steps": [],
     "requirements": [],
     "faqs": [],
     "imageUrl": "",
