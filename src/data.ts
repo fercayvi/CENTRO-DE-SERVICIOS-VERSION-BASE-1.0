@@ -962,7 +962,8 @@ export const initialServices: Service[] = [
     "contact": "",
     "attachments": [],
     "alertNotice": "",
-    "layoutBlocks": []
+    "layoutBlocks": [],
+    "hidden": true
   },
   {
     "id": "reloj_checador",
