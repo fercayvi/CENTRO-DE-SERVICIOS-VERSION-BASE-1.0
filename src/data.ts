@@ -949,7 +949,28 @@ export const initialServices: Service[] = [
     "videoUrl": "",
     "pdfUrl": "",
     "pdfTitle": "",
-    "decisionTree": [],
+    "decisionTree": [
+      {
+        "id": "node_root_1",
+        "title": " ¿Cómo dar de alta a tus beneficiarios en tu clínica del IMSS?",
+        "nodeType": "content",
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": ""
+        }
+      },
+      {
+        "id": "node_1793046417290_f4yq",
+        "title": "Incapacidades",
+        "nodeType": "content",
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": ""
+        }
+      }
+    ],
     "tags": [
       "incapacidad",
       "imss",
@@ -976,8 +997,7 @@ export const initialServices: Service[] = [
     "icon": "Fingerprint",
     "shortDesc": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",
     "category": "Asistencia y Vacaciones",
-    "fullDescription": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",
-    "steps": [],
+    "fullDescription": "Guía de uso de lectores en planta, política sobre omisión de marcas y aclaraciones de asistencia.",    "steps": [],
     "requirements": [],
     "faqs": [],
     "imageUrl": "",
