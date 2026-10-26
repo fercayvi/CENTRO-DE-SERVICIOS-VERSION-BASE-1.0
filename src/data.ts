@@ -112,32 +112,6 @@ export const initialServices: Service[] = [
     "decisionTree": [],
     "layoutBlocks": [
       {
-        "id": "txt_1792531438135_98a3g",
-        "type": "text",
-        "title": "ESTA ES UNA PRUEBA DE CONTENIDO ESPERO QUE SALGA BIEN",
-        "content": "",
-        "align": "left",
-        "style": "normal"
-      },
-      {
-        "id": "img_1789053857295_o2bxo",
-        "type": "media",
-        "mediaType": "image",
-        "title": "",
-        "url": "/Topper-Vacaciones.jpg",
-        "caption": "",
-        "alignment": "center",
-        "size": "full"
-      },
-      {
-        "id": "txt_1789053883043_p4q17",
-        "type": "text",
-        "title": "",
-        "content": "Conforme a la Ley Federal de Trabajo Vigente el esquema de vacaciones se realiza de la siguiente manera:\n\n<b>Los trabajadores que tengan más de un año de servicios disfrutarán de un período anual de vacaciones pagadas, que en ningún caso podrá ser inferior a 6 días laborables, y que aumentará en 2 días laborables, hasta llegar a 12, por cada año subsecuente de servicios.\n</b>\nDespués del cuarto año, el periodo de vacaciones se aumentará en 2 días por cada 5 años de servicio.\n&nbsp;&nbsp;\nPara solicitar tus vacaciones, descarga el documento que está en la sección de Herramientas y Sitios de interés, llénalo y entrégalo a Talento y Cultura.\n&nbsp;\nRecuerda que tus vacaciones tienen una vigencia de<b> 18 meses&nbsp; a partir de su liberación. </b>En dado caso que no las utilices estas serán redimidas.",
-        "align": "left",
-        "style": "normal"
-      },
-      {
         "id": "btn_1790096656856_vqz6h",
         "type": "button",
         "label": "Solicita o consulta tus días de vacaciones",
@@ -954,34 +928,10 @@ export const initialServices: Service[] = [
         "id": "node_root_1",
         "title": " ¿Cómo dar de alta a tus beneficiarios en tu clínica del IMSS?",
         "nodeType": "content",
-        "blocks": [
-          {
-            "id": "img_1793053898722_j7ehu",
-            "type": "media",
-            "mediaType": "image",
-            "title": "",
-            "url": "/1793053977399-Captura-de-pantalla-2026-10-23-112642.png",
-            "caption": "",
-            "alignment": "center",
-            "widthPercent": 100
-          }
-        ],
         "contentData": {
           "text": "",
           "imageUrl": "",
-          "videoUrl": "",
-          "layoutBlocks": [
-            {
-              "id": "img_1793053898722_j7ehu",
-              "type": "media",
-              "mediaType": "image",
-              "title": "",
-              "url": "/1793053977399-Captura-de-pantalla-2026-10-23-112642.png",
-              "caption": "",
-              "alignment": "center",
-              "widthPercent": 100
-            }
-          ]
+          "videoUrl": ""
         }
       },
       {
