@@ -882,12 +882,12 @@ export const initialServices: Service[] = [
   },
   {
     "id": "infonavit",
-    "title": "Infonavit",
+    "title": "INFONAVIT",
     "iconName": "Home",
     "icon": "Home",
     "shortDesc": "Información de descuentos, retención de crédito y preguntas frecuentes.",
     "category": "Tarjetas y Créditos",
-    "fullDescription": "",
+    "fullDescription": "Información de descuentos, retención de crédito y preguntas frecuentes.",
     "steps": [],
     "requirements": [],
     "faqs": [],
@@ -906,7 +906,589 @@ export const initialServices: Service[] = [
       "hipotecario",
       "constancia"
     ],
-    "hidden": true
+    "hidden": false,
+    "decisionTree": [
+      {
+        "id": "node_root_1",
+        "title": "¿Cómo crear mi cuenta Infonavit?",
+        "nodeType": "step",
+        "children": [
+          {
+            "id": "node_1793125750898_t6xp",
+            "title": "Iniciar registro",
+            "nodeType": "step",
+            "children": [
+              {
+                "id": "node_1793125755944_0j42",
+                "title": "Ingresar datos personales",
+                "nodeType": "step",
+                "children": [
+                  {
+                    "id": "node_1793125756454_ehur",
+                    "title": "Verificar tu nombre",
+                    "nodeType": "step",
+                    "children": [
+                      {
+                        "id": "node_1793125757098_w2q0",
+                        "title": "Añadir datos de contacto",
+                        "nodeType": "step",
+                        "children": [
+                          {
+                            "id": "node_1793125757621_hrfl",
+                            "title": "Aceptar condiciones legales",
+                            "nodeType": "step",
+                            "children": [
+                              {
+                                "id": "node_1793125758124_ja0w",
+                                "title": "Crear contraseña",
+                                "nodeType": "step",
+                                "children": [
+                                  {
+                                    "id": "node_1793125758565_xpet",
+                                    "title": "Activar la cuenta",
+                                    "nodeType": "step",
+                                    "children": [
+                                      {
+                                        "id": "node_1793125758900_nbpm",
+                                        "title": "Finalizar",
+                                        "nodeType": "step",
+                                        "children": [],
+                                        "blocks": [
+                                          {
+                                            "id": "txt_1793126896541_xfid7",
+                                            "type": "text",
+                                            "title": "",
+                                            "content": "<b>Confirma la activación y haz clic en el botón Finalizar para acceder a tu cuenta.</b>",
+                                            "align": "left",
+                                            "style": "normal"
+                                          },
+                                          {
+                                            "id": "img_1793126902791_0y79g",
+                                            "type": "media",
+                                            "mediaType": "image",
+                                            "title": "",
+                                            "url": "/1793126907283-Captura-de-pantalla-2026-10-27-121502.png",
+                                            "caption": "",
+                                            "alignment": "center",
+                                            "widthPercent": 100
+                                          }
+                                        ],
+                                        "contentData": {
+                                          "text": "",
+                                          "imageUrl": "",
+                                          "videoUrl": "",
+                                          "layoutBlocks": [
+                                            {
+                                              "id": "txt_1793126896541_xfid7",
+                                              "type": "text",
+                                              "title": "",
+                                              "content": "<b>Confirma la activación y haz clic en el botón Finalizar para acceder a tu cuenta.</b>",
+                                              "align": "left",
+                                              "style": "normal"
+                                            },
+                                            {
+                                              "id": "img_1793126902791_0y79g",
+                                              "type": "media",
+                                              "mediaType": "image",
+                                              "title": "",
+                                              "url": "/1793126907283-Captura-de-pantalla-2026-10-27-121502.png",
+                                              "caption": "",
+                                              "alignment": "center",
+                                              "widthPercent": 100
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "blocks": [
+                                      {
+                                        "id": "txt_1793126809456_b9sar",
+                                        "type": "text",
+                                        "title": "",
+                                        "content": "<b>Abre el enlace o aviso enviado a tu correo electrónico e ingresa el código numérico recibido vía SMS en tu celular.</b>",
+                                        "align": "left",
+                                        "style": "normal"
+                                      },
+                                      {
+                                        "id": "cols_1793126828605_r5ctb",
+                                        "type": "columns",
+                                        "columnsCount": 2,
+                                        "layout": "equal",
+                                        "backgroundColor": "white",
+                                        "columns": [
+                                          {
+                                            "id": "col_1_1793126828605_v5d7w",
+                                            "blocks": [
+                                              {
+                                                "id": "img_1793126831544_2ksv5",
+                                                "type": "media",
+                                                "mediaType": "image",
+                                                "title": "",
+                                                "url": "/1793126839578-Captura-de-pantalla-2026-10-27-121027.png",
+                                                "caption": "",
+                                                "alignment": "center",
+                                                "widthPercent": 100
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "id": "col_2_1793126828605_irrpq",
+                                            "blocks": [
+                                              {
+                                                "id": "img_1793126833096_svz4f",
+                                                "type": "media",
+                                                "mediaType": "image",
+                                                "title": "",
+                                                "url": "/1793126844427-Captura-de-pantalla-2026-10-27-121431.png",
+                                                "caption": "",
+                                                "alignment": "center",
+                                                "widthPercent": 100
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ],
+                                    "contentData": {
+                                      "text": "",
+                                      "imageUrl": "",
+                                      "videoUrl": "",
+                                      "layoutBlocks": [
+                                        {
+                                          "id": "txt_1793126809456_b9sar",
+                                          "type": "text",
+                                          "title": "",
+                                          "content": "<b>Abre el enlace o aviso enviado a tu correo electrónico e ingresa el código numérico recibido vía SMS en tu celular.</b>",
+                                          "align": "left",
+                                          "style": "normal"
+                                        },
+                                        {
+                                          "id": "cols_1793126828605_r5ctb",
+                                          "type": "columns",
+                                          "columnsCount": 2,
+                                          "layout": "equal",
+                                          "backgroundColor": "white",
+                                          "columns": [
+                                            {
+                                              "id": "col_1_1793126828605_v5d7w",
+                                              "blocks": [
+                                                {
+                                                  "id": "img_1793126831544_2ksv5",
+                                                  "type": "media",
+                                                  "mediaType": "image",
+                                                  "title": "",
+                                                  "url": "/1793126839578-Captura-de-pantalla-2026-10-27-121027.png",
+                                                  "caption": "",
+                                                  "alignment": "center",
+                                                  "widthPercent": 100
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "id": "col_2_1793126828605_irrpq",
+                                              "blocks": [
+                                                {
+                                                  "id": "img_1793126833096_svz4f",
+                                                  "type": "media",
+                                                  "mediaType": "image",
+                                                  "title": "",
+                                                  "url": "/1793126844427-Captura-de-pantalla-2026-10-27-121431.png",
+                                                  "caption": "",
+                                                  "alignment": "center",
+                                                  "widthPercent": 100
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ],
+                                "blocks": [
+                                  {
+                                    "id": "txt_1793126768249_9ojp7",
+                                    "type": "text",
+                                    "title": "",
+                                    "content": "<b>Establece y confirma tu contraseña siguiendo los requisitos de longitud y caracteres solicitados.</b>",
+                                    "align": "left",
+                                    "style": "normal"
+                                  },
+                                  {
+                                    "id": "img_1793126776574_72ep9",
+                                    "type": "media",
+                                    "mediaType": "image",
+                                    "title": "",
+                                    "url": "/1793126782055-Captura-de-pantalla-2026-10-27-120934.png",
+                                    "caption": "",
+                                    "alignment": "center",
+                                    "widthPercent": 100
+                                  }
+                                ],
+                                "contentData": {
+                                  "text": "",
+                                  "imageUrl": "",
+                                  "videoUrl": "",
+                                  "layoutBlocks": [
+                                    {
+                                      "id": "txt_1793126768249_9ojp7",
+                                      "type": "text",
+                                      "title": "",
+                                      "content": "<b>Establece y confirma tu contraseña siguiendo los requisitos de longitud y caracteres solicitados.</b>",
+                                      "align": "left",
+                                      "style": "normal"
+                                    },
+                                    {
+                                      "id": "img_1793126776574_72ep9",
+                                      "type": "media",
+                                      "mediaType": "image",
+                                      "title": "",
+                                      "url": "/1793126782055-Captura-de-pantalla-2026-10-27-120934.png",
+                                      "caption": "",
+                                      "alignment": "center",
+                                      "widthPercent": 100
+                                    }
+                                  ]
+                                }
+                              }
+                            ],
+                            "blocks": [
+                              {
+                                "id": "txt_1793126695707_um193",
+                                "type": "text",
+                                "title": "",
+                                "content": "<b>Revisa y marca como aceptados tanto el Aviso de privacidad como los Términos y condiciones.</b>",
+                                "align": "left",
+                                "style": "normal"
+                              },
+                              {
+                                "id": "cols_1793126728461_o1f4u",
+                                "type": "columns",
+                                "columnsCount": 2,
+                                "layout": "equal",
+                                "backgroundColor": "white",
+                                "columns": [
+                                  {
+                                    "id": "col_1_1793126728461_ndlmi",
+                                    "blocks": [
+                                      {
+                                        "id": "img_1793126731466_7pwns",
+                                        "type": "media",
+                                        "mediaType": "image",
+                                        "title": "",
+                                        "url": "/1793126738795-Captura-de-pantalla-2026-10-27-120814.png",
+                                        "caption": "",
+                                        "alignment": "center",
+                                        "widthPercent": 100
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "id": "col_2_1793126728461_vdmc3",
+                                    "blocks": [
+                                      {
+                                        "id": "img_1793126733724_f2x7k",
+                                        "type": "media",
+                                        "mediaType": "image",
+                                        "title": "",
+                                        "url": "/1793126743357-Captura-de-pantalla-2026-10-27-120842.png",
+                                        "caption": "",
+                                        "alignment": "center",
+                                        "widthPercent": 100
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ],
+                            "contentData": {
+                              "text": "",
+                              "imageUrl": "",
+                              "videoUrl": "",
+                              "layoutBlocks": [
+                                {
+                                  "id": "txt_1793126695707_um193",
+                                  "type": "text",
+                                  "title": "",
+                                  "content": "<b>Revisa y marca como aceptados tanto el Aviso de privacidad como los Términos y condiciones.</b>",
+                                  "align": "left",
+                                  "style": "normal"
+                                },
+                                {
+                                  "id": "cols_1793126728461_o1f4u",
+                                  "type": "columns",
+                                  "columnsCount": 2,
+                                  "layout": "equal",
+                                  "backgroundColor": "white",
+                                  "columns": [
+                                    {
+                                      "id": "col_1_1793126728461_ndlmi",
+                                      "blocks": [
+                                        {
+                                          "id": "img_1793126731466_7pwns",
+                                          "type": "media",
+                                          "mediaType": "image",
+                                          "title": "",
+                                          "url": "/1793126738795-Captura-de-pantalla-2026-10-27-120814.png",
+                                          "caption": "",
+                                          "alignment": "center",
+                                          "widthPercent": 100
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "id": "col_2_1793126728461_vdmc3",
+                                      "blocks": [
+                                        {
+                                          "id": "img_1793126733724_f2x7k",
+                                          "type": "media",
+                                          "mediaType": "image",
+                                          "title": "",
+                                          "url": "/1793126743357-Captura-de-pantalla-2026-10-27-120842.png",
+                                          "caption": "",
+                                          "alignment": "center",
+                                          "widthPercent": 100
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "blocks": [
+                          {
+                            "id": "txt_1793126661111_lvu2i",
+                            "type": "text",
+                            "title": "",
+                            "content": "<b>Escribe y confirma tu teléfono celular y tu correo electrónico, además de indicar tu canal de comunicación preferido.</b>",
+                            "align": "left",
+                            "style": "normal"
+                          },
+                          {
+                            "id": "img_1793126671203_y4z9e",
+                            "type": "media",
+                            "mediaType": "image",
+                            "title": "",
+                            "url": "/1793126683399-Captura-de-pantalla-2026-10-27-120631.png",
+                            "caption": "",
+                            "alignment": "center",
+                            "widthPercent": 100
+                          }
+                        ],
+                        "contentData": {
+                          "text": "",
+                          "imageUrl": "",
+                          "videoUrl": "",
+                          "layoutBlocks": [
+                            {
+                              "id": "txt_1793126661111_lvu2i",
+                              "type": "text",
+                              "title": "",
+                              "content": "<b>Escribe y confirma tu teléfono celular y tu correo electrónico, además de indicar tu canal de comunicación preferido.</b>",
+                              "align": "left",
+                              "style": "normal"
+                            },
+                            {
+                              "id": "img_1793126671203_y4z9e",
+                              "type": "media",
+                              "mediaType": "image",
+                              "title": "",
+                              "url": "/1793126683399-Captura-de-pantalla-2026-10-27-120631.png",
+                              "caption": "",
+                              "alignment": "center",
+                              "widthPercent": 100
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "blocks": [
+                      {
+                        "id": "txt_1793126552911_8mul8",
+                        "type": "text",
+                        "title": "",
+                        "content": "<b>Comprueba que tu nombre registrado sea correcto y presiona \"Sí\".</b>",
+                        "align": "left",
+                        "style": "normal"
+                      },
+                      {
+                        "id": "img_1793126562792_x9b3a",
+                        "type": "media",
+                        "mediaType": "image",
+                        "title": "",
+                        "url": "/1793126566984-Captura-de-pantalla-2026-10-27-120409.png",
+                        "caption": "",
+                        "alignment": "center",
+                        "widthPercent": 100
+                      }
+                    ],
+                    "contentData": {
+                      "text": "",
+                      "imageUrl": "",
+                      "videoUrl": "",
+                      "layoutBlocks": [
+                        {
+                          "id": "txt_1793126552911_8mul8",
+                          "type": "text",
+                          "title": "",
+                          "content": "<b>Comprueba que tu nombre registrado sea correcto y presiona \"Sí\".</b>",
+                          "align": "left",
+                          "style": "normal"
+                        },
+                        {
+                          "id": "img_1793126562792_x9b3a",
+                          "type": "media",
+                          "mediaType": "image",
+                          "title": "",
+                          "url": "/1793126566984-Captura-de-pantalla-2026-10-27-120409.png",
+                          "caption": "",
+                          "alignment": "center",
+                          "widthPercent": 100
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "blocks": [
+                  {
+                    "id": "txt_1793126501499_dhmy7",
+                    "type": "text",
+                    "title": "",
+                    "content": "<b>Captura tu Número de Seguridad Social (NSS), CURP y RFC.</b>\n",
+                    "align": "left",
+                    "style": "normal"
+                  },
+                  {
+                    "id": "img_1793126520930_w8w2l",
+                    "type": "media",
+                    "mediaType": "image",
+                    "title": "",
+                    "url": "/1793126526985-Captura-de-pantalla-2026-10-27-110018.png",
+                    "caption": "",
+                    "alignment": "center",
+                    "widthPercent": 100
+                  }
+                ],
+                "contentData": {
+                  "text": "",
+                  "imageUrl": "",
+                  "videoUrl": "",
+                  "layoutBlocks": [
+                    {
+                      "id": "txt_1793126501499_dhmy7",
+                      "type": "text",
+                      "title": "",
+                      "content": "<b>Captura tu Número de Seguridad Social (NSS), CURP y RFC.</b>\n",
+                      "align": "left",
+                      "style": "normal"
+                    },
+                    {
+                      "id": "img_1793126520930_w8w2l",
+                      "type": "media",
+                      "mediaType": "image",
+                      "title": "",
+                      "url": "/1793126526985-Captura-de-pantalla-2026-10-27-110018.png",
+                      "caption": "",
+                      "alignment": "center",
+                      "widthPercent": 100
+                    }
+                  ]
+                }
+              }
+            ],
+            "blocks": [
+              {
+                "id": "txt_1793126185154_23xs1",
+                "type": "text",
+                "title": "",
+                "content": "<b>En el portal de Mi Cuenta Infonavit, selecciona la opción \"Crear una cuenta\".   </b>",
+                "align": "left",
+                "style": "normal"
+              },
+              {
+                "id": "img_1793126195046_n5c7x",
+                "type": "media",
+                "mediaType": "image",
+                "title": "",
+                "url": "/1793126321908-Captura-de-pantalla-2026-10-27-103709.png",
+                "caption": "",
+                "alignment": "center",
+                "widthPercent": 100
+              }
+            ],
+            "contentData": {
+              "text": "",
+              "imageUrl": "",
+              "videoUrl": "",
+              "layoutBlocks": [
+                {
+                  "id": "txt_1793126185154_23xs1",
+                  "type": "text",
+                  "title": "",
+                  "content": "<b>En el portal de Mi Cuenta Infonavit, selecciona la opción \"Crear una cuenta\".   </b>",
+                  "align": "left",
+                  "style": "normal"
+                },
+                {
+                  "id": "img_1793126195046_n5c7x",
+                  "type": "media",
+                  "mediaType": "image",
+                  "title": "",
+                  "url": "/1793126321908-Captura-de-pantalla-2026-10-27-103709.png",
+                  "caption": "",
+                  "alignment": "center",
+                  "widthPercent": 100
+                }
+              ]
+            }
+          }
+        ],
+        "blocks": [
+          {
+            "id": "txt_1793126087905_ah4ww",
+            "type": "text",
+            "title": "Ten tus datos a la mano",
+            "content": "<p><b>Antes de iniciar, asegúrate de contar con los siguientes datos:</b></p><ul><li><p>Número de Seguridad Social (NSS).</p></li><li><p>CURP.</p></li><li><p>RFC.</p></li><li><p>Teléfono celular personal.</p></li><li><p>Correo electrónico personal al que tengas acceso.<br></p></li></ul>",
+            "align": "left",
+            "style": "normal"
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793126087905_ah4ww",
+              "type": "text",
+              "title": "Ten tus datos a la mano",
+              "content": "<p><b>Antes de iniciar, asegúrate de contar con los siguientes datos:</b></p><ul><li><p>Número de Seguridad Social (NSS).</p></li><li><p>CURP.</p></li><li><p>RFC.</p></li><li><p>Teléfono celular personal.</p></li><li><p>Correo electrónico personal al que tengas acceso.<br></p></li></ul>",
+              "align": "left",
+              "style": "normal"
+            }
+          ]
+        }
+      },
+      {
+        "id": "node_1793118703831_4n7h",
+        "title": "¿Cómo consultar mi precalificación?",
+        "nodeType": "category",
+        "children": [],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": ""
+        }
+      }
+    ],
+    "location": "",
+    "schedule": "",
+    "contact": "",
+    "attachments": [],
+    "alertNotice": "",
+    "layoutBlocks": []
   },
   {
     "id": "incapacidades",
@@ -963,7 +1545,7 @@ export const initialServices: Service[] = [
     "attachments": [],
     "alertNotice": "",
     "layoutBlocks": [],
-    "hidden": true
+    "hidden": false
   },
   {
     "id": "reloj_checador",
