@@ -142,13 +142,12 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               onClick={() => handleSelectNode(currentNode.children![0])}
               className="min-h-[48px] px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
             >
-              <span>{getCleanButtonTitle(currentNode.children[0].title)}</span>
+              <span>Siguiente</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           ) : (
             <div className="flex flex-wrap items-center gap-2 ml-auto justify-end">
               {currentNode.children.map((childNode) => {
-                const childButtonText = getCleanButtonTitle(childNode.title);
                 return (
                   <button
                     key={childNode.id}
@@ -156,7 +155,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                     onClick={() => handleSelectNode(childNode)}
                     className="min-h-[48px] px-5 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
                   >
-                    <span>{childButtonText}</span>
+                    <span>Siguiente</span>
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 );
