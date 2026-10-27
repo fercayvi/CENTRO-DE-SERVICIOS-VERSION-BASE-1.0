@@ -184,29 +184,33 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
           ========================================================================= */}
       <div className="bg-white border border-slate-100 rounded-2xl p-4 sm:p-6 shadow-md">
         {/* Barra superior de navegación: Breadcrumbs a la izquierda y Controles a la derecha */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100">
+        <div className="flex items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100 min-w-0">
           {/* Breadcrumbs limpios con mayor tamaño de fuente y peso */}
-          <nav className="flex flex-wrap items-center gap-2 text-xl sm:text-2xl">
+          <nav aria-label="Ruta de navegación" className="flex items-center gap-1 text-sm sm:text-base min-w-0 flex-1 overflow-hidden whitespace-nowrap">
             {visibleHistory.length === 0 ? (
-              <span className="text-slate-900 font-bold">
-                Inicio
-              </span>
+              <span className="text-slate-900 font-bold shrink-0">Inicio</span>
             ) : (
               <>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="min-h-[48px] inline-flex items-center text-slate-500 font-normal hover:text-slate-800 cursor-pointer transition-colors"
+                  className="min-h-[40px] shrink-0 inline-flex items-center text-slate-500 font-normal hover:text-slate-800 cursor-pointer transition-colors"
                 >
                   Inicio
                 </button>
-                {visibleHistory.map((stepNode, idx) => {
-                  const isLast = idx === visibleHistory.length - 1;
+                {visibleHistory.length > 2 && (
+                  <>
+                    <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span className="text-slate-400 px-0.5 shrink-0" aria-label="Pasos anteriores omitidos">…</span>
+                  </>
+                )}
+                {(visibleHistory.length > 2 ? visibleHistory.slice(-2) : visibleHistory).map((stepNode, idx, displayedHistory) => {
+                  const isLast = idx === displayedHistory.length - 1;
                   return (
                     <React.Fragment key={stepNode.id}>
-                      <ChevronRight className="w-5 h-5 text-slate-400 shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
                       {isLast ? (
-                        <span className="font-bold text-slate-900 truncate max-w-[280px] sm:max-w-md">
+                        <span className="font-bold text-slate-900 truncate min-w-0" title={stepNode.title}>
                           {stepNode.title}
                         </span>
                       ) : (
@@ -216,7 +220,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                             const targetIdx = navPath.findIndex((n) => n.id === stepNode.id);
                             if (targetIdx !== -1) handleJumpToStep(targetIdx);
                           }}
-                          className="min-h-[48px] inline-flex items-center text-slate-500 font-normal hover:text-slate-800 truncate max-w-[180px] sm:max-w-xs cursor-pointer transition-colors"
+                          className="min-h-[40px] inline-flex items-center text-slate-500 font-normal hover:text-slate-800 truncate min-w-0 max-w-[140px] sm:max-w-[220px] cursor-pointer transition-colors"
+                          title={stepNode.title}
                         >
                           {stepNode.title}
                         </button>
@@ -230,7 +235,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
 
           {/* Controles discretos fantasma alineados a la derecha */}
           {navPath.length > 0 && (
-            <div className="flex items-center ml-auto shrink-0">
+            <div className="flex items-center shrink-0">
               <button
                 type="button"
                 onClick={handleReset}
