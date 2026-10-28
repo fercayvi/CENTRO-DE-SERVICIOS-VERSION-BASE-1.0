@@ -1509,6 +1509,16 @@ export const initialServices: Service[] = [
                                 "content": "<b>Al finalizar, podrás visualizar el monto de crédito que tienes disponible para adquirir tu vivienda.</b>",
                                 "align": "left",
                                 "style": "normal"
+                              },
+                              {
+                                "id": "img_1793223550550_16iwe",
+                                "type": "media",
+                                "mediaType": "image",
+                                "title": "",
+                                "url": "/1793223555449-Captura-de-pantalla-2026-10-28-152917.png",
+                                "caption": "",
+                                "alignment": "center",
+                                "widthPercent": 100
                               }
                             ],
                             "contentData": {
@@ -1523,6 +1533,16 @@ export const initialServices: Service[] = [
                                   "content": "<b>Al finalizar, podrás visualizar el monto de crédito que tienes disponible para adquirir tu vivienda.</b>",
                                   "align": "left",
                                   "style": "normal"
+                                },
+                                {
+                                  "id": "img_1793223550550_16iwe",
+                                  "type": "media",
+                                  "mediaType": "image",
+                                  "title": "",
+                                  "url": "/1793223555449-Captura-de-pantalla-2026-10-28-152917.png",
+                                  "caption": "",
+                                  "alignment": "center",
+                                  "widthPercent": 100
                                 }
                               ]
                             }
@@ -1542,7 +1562,7 @@ export const initialServices: Service[] = [
                             "type": "media",
                             "mediaType": "image",
                             "title": "",
-                            "url": "",
+                            "url": "/1793223543419-Captura-de-pantalla-2026-10-28-152908.png",
                             "caption": "",
                             "alignment": "center",
                             "widthPercent": 100
@@ -1566,7 +1586,7 @@ export const initialServices: Service[] = [
                               "type": "media",
                               "mediaType": "image",
                               "title": "",
-                              "url": "",
+                              "url": "/1793223543419-Captura-de-pantalla-2026-10-28-152908.png",
                               "caption": "",
                               "alignment": "center",
                               "widthPercent": 100
@@ -1790,20 +1810,138 @@ export const initialServices: Service[] = [
         "id": "node_root_1",
         "title": " ¿Cómo dar de alta a tus beneficiarios en tu clínica del IMSS?",
         "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793223743498_y2phh",
+            "type": "text",
+            "title": "¿Qué necesitas?",
+            "content": "<p>Tu NSS (Número de Seguridad Social).</p>Tu CURP y la CURP de cada familiar.<br>Un correo electrónico personal.\n",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "txt_1793223775649_lam3h",
+            "type": "text",
+            "title": "Documentos por familiar",
+            "content": "<ul><li></li><li><strong>Esposa/o:</strong> identificación oficial, foto tamaño infantil y acta de matrimonio.</li><li><strong>Hijos:</strong> acta de nacimiento, adopción o reconocimiento y foto tamaño infantil.</li><li><strong>Mamá o papá:</strong> identificación, tu acta de nacimiento, comprobante de domicilio, foto tamaño infantil y manifestación de convivencia y dependencia económica.</li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "txt_1793224006547_gihng",
+            "type": "text",
+            "title": "",
+            "content": "Acude a la UMF que te corresponde, al área de Afiliación/Vigencia de Derechos, llevando los documentos originales y copias. <b>El trámite es gratuito.</b><br>",
+            "align": "left",
+            "style": "normal"
+          }
+        ],
         "contentData": {
           "text": "",
           "imageUrl": "",
-          "videoUrl": ""
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793223743498_y2phh",
+              "type": "text",
+              "title": "¿Qué necesitas?",
+              "content": "<p>Tu NSS (Número de Seguridad Social).</p>Tu CURP y la CURP de cada familiar.<br>Un correo electrónico personal.\n",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "txt_1793223775649_lam3h",
+              "type": "text",
+              "title": "Documentos por familiar",
+              "content": "<ul><li></li><li><strong>Esposa/o:</strong> identificación oficial, foto tamaño infantil y acta de matrimonio.</li><li><strong>Hijos:</strong> acta de nacimiento, adopción o reconocimiento y foto tamaño infantil.</li><li><strong>Mamá o papá:</strong> identificación, tu acta de nacimiento, comprobante de domicilio, foto tamaño infantil y manifestación de convivencia y dependencia económica.</li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "txt_1793224006547_gihng",
+              "type": "text",
+              "title": "",
+              "content": "Acude a la UMF que te corresponde, al área de Afiliación/Vigencia de Derechos, llevando los documentos originales y copias. <b>El trámite es gratuito.</b><br>",
+              "align": "left",
+              "style": "normal"
+            }
+          ]
         }
       },
       {
         "id": "node_1793046417290_f4yq",
         "title": "Incapacidades",
         "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793224381136_dkh3z",
+            "type": "text",
+            "title": "Porcentaje y fecha de pago:",
+            "content": "<ul data-spread=\"false\" data-pm-slice=\"3 3 []\"><li><p><strong>Enfermedad general:</strong> 60% del salario base de cotización (SBC), a partir del 4.º día.</p></li><li><p><strong>Riesgo de trabajo:</strong> 100% del SBC, desde el primer día.</p></li><li><p><strong>Maternidad:</strong> 100% del SBC durante la licencia de 84 días.<br></p></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "txt_1793224676385_iba2i",
+            "type": "text",
+            "title": "Documentos necesarios:",
+            "content": "<ul><li>Copia para el asegurado del certificado de incapacidad del IMSS.</li><li>Identificación oficial vigente con fotografía (INE o pasaporte).</li><li>Número de Seguridad Social (NSS).<br></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "txt_1793224528077_nawsm",
+            "type": "text",
+            "title": "¿Dónde cobrar?",
+            "content": "<p data-pm-slice=\"1 1 []\">Puedes acudir a cualquiera de los siguientes bancos:</p><ul><li>BBVA</li><li>Banorte</li><li>HSBC</li><li>Santander</li><li>Banamex</li><li>Scotiabank</li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1793224513634_zoksv",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Deberás acudir personalmente a la ventanilla bancaria para gestionar el cobro de tu incapacidad.\n"
+          }
+        ],
         "contentData": {
           "text": "",
           "imageUrl": "",
-          "videoUrl": ""
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793224381136_dkh3z",
+              "type": "text",
+              "title": "Porcentaje y fecha de pago:",
+              "content": "<ul data-spread=\"false\" data-pm-slice=\"3 3 []\"><li><p><strong>Enfermedad general:</strong> 60% del salario base de cotización (SBC), a partir del 4.º día.</p></li><li><p><strong>Riesgo de trabajo:</strong> 100% del SBC, desde el primer día.</p></li><li><p><strong>Maternidad:</strong> 100% del SBC durante la licencia de 84 días.<br></p></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "txt_1793224676385_iba2i",
+              "type": "text",
+              "title": "Documentos necesarios:",
+              "content": "<ul><li>Copia para el asegurado del certificado de incapacidad del IMSS.</li><li>Identificación oficial vigente con fotografía (INE o pasaporte).</li><li>Número de Seguridad Social (NSS).<br></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "txt_1793224528077_nawsm",
+              "type": "text",
+              "title": "¿Dónde cobrar?",
+              "content": "<p data-pm-slice=\"1 1 []\">Puedes acudir a cualquiera de los siguientes bancos:</p><ul><li>BBVA</li><li>Banorte</li><li>HSBC</li><li>Santander</li><li>Banamex</li><li>Scotiabank</li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1793224513634_zoksv",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Deberás acudir personalmente a la ventanilla bancaria para gestionar el cobro de tu incapacidad.\n"
+            }
+          ]
         }
       }
     ],
@@ -1825,7 +1963,7 @@ export const initialServices: Service[] = [
     "attachments": [],
     "alertNotice": "",
     "layoutBlocks": [],
-    "hidden": true
+    "hidden": false
   },
   {
     "id": "custom_1793134000134",
