@@ -1503,7 +1503,7 @@ const handleOpenNewNewsModal = () => {
                 Actualizar archivo src/data.ts
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                Escribe los trámites, árboles de decisión, categorías, noticias y configuración actuales directamente en <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 text-xs font-semibold">src/data.ts</code> dentro del workspace de Codespaces. No modifica la versión pública ni copia imágenes.
+                Guarda la configuración actual en <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 text-xs font-semibold">src/data.ts</code>, agrega los cambios de <code className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-800 text-xs font-semibold">public/</code>, crea un commit y los envía automáticamente a GitHub.
               </p>
             </div>
 
@@ -1542,7 +1542,7 @@ const handleOpenNewNewsModal = () => {
             {/* Instrucciones de Ayuda */}
             <div className="pt-4 border-t border-slate-100 text-xs text-slate-400 max-w-md mx-auto space-y-1.5">
               <p className="leading-relaxed">
-                El archivo <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code> y los archivos multimedia guardados en <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">public/</code> quedan en el workspace de Codespaces. Revisa ambos en Control de código fuente y confirma/sube los cambios a GitHub para que se publiquen.
+                El botón publica automáticamente <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">src/data.ts</code> y los archivos de <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">public/</code> en <code className="font-mono text-slate-700 font-semibold px-1 py-0.5 bg-slate-100 rounded">origin/main</code>. Si GitHub Actions está configurado para este cambio, después procesará la versión pública.
               </p>
             </div>
 
