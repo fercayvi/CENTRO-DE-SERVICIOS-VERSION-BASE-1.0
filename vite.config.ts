@@ -2,8 +2,12 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import * as ts from 'typescript';
 import {defineConfig} from 'vite';
+
+const execFileAsync = promisify(execFile);
 
 export default defineConfig(() => {
   return {
@@ -111,6 +115,109 @@ export default defineConfig(() => {
                 }
               }
             });
+          });
+        },
+      },
+      {
+        name: 'codespaces-git-publisher',
+        configureServer(server) {
+          server.middlewares.use('/__admin/publish-git', async (req, res) => {
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+            if (req.method !== 'POST') {
+              res.statusCode = 405;
+              res.end(JSON.stringify({ error: 'Método no permitido.' }));
+              return;
+            }
+
+            const origin = req.headers.origin;
+            const requestHost = req.headers.host;
+            let originHost = '';
+            try {
+              originHost = origin ? new URL(origin).host : '';
+            } catch {
+              originHost = '';
+            }
+
+            if (!requestHost || originHost !== requestHost) {
+              res.statusCode = 403;
+              res.end(JSON.stringify({ error: 'Origen no autorizado.' }));
+              return;
+            }
+
+            const repoRoot = path.resolve(__dirname);
+            const runGit = async (args: string[]) => execFileAsync('git', args, {
+              cwd: repoRoot,
+              windowsHide: true,
+              timeout: 120000,
+              maxBuffer: 1024 * 1024,
+            });
+            const getStagedPaths = async () => {
+              const { stdout } = await runGit(['diff', '--cached', '--name-only']);
+              return stdout.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
+            };
+            const isAllowedPath = (item: string) => item === 'src/data.ts' || item.startsWith('public/');
+
+            try {
+              // Do not accidentally include unrelated files already staged by the developer.
+              const stagedBefore = await getStagedPaths();
+              const unexpectedBefore = stagedBefore.filter((item) => !isAllowedPath(item));
+              if (unexpectedBefore.length > 0) {
+                res.statusCode = 409;
+                res.end(JSON.stringify({
+                  error: 'No se publicó porque hay otros archivos preparados en Git. Revisa el área de preparación y vuelve a intentarlo.',
+                  details: unexpectedBefore.slice(0, 10),
+                }));
+                return;
+              }
+
+              // Fixed arguments only; no shell and no user-provided command strings.
+              await runGit(['add', '--', 'src/data.ts', 'public/']);
+
+              const stagedPaths = await getStagedPaths();
+              const unexpectedAfter = stagedPaths.filter((item) => !isAllowedPath(item));
+              if (unexpectedAfter.length > 0) {
+                res.statusCode = 409;
+                res.end(JSON.stringify({
+                  error: 'Se detectaron archivos fuera del alcance permitido. No se creó ningún commit.',
+                  details: unexpectedAfter.slice(0, 10),
+                }));
+                return;
+              }
+
+              if (stagedPaths.length === 0) {
+                res.statusCode = 200;
+                res.end(JSON.stringify({
+                  success: true,
+                  noChanges: true,
+                  message: 'No hay cambios nuevos para publicar.',
+                }));
+                return;
+              }
+
+              await runGit(['commit', '-m', 'Actualiza tarjeta']);
+              await runGit(['push', 'origin', 'main']);
+
+              res.statusCode = 200;
+              res.end(JSON.stringify({
+                success: true,
+                noChanges: false,
+                message: 'Cambios guardados y enviados a GitHub. La versión pública se actualizará mediante GitHub Actions.',
+              }));
+            } catch (error) {
+              const details = error && typeof error === 'object' && 'stderr' in error
+                ? String((error as { stderr?: unknown }).stderr || '')
+                : '';
+              const message = error instanceof Error ? error.message : String(error);
+              console.error('Falló la publicación automática en GitHub:', message, details);
+              if (!res.writableEnded) {
+                res.statusCode = 500;
+                res.end(JSON.stringify({
+                  error: 'No se pudieron publicar los cambios en GitHub. Revisa la configuración de Git, las credenciales y la conexión.',
+                  details: (details || message).slice(0, 1000),
+                }));
+              }
+            }
           });
         },
       },
