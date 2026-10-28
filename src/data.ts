@@ -714,7 +714,7 @@ export const initialServices: Service[] = [
               }
             ],
             "contentData": {
-              "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposici��n por un costo de $49 MXN.\n\n",
+              "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposición por un costo de $49 MXN.\n\n",
               "imageUrl": "",
               "videoUrl": "",
               "layoutBlocks": [
@@ -806,23 +806,187 @@ export const initialServices: Service[] = [
           {
             "id": "node_1792708543192_5l3p",
             "title": "¿Cómo descargar Banorte Móvil?",
-            "nodeType": "category",
-            "children": [],
+            "nodeType": "content",
+            "blocks": [
+              {
+                "id": "txt_1793226346287_jgizv",
+                "type": "text",
+                "title": "¿Cómo descargar Banorte Móvil?",
+                "content": "Registra y administra tu tarjeta desde la app:\n",
+                "align": "left",
+                "style": "normal"
+              },
+              {
+                "id": "cols_1793226327144_pzsb4",
+                "type": "columns",
+                "columnsCount": 3,
+                "layout": "equal",
+                "backgroundColor": "white",
+                "columns": [
+                  {
+                    "id": "col_1_1793226327143_1k34c",
+                    "blocks": [
+                      {
+                        "id": "txt_1793226382174_5eti1",
+                        "type": "text",
+                        "title": "Descarga",
+                        "content": "Descarga Banorte Móvil y selecciona “Registrarme”.\n",
+                        "align": "left",
+                        "style": "normal"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "col_2_1793226327144_t7f1a",
+                    "blocks": [
+                      {
+                        "id": "txt_1793226383759_wrwen",
+                        "type": "text",
+                        "title": "Ingresa tu numero de tarjeta",
+                        "content": "Ingresa tu número de tarjeta de nómina y captura los datos solicitados.\n",
+                        "align": "left",
+                        "style": "normal"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "col_3_1793226327144_krrfy",
+                    "blocks": [
+                      {
+                        "id": "txt_1793226385561_4ax6v",
+                        "type": "text",
+                        "title": "Crea usuario y contraseña",
+                        "content": "Crea tu usuario y contraseña, e ingresa el código de activación que recibirás por SMS\n",
+                        "align": "left",
+                        "style": "normal"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "txt_1793226508278_3wzrm",
+                "type": "text",
+                "title": "¿Cuándo recibo mi nómina?",
+                "content": "<ul data-spread=\"false\" data-pm-slice=\"3 1 []\"><li><p><strong>Pago semanal:</strong> todos los viernes, después del mediodía.</p></li><li><p><strong>Pago quincenal:</strong> los días 15 y 30 de cada mes.</p></li></ul><p>Tu nómina se deposita directamente en tu cuenta bancaria.<br></p>",
+                "align": "left",
+                "style": "normal"
+              }
+            ],
             "contentData": {
               "text": "",
               "imageUrl": "",
-              "videoUrl": ""
+              "videoUrl": "",
+              "layoutBlocks": [
+                {
+                  "id": "txt_1793226346287_jgizv",
+                  "type": "text",
+                  "title": "¿Cómo descargar Banorte Móvil?",
+                  "content": "Registra y administra tu tarjeta desde la app:\n",
+                  "align": "left",
+                  "style": "normal"
+                },
+                {
+                  "id": "cols_1793226327144_pzsb4",
+                  "type": "columns",
+                  "columnsCount": 3,
+                  "layout": "equal",
+                  "backgroundColor": "white",
+                  "columns": [
+                    {
+                      "id": "col_1_1793226327143_1k34c",
+                      "blocks": [
+                        {
+                          "id": "txt_1793226382174_5eti1",
+                          "type": "text",
+                          "title": "Descarga",
+                          "content": "Descarga Banorte Móvil y selecciona “Registrarme”.\n",
+                          "align": "left",
+                          "style": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "col_2_1793226327144_t7f1a",
+                      "blocks": [
+                        {
+                          "id": "txt_1793226383759_wrwen",
+                          "type": "text",
+                          "title": "Ingresa tu numero de tarjeta",
+                          "content": "Ingresa tu número de tarjeta de nómina y captura los datos solicitados.\n",
+                          "align": "left",
+                          "style": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "col_3_1793226327144_krrfy",
+                      "blocks": [
+                        {
+                          "id": "txt_1793226385561_4ax6v",
+                          "type": "text",
+                          "title": "Crea usuario y contraseña",
+                          "content": "Crea tu usuario y contraseña, e ingresa el código de activación que recibirás por SMS\n",
+                          "align": "left",
+                          "style": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "txt_1793226508278_3wzrm",
+                  "type": "text",
+                  "title": "¿Cuándo recibo mi nómina?",
+                  "content": "<ul data-spread=\"false\" data-pm-slice=\"3 1 []\"><li><p><strong>Pago semanal:</strong> todos los viernes, después del mediodía.</p></li><li><p><strong>Pago quincenal:</strong> los días 15 y 30 de cada mes.</p></li></ul><p>Tu nómina se deposita directamente en tu cuenta bancaria.<br></p>",
+                  "align": "left",
+                  "style": "normal"
+                }
+              ]
             }
           },
           {
             "id": "node_1792708603174_a2lj",
-            "title": "¿Tienes una nueva tarjeta Banorte?",
-            "nodeType": "category",
-            "children": [],
+            "title": "¿Cómo asociar una nueva tarjeta Banorte?",
+            "nodeType": "content",
+            "blocks": [
+              {
+                "id": "txt_1793225930551_4dq6u",
+                "type": "text",
+                "title": "Si recibiste una nueva tarjeta, sigue estos pasos para vincularla a tu cuenta en Banorte Móvil.",
+                "content": "<p data-pm-slice=\"1 3 []\"><strong>Pasos a seguir:</strong></p><ol data-spread=\"false\"><li><p><strong>Ingresa a Banorte Móvil:</strong> inicia sesión con tu usuario y contraseña.</p></li><li><p><strong>Selecciona tu cuenta:</strong> entra al apartado de Ajustes.</p></li><li><p><strong>Asocia tu tarjeta:</strong> selecciona la opción «Asociar Tarjeta».</p></li><li><p><strong>Ingresa los datos:</strong> captura los 16 dígitos de tu nueva tarjeta.</p></li><li><p><strong>Confirma la activación:</strong> verifica que la tarjeta aparezca vinculada a tu cuenta.<br></p></li></ol>",
+                "align": "left",
+                "style": "normal"
+              },
+              {
+                "id": "alt_1793225961306_9r0kt",
+                "type": "alert",
+                "level": "warning",
+                "title": "Aviso Importante",
+                "message": "Si recibiste una nueva tarjeta, revisa si necesitas asociarla nuevamente en Banorte Móvil para mantenerla vinculada a tu cuenta."
+              }
+            ],
             "contentData": {
               "text": "",
               "imageUrl": "",
-              "videoUrl": ""
+              "videoUrl": "",
+              "layoutBlocks": [
+                {
+                  "id": "txt_1793225930551_4dq6u",
+                  "type": "text",
+                  "title": "Si recibiste una nueva tarjeta, sigue estos pasos para vincularla a tu cuenta en Banorte Móvil.",
+                  "content": "<p data-pm-slice=\"1 3 []\"><strong>Pasos a seguir:</strong></p><ol data-spread=\"false\"><li><p><strong>Ingresa a Banorte Móvil:</strong> inicia sesión con tu usuario y contraseña.</p></li><li><p><strong>Selecciona tu cuenta:</strong> entra al apartado de Ajustes.</p></li><li><p><strong>Asocia tu tarjeta:</strong> selecciona la opción «Asociar Tarjeta».</p></li><li><p><strong>Ingresa los datos:</strong> captura los 16 dígitos de tu nueva tarjeta.</p></li><li><p><strong>Confirma la activación:</strong> verifica que la tarjeta aparezca vinculada a tu cuenta.<br></p></li></ol>",
+                  "align": "left",
+                  "style": "normal"
+                },
+                {
+                  "id": "alt_1793225961306_9r0kt",
+                  "type": "alert",
+                  "level": "warning",
+                  "title": "Aviso Importante",
+                  "message": "Si recibiste una nueva tarjeta, revisa si necesitas asociarla nuevamente en Banorte Móvil para mantenerla vinculada a tu cuenta."
+                }
+              ]
             }
           }
         ],
