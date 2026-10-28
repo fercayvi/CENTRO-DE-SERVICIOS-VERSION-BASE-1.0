@@ -263,6 +263,7 @@ export default function AdminPanel({
 }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<'tramites' | 'categorias' | 'noticias' | 'contacto' | 'configuracion' | 'sincronizar'>('tramites');
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string>('');
 
   const currentSettings = settings || defaultSiteSettings;
@@ -406,27 +407,53 @@ export const faqsData: FAQ[] = ${faqsJson};
   };
 
   const handleWriteDataFile = async () => {
+    if (isPublishing) return;
     setIsCopied(false);
+    setIsPublishing(true);
     try {
-      const response = await fetch('/__admin/write-data-ts', {
+      const saveResponse = await fetch('/__admin/write-data-ts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: generateSourceCode() }),
       });
-      const result = await response.json() as { success?: boolean; error?: string };
+      const saveResult = await saveResponse.json() as { success?: boolean; error?: string };
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'No se pudo actualizar src/data.ts.');
+      if (!saveResponse.ok || !saveResult.success) {
+        throw new Error(saveResult.error || 'No se pudo actualizar src/data.ts.');
+      }
+
+      const publishResponse = await fetch('/__admin/publish-git', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const publishResult = await publishResponse.json() as {
+        success?: boolean;
+        noChanges?: boolean;
+        message?: string;
+        error?: string;
+        details?: string | string[];
+      };
+
+      if (!publishResponse.ok || !publishResult.success) {
+        const details = Array.isArray(publishResult.details)
+          ? publishResult.details.join(', ')
+          : publishResult.details;
+        throw new Error([publishResult.error || 'No se pudieron publicar los cambios en GitHub.', details]
+          .filter(Boolean).join(' '));
       }
 
       setIsCopied(true);
-      showToast('¡src/data.ts actualizado en el workspace de Codespaces!');
-      window.setTimeout(() => setIsCopied(false), 2500);
+      showToast(publishResult.message || (publishResult.noChanges
+        ? 'No había cambios nuevos para publicar.'
+        : '¡Cambios publicados en GitHub!'));
+      window.setTimeout(() => setIsCopied(false), 4000);
     } catch (err) {
-      console.error('Error al actualizar src/data.ts:', err);
+      console.error('Error al sincronizar y publicar los cambios:', err);
       showToast(err instanceof Error
         ? err.message
-        : 'No se pudo actualizar src/data.ts. Verifica que el servidor de desarrollo esté activo.');
+        : 'No se pudo completar la sincronización y publicación. Verifica que el servidor esté activo.');
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -1486,21 +1513,27 @@ const handleOpenNewNewsModal = () => {
                 type="button"
                 id="btn-write-source-code"
                 onClick={handleWriteDataFile}
-                className={`w-full sm:w-auto px-8 py-4 rounded-2xl text-sm sm:text-base font-bold flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer mx-auto min-h-[52px] ${
+                disabled={isPublishing}
+                className={`w-full sm:w-auto px-8 py-4 rounded-2xl text-sm sm:text-base font-bold flex items-center justify-center gap-3 transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer mx-auto min-h-[52px] disabled:opacity-60 disabled:cursor-wait ${
                   isCopied
                     ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
-                {isCopied ? (
+                {isPublishing ? (
+                  <>
+                    <Clock className="w-5 h-5 animate-spin" />
+                    <span>Publicando en GitHub...</span>
+                  </>
+                ) : isCopied ? (
                   <>
                     <Check className="w-5 h-5" />
-                    <span>¡Archivo actualizado!</span>
+                    <span>¡Publicado en GitHub!</span>
                   </>
                 ) : (
                   <>
                     <Save className="w-5 h-5" />
-                    <span>Actualizar src/data.ts</span>
+                    <span>Sincronizar y publicar en GitHub</span>
                   </>
                 )}
               </button>
