@@ -1474,12 +1474,240 @@ export const initialServices: Service[] = [
       {
         "id": "node_1793118703831_4n7h",
         "title": "¿Cómo consultar mi precalificación?",
-        "nodeType": "category",
-        "children": [],
+        "nodeType": "step",
+        "children": [
+          {
+            "id": "node_1793218932786_ihcu",
+            "title": "Selecciona “Comprar una Vivienda”.",
+            "nodeType": "step",
+            "children": [
+              {
+                "id": "node_1793219005820_pndw",
+                "title": "Continúa con la precalificación",
+                "nodeType": "step",
+                "children": [
+                  {
+                    "id": "node_1793219049155_u3mb",
+                    "title": "Selecciona “Crédito Individual”.",
+                    "nodeType": "step",
+                    "children": [
+                      {
+                        "id": "node_1793219073585_6ngn",
+                        "title": "Consulta tu precalificación",
+                        "nodeType": "step",
+                        "children": [
+                          {
+                            "id": "node_1793219131852_l79m",
+                            "title": "Siguiente",
+                            "nodeType": "step",
+                            "children": [],
+                            "contentData": {
+                              "text": "",
+                              "imageUrl": "",
+                              "videoUrl": ""
+                            }
+                          }
+                        ],
+                        "blocks": [
+                          {
+                            "id": "txt_1793219089688_e88sj",
+                            "type": "text",
+                            "title": "",
+                            "content": "<b>En la sección correspondiente, selecciona “Crédito Infonavit”.</b>",
+                            "align": "left",
+                            "style": "normal"
+                          },
+                          {
+                            "id": "img_1793219097101_b0944",
+                            "type": "media",
+                            "mediaType": "image",
+                            "title": "",
+                            "url": "",
+                            "caption": "",
+                            "alignment": "center",
+                            "widthPercent": 100
+                          }
+                        ],
+                        "contentData": {
+                          "text": "",
+                          "imageUrl": "",
+                          "videoUrl": "",
+                          "layoutBlocks": [
+                            {
+                              "id": "txt_1793219089688_e88sj",
+                              "type": "text",
+                              "title": "",
+                              "content": "<b>En la sección correspondiente, selecciona “Crédito Infonavit”.</b>",
+                              "align": "left",
+                              "style": "normal"
+                            },
+                            {
+                              "id": "img_1793219097101_b0944",
+                              "type": "media",
+                              "mediaType": "image",
+                              "title": "",
+                              "url": "",
+                              "caption": "",
+                              "alignment": "center",
+                              "widthPercent": 100
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "blocks": [
+                      {
+                        "id": "img_1793219059660_a5vcp",
+                        "type": "media",
+                        "mediaType": "image",
+                        "title": "",
+                        "url": "/1793219065270-tercerpasoCCMP.png",
+                        "caption": "",
+                        "alignment": "center",
+                        "widthPercent": 100
+                      }
+                    ],
+                    "contentData": {
+                      "text": "",
+                      "imageUrl": "",
+                      "videoUrl": "",
+                      "layoutBlocks": [
+                        {
+                          "id": "img_1793219059660_a5vcp",
+                          "type": "media",
+                          "mediaType": "image",
+                          "title": "",
+                          "url": "/1793219065270-tercerpasoCCMP.png",
+                          "caption": "",
+                          "alignment": "center",
+                          "widthPercent": 100
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "blocks": [
+                  {
+                    "id": "txt_1793219023256_lhf9t",
+                    "type": "text",
+                    "title": "",
+                    "content": "<b>Aparecerá un aviso relacionado con tu precalificación. Haz clic en “Continuar”.</b>",
+                    "align": "left",
+                    "style": "normal"
+                  },
+                  {
+                    "id": "img_1793219033190_yhera",
+                    "type": "media",
+                    "mediaType": "image",
+                    "title": "",
+                    "url": "/1793219042749-segundopasoCCMP.png",
+                    "caption": "",
+                    "alignment": "center",
+                    "widthPercent": 100
+                  }
+                ],
+                "contentData": {
+                  "text": "",
+                  "imageUrl": "",
+                  "videoUrl": "",
+                  "layoutBlocks": [
+                    {
+                      "id": "txt_1793219023256_lhf9t",
+                      "type": "text",
+                      "title": "",
+                      "content": "<b>Aparecerá un aviso relacionado con tu precalificación. Haz clic en “Continuar”.</b>",
+                      "align": "left",
+                      "style": "normal"
+                    },
+                    {
+                      "id": "img_1793219033190_yhera",
+                      "type": "media",
+                      "mediaType": "image",
+                      "title": "",
+                      "url": "/1793219042749-segundopasoCCMP.png",
+                      "caption": "",
+                      "alignment": "center",
+                      "widthPercent": 100
+                    }
+                  ]
+                }
+              }
+            ],
+            "blocks": [
+              {
+                "id": "img_1793218949708_8mqva",
+                "type": "media",
+                "mediaType": "image",
+                "title": "",
+                "url": "/1793218989607-primerpasoCCMP.png",
+                "caption": "",
+                "alignment": "center",
+                "widthPercent": 100
+              }
+            ],
+            "contentData": {
+              "text": "",
+              "imageUrl": "",
+              "videoUrl": "",
+              "layoutBlocks": [
+                {
+                  "id": "img_1793218949708_8mqva",
+                  "type": "media",
+                  "mediaType": "image",
+                  "title": "",
+                  "url": "/1793218989607-primerpasoCCMP.png",
+                  "caption": "",
+                  "alignment": "center",
+                  "widthPercent": 100
+                }
+              ]
+            }
+          }
+        ],
+        "blocks": [
+          {
+            "id": "txt_1793218640943_57yt6",
+            "type": "text",
+            "title": "Ingresa a Mi Cuenta Infonavit",
+            "content": "Captura tu Número de Seguridad Social (NSS) y tu contraseña.",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "img_1793218663747_rfoaj",
+            "type": "media",
+            "mediaType": "image",
+            "title": "",
+            "url": "/1793218916806-Captura-de-pantalla-2026-10-28-122654.png",
+            "caption": "",
+            "alignment": "center",
+            "widthPercent": 100
+          }
+        ],
         "contentData": {
           "text": "",
           "imageUrl": "",
-          "videoUrl": ""
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793218640943_57yt6",
+              "type": "text",
+              "title": "Ingresa a Mi Cuenta Infonavit",
+              "content": "Captura tu Número de Seguridad Social (NSS) y tu contraseña.",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "img_1793218663747_rfoaj",
+              "type": "media",
+              "mediaType": "image",
+              "title": "",
+              "url": "/1793218916806-Captura-de-pantalla-2026-10-28-122654.png",
+              "caption": "",
+              "alignment": "center",
+              "widthPercent": 100
+            }
+          ]
         }
       }
     ],
