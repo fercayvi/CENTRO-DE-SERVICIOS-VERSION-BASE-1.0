@@ -1498,13 +1498,33 @@ export const initialServices: Service[] = [
                         "children": [
                           {
                             "id": "node_1793219131852_l79m",
-                            "title": "Siguiente",
+                            "title": "Consulta el monto disponible",
                             "nodeType": "step",
                             "children": [],
+                            "blocks": [
+                              {
+                                "id": "txt_1793219406279_15zut",
+                                "type": "text",
+                                "title": "Consulta el monto disponible",
+                                "content": "<b>Al finalizar, podrás visualizar el monto de crédito que tienes disponible para adquirir tu vivienda.</b>",
+                                "align": "left",
+                                "style": "normal"
+                              }
+                            ],
                             "contentData": {
                               "text": "",
                               "imageUrl": "",
-                              "videoUrl": ""
+                              "videoUrl": "",
+                              "layoutBlocks": [
+                                {
+                                  "id": "txt_1793219406279_15zut",
+                                  "type": "text",
+                                  "title": "Consulta el monto disponible",
+                                  "content": "<b>Al finalizar, podrás visualizar el monto de crédito que tienes disponible para adquirir tu vivienda.</b>",
+                                  "align": "left",
+                                  "style": "normal"
+                                }
+                              ]
                             }
                           }
                         ],
@@ -1512,7 +1532,7 @@ export const initialServices: Service[] = [
                           {
                             "id": "txt_1793219089688_e88sj",
                             "type": "text",
-                            "title": "",
+                            "title": "Consulta tu precalificación",
                             "content": "<b>En la sección correspondiente, selecciona “Crédito Infonavit”.</b>",
                             "align": "left",
                             "style": "normal"
@@ -1536,7 +1556,7 @@ export const initialServices: Service[] = [
                             {
                               "id": "txt_1793219089688_e88sj",
                               "type": "text",
-                              "title": "",
+                              "title": "Consulta tu precalificación",
                               "content": "<b>En la sección correspondiente, selecciona “Crédito Infonavit”.</b>",
                               "align": "left",
                               "style": "normal"
@@ -1557,6 +1577,14 @@ export const initialServices: Service[] = [
                     ],
                     "blocks": [
                       {
+                        "id": "txt_1793219354626_pfpq9",
+                        "type": "text",
+                        "title": "Selecciona “Crédito Individual”.",
+                        "content": "",
+                        "align": "left",
+                        "style": "normal"
+                      },
+                      {
                         "id": "img_1793219059660_a5vcp",
                         "type": "media",
                         "mediaType": "image",
@@ -1572,6 +1600,14 @@ export const initialServices: Service[] = [
                       "imageUrl": "",
                       "videoUrl": "",
                       "layoutBlocks": [
+                        {
+                          "id": "txt_1793219354626_pfpq9",
+                          "type": "text",
+                          "title": "Selecciona “Crédito Individual”.",
+                          "content": "",
+                          "align": "left",
+                          "style": "normal"
+                        },
                         {
                           "id": "img_1793219059660_a5vcp",
                           "type": "media",
@@ -1590,7 +1626,7 @@ export const initialServices: Service[] = [
                   {
                     "id": "txt_1793219023256_lhf9t",
                     "type": "text",
-                    "title": "",
+                    "title": "Continúa con la precalificación",
                     "content": "<b>Aparecerá un aviso relacionado con tu precalificación. Haz clic en “Continuar”.</b>",
                     "align": "left",
                     "style": "normal"
@@ -1614,7 +1650,7 @@ export const initialServices: Service[] = [
                     {
                       "id": "txt_1793219023256_lhf9t",
                       "type": "text",
-                      "title": "",
+                      "title": "Continúa con la precalificación",
                       "content": "<b>Aparecerá un aviso relacionado con tu precalificación. Haz clic en “Continuar”.</b>",
                       "align": "left",
                       "style": "normal"
@@ -1635,6 +1671,14 @@ export const initialServices: Service[] = [
             ],
             "blocks": [
               {
+                "id": "txt_1793219294920_mgp2b",
+                "type": "text",
+                "title": "Selecciona “Comprar una Vivienda”.",
+                "content": "",
+                "align": "left",
+                "style": "normal"
+              },
+              {
                 "id": "img_1793218949708_8mqva",
                 "type": "media",
                 "mediaType": "image",
@@ -1650,6 +1694,14 @@ export const initialServices: Service[] = [
               "imageUrl": "",
               "videoUrl": "",
               "layoutBlocks": [
+                {
+                  "id": "txt_1793219294920_mgp2b",
+                  "type": "text",
+                  "title": "Selecciona “Comprar una Vivienda”.",
+                  "content": "",
+                  "align": "left",
+                  "style": "normal"
+                },
                 {
                   "id": "img_1793218949708_8mqva",
                   "type": "media",
