@@ -1545,7 +1545,31 @@ export const initialServices: Service[] = [
     "attachments": [],
     "alertNotice": "",
     "layoutBlocks": [],
-    "hidden": false
+    "hidden": true
+  },
+  {
+    "id": "custom_1793134000134",
+    "title": "INFONACOT",
+    "iconName": "Banknote",
+    "shortDesc": "",
+    "category": "Nómina y Pagos",
+    "fullDescription": "",
+    "steps": [],
+    "requirements": [],
+    "location": "",
+    "schedule": "",
+    "contact": "",
+    "faqs": [],
+    "imageUrl": "",
+    "videoUrl": "",
+    "pdfUrl": "",
+    "pdfTitle": "",
+    "attachments": [],
+    "alertNotice": "",
+    "decisionTree": [],
+    "layoutBlocks": [],
+    "hidden": true,
+    "icon": "Banknote"
   },
   {
     "id": "reloj_checador",
