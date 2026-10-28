@@ -255,7 +255,7 @@ export const initialServices: Service[] = [
                                   {
                                     "id": "txt_b_block_node_1788447230371_g53k_1",
                                     "type": "text",
-                                    "content": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
+                                    "content": "<b>6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.</b>\n",
                                     "align": "left",
                                     "style": "normal"
                                   },
@@ -278,7 +278,7 @@ export const initialServices: Service[] = [
                                     {
                                       "id": "txt_b_block_node_1788447230371_g53k_1",
                                       "type": "text",
-                                      "content": "6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.\n",
+                                      "content": "<b>6. Ingresa los datos adicionales que solicite la aplicación, como:\nFecha de vencimiento.\nCódigo de seguridad CVV, ubicado en la parte posterior de tu tarjeta.</b>\n",
                                       "align": "left",
                                       "style": "normal"
                                     },
@@ -300,7 +300,7 @@ export const initialServices: Service[] = [
                               {
                                 "id": "txt_b_block_node_1788447209926_h15m_1",
                                 "type": "text",
-                                "content": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
+                                "content": "<b>5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.</b>\n",
                                 "align": "left",
                                 "style": "normal"
                               },
@@ -323,7 +323,7 @@ export const initialServices: Service[] = [
                                 {
                                   "id": "txt_b_block_node_1788447209926_h15m_1",
                                   "type": "text",
-                                  "content": "5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.\n",
+                                  "content": "<b>5. Confirma tu cuenta ingresando el código de verificación que recibirás en el correo electrónico registrado.</b>\n",
                                   "align": "left",
                                   "style": "normal"
                                 },
@@ -345,7 +345,7 @@ export const initialServices: Service[] = [
                           {
                             "id": "txt_b_block_node_1788447195454_x0fa_1",
                             "type": "text",
-                            "content": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
+                            "content": "<b>4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad</b>",
                             "align": "left",
                             "style": "normal"
                           },
@@ -368,7 +368,7 @@ export const initialServices: Service[] = [
                             {
                               "id": "txt_b_block_node_1788447195454_x0fa_1",
                               "type": "text",
-                              "content": "4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad",
+                              "content": "<b>4. Coloca tu nombre y apellido, adicional selecciona la casilla del aviso de privacidad</b>",
                               "align": "left",
                               "style": "normal"
                             },
@@ -390,7 +390,7 @@ export const initialServices: Service[] = [
                       {
                         "id": "txt_b_block_node_1788447179506_x8rv_1",
                         "type": "text",
-                        "content": "3. Ingresa tu correo electrónico y crea una contraseña segura\n",
+                        "content": "<b>3. Ingresa tu correo electrónico y crea una contraseña segura</b>\n",
                         "align": "left",
                         "style": "normal"
                       },
@@ -413,7 +413,7 @@ export const initialServices: Service[] = [
                         {
                           "id": "txt_b_block_node_1788447179506_x8rv_1",
                           "type": "text",
-                          "content": "3. Ingresa tu correo electrónico y crea una contraseña segura\n",
+                          "content": "<b>3. Ingresa tu correo electrónico y crea una contraseña segura</b>\n",
                           "align": "left",
                           "style": "normal"
                         },
@@ -435,7 +435,7 @@ export const initialServices: Service[] = [
                   {
                     "id": "txt_b_block_node_1788447025718_4lto_1",
                     "type": "text",
-                    "content": "2. Selecciona la opción “Regístrate”",
+                    "content": "<b>2. Selecciona la opción “Regístrate”</b>",
                     "align": "left",
                     "style": "normal"
                   },
@@ -458,7 +458,7 @@ export const initialServices: Service[] = [
                     {
                       "id": "txt_b_block_node_1788447025718_4lto_1",
                       "type": "text",
-                      "content": "2. Selecciona la opción “Regístrate”",
+                      "content": "<b>2. Selecciona la opción “Regístrate”</b>",
                       "align": "left",
                       "style": "normal"
                     },
@@ -480,7 +480,7 @@ export const initialServices: Service[] = [
               {
                 "id": "txt_b_block_node_1788446978640_awy8_1",
                 "type": "text",
-                "content": "1. Descarga la aplicación oficial Edenred en tu celular.\n",
+                "content": "<b>1. Descarga la aplicación oficial Edenred en tu celular.</b>\n",
                 "align": "left",
                 "style": "normal"
               },
@@ -503,7 +503,7 @@ export const initialServices: Service[] = [
                 {
                   "id": "txt_b_block_node_1788446978640_awy8_1",
                   "type": "text",
-                  "content": "1. Descarga la aplicación oficial Edenred en tu celular.\n",
+                  "content": "<b>1. Descarga la aplicación oficial Edenred en tu celular.</b>\n",
                   "align": "left",
                   "style": "normal"
                 },
@@ -714,7 +714,7 @@ export const initialServices: Service[] = [
               }
             ],
             "contentData": {
-              "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposición por un costo de $49 MXN.\n\n",
+              "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposici��n por un costo de $49 MXN.\n\n",
               "imageUrl": "",
               "videoUrl": "",
               "layoutBlocks": [
@@ -1820,10 +1820,10 @@ export const initialServices: Service[] = [
             "style": "normal"
           },
           {
-            "id": "txt_1793223775649_lam3h",
+            "id": "txt_1793225688721_iyhcg",
             "type": "text",
             "title": "Documentos por familiar",
-            "content": "<ul><li></li><li><strong>Esposa/o:</strong> identificación oficial, foto tamaño infantil y acta de matrimonio.</li><li><strong>Hijos:</strong> acta de nacimiento, adopción o reconocimiento y foto tamaño infantil.</li><li><strong>Mamá o papá:</strong> identificación, tu acta de nacimiento, comprobante de domicilio, foto tamaño infantil y manifestación de convivencia y dependencia económica.</li></ul>",
+            "content": "<ul><li><b>Esposa/o:</b> identificación oficial, foto tamaño infantil y acta de matrimonio.</li><li><b>Hijos:</b> acta de nacimiento, adopción o reconocimiento y foto tamaño infantil.</li><li><b>Mamá o papá:</b> identificación, tu acta de nacimiento, comprobante de domicilio, foto tamaño infantil y manifestación de convivencia y dependencia económica.</li></ul>",
             "align": "left",
             "style": "normal"
           },
@@ -1850,10 +1850,10 @@ export const initialServices: Service[] = [
               "style": "normal"
             },
             {
-              "id": "txt_1793223775649_lam3h",
+              "id": "txt_1793225688721_iyhcg",
               "type": "text",
               "title": "Documentos por familiar",
-              "content": "<ul><li></li><li><strong>Esposa/o:</strong> identificación oficial, foto tamaño infantil y acta de matrimonio.</li><li><strong>Hijos:</strong> acta de nacimiento, adopción o reconocimiento y foto tamaño infantil.</li><li><strong>Mamá o papá:</strong> identificación, tu acta de nacimiento, comprobante de domicilio, foto tamaño infantil y manifestación de convivencia y dependencia económica.</li></ul>",
+              "content": "<ul><li><b>Esposa/o:</b> identificación oficial, foto tamaño infantil y acta de matrimonio.</li><li><b>Hijos:</b> acta de nacimiento, adopción o reconocimiento y foto tamaño infantil.</li><li><b>Mamá o papá:</b> identificación, tu acta de nacimiento, comprobante de domicilio, foto tamaño infantil y manifestación de convivencia y dependencia económica.</li></ul>",
               "align": "left",
               "style": "normal"
             },
