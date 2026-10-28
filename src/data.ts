@@ -714,7 +714,7 @@ export const initialServices: Service[] = [
               }
             ],
             "contentData": {
-              "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposición por un costo de $49 MXN.\n\n",
+              "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposici��n por un costo de $49 MXN.\n\n",
               "imageUrl": "",
               "videoUrl": "",
               "layoutBlocks": [
@@ -766,7 +766,7 @@ export const initialServices: Service[] = [
                 "id": "txt_1792776142823_5skk7",
                 "type": "text",
                 "title": "¿Cómo puedes activarla?",
-                "content": "¡Activa tu tarjeta en unos sencillos pasos!<p><br></p><p></p><ol><li>Inserta tu tarjeta en cualquier cajero automático.</li><li>Ingresa el NIP que aparece en el desprendible de la tarjeta.</li><li>El cajero automático te solicitará cambiar el NIP por uno</li><li>nuevo que solo tú conozcas.</li></ol><p></p>",
+                "content": "<ul><li>Inserta tu tarjeta en cualquier cajero automático.</li><li>Ingresa el NIP que aparece en el desprendible de la tarjeta.</li><li>El cajero automático te solicitará cambiar el NIP por uno.</li><li>nuevo que solo tú conozcas.</li></ul><p></p>",
                 "align": "left",
                 "style": "normal"
               }
@@ -796,7 +796,7 @@ export const initialServices: Service[] = [
                   "id": "txt_1792776142823_5skk7",
                   "type": "text",
                   "title": "¿Cómo puedes activarla?",
-                  "content": "¡Activa tu tarjeta en unos sencillos pasos!<p><br></p><p></p><ol><li>Inserta tu tarjeta en cualquier cajero automático.</li><li>Ingresa el NIP que aparece en el desprendible de la tarjeta.</li><li>El cajero automático te solicitará cambiar el NIP por uno</li><li>nuevo que solo tú conozcas.</li></ol><p></p>",
+                  "content": "<ul><li>Inserta tu tarjeta en cualquier cajero automático.</li><li>Ingresa el NIP que aparece en el desprendible de la tarjeta.</li><li>El cajero automático te solicitará cambiar el NIP por uno.</li><li>nuevo que solo tú conozcas.</li></ul><p></p>",
                   "align": "left",
                   "style": "normal"
                 }
