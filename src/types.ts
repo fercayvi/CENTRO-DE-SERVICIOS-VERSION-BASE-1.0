@@ -204,6 +204,8 @@ export interface NewsItem {
   imageName: string;
   category: 'evento' | 'comunicado' | 'logro'; // Compatibilidad con comunicados anteriores
   imageUrl?: string;
+  imagePositionX?: number;
+  imagePositionY?: number;
   linkUrl?: string;
   linkLabel?: string;
   attachmentUrl?: string;
