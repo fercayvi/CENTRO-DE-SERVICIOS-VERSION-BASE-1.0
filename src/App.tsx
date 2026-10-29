@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
 import { Service, NewsItem, ContactInfo, CategoryConfig, SiteSettings } from './types';
+import NewsDetail from './components/NewsDetail';
 import { initialServices, initialNews, initialContact, defaultCategories, siteSettings } from './data';
 import BottomNav from './components/BottomNav';
 import TopBar from './components/TopBar';
@@ -18,6 +19,7 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<'inicio' | 'buscar' | 'noticias' | 'asistente'>('inicio');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedService, setSelectedService] = useState<(Service & { hidden?: boolean }) | null>(null);
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [serviceEditMode, setServiceEditMode] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
@@ -201,7 +203,14 @@ export default function App() {
             <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
             
             {/* RENDER SELECTED SERVICE DETAIL (Public or Admin) WITH LIGHT FULLSCREEN BACKDROP */}
-            {selectedService ? (
+            {selectedNews ? (
+              <div className="relative animate-fadeIn min-h-screen">
+                <div className="fixed inset-0 bg-slate-50 z-30 pointer-events-none" aria-hidden="true" />
+                <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
+                  <NewsDetail news={selectedNews} onBack={() => setSelectedNews(null)} />
+                </div>
+              </div>
+            ) : selectedService ? (
               <div className="relative animate-fadeIn min-h-screen">
                 {/* Light Full-Screen Background Overlay (Static background, no click-to-close on margins) */}
                 <div 
@@ -259,6 +268,7 @@ export default function App() {
                       setSelectedService(null);
                     }}
                     unreadNewsCount={unreadNewsCount}
+                    showNewsLink={!(settings.showNewsOnHome === true && news.some(item => item.showOnHome !== false))}
                     searchQuery={searchQuery}
                     onSearch={(query) => {
                       setSearchQuery(query);
@@ -351,6 +361,7 @@ export default function App() {
                     <NewsTab 
                     newsList={news} 
                     onUnreadCountChange={setUnreadNewsCount}
+                    onSelectNews={setSelectedNews}
                   />
                   )}
 
