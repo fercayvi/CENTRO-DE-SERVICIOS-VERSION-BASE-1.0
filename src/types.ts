@@ -206,6 +206,7 @@ export interface NewsItem {
   imageUrl?: string;
   imagePositionX?: number;
   imagePositionY?: number;
+  imageZoom?: number;
   linkUrl?: string;
   linkLabel?: string;
   attachmentUrl?: string;
