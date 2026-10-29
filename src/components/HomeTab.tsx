@@ -5,9 +5,11 @@ import {
   CreditCard,
   CalendarClock,
   ArrowLeft,
-  Info
+  Info,
+  Newspaper,
+  ArrowRight
 } from 'lucide-react';
-import { Service, CategoryConfig, SiteSettings } from '../types';
+import { Service, CategoryConfig, SiteSettings, NewsItem } from '../types';
 import { defaultCategories } from '../data';
 import ServiceCard from './ServiceCard';
 
@@ -44,6 +46,8 @@ interface HomeTabProps {
   onSelectCategory?: (category: string | null) => void;
   categories?: CategoryConfig[];
   settings?: SiteSettings;
+  newsList?: NewsItem[];
+  onViewAllNews?: () => void;
 }
 
 export default function HomeTab({
@@ -53,8 +57,12 @@ export default function HomeTab({
   onSelectCategory,
   categories,
   settings,
+  newsList = [],
+  onViewAllNews,
 }: HomeTabProps) {
   const isAllServicesDefault = settings?.defaultHomeView === 'all_services';
+  const showNewsPreview = settings?.showNewsOnHome === true && (controlledCategory === null || controlledCategory === undefined || controlledCategory === 'all' || controlledCategory === 'Todos los trámites');
+  const previewNews = [...newsList].sort((a, b) => (b.date || '').localeCompare(a.date || '')).slice(0, 3);
 
   // Manejo de Estado (inicializado en 'all' si defaultHomeView es 'all_services', de lo contrario null)
   const [internalCategory, setInternalCategory] = useState<string | null>(() => {
@@ -305,6 +313,51 @@ export default function HomeTab({
             </div>
           )}
         </div>
+      )}
+
+      {/* Vista previa de noticias: solo aparece en la pantalla principal, no dentro de una categoría. */}
+      {showNewsPreview && (
+        <section className="mt-8 sm:mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/50 p-4 sm:p-6 shadow-xs animate-fadeIn">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
+            <div>
+              <div className="flex items-center gap-2 text-blue-700 mb-1">
+                <Newspaper className="w-5 h-5" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em]">Novedades</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Entérate de lo que pasa en Ayvi</h2>
+              <p className="text-sm text-slate-500 mt-1">Comunicados, eventos y logros de nuestra comunidad.</p>
+            </div>
+            <button type="button" onClick={onViewAllNews} className="inline-flex items-center gap-2 self-start sm:self-auto rounded-xl px-3 py-2 text-sm font-bold text-blue-700 hover:bg-blue-100/70 transition-colors">
+              Ver todas las noticias <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+          {previewNews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {previewNews.map((item) => (
+                <button type="button" key={item.id} onClick={onViewAllNews} className="group min-w-0 rounded-xl border border-slate-200 bg-white p-4 text-left hover:border-blue-300 hover:shadow-sm transition-all">
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
+                      item.category === 'evento' ? 'bg-violet-50 text-violet-700' :
+                      item.category === 'logro' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'
+                    }`}>{item.category === 'evento' ? 'Evento' : item.category === 'logro' ? 'Logro' : 'Comunicado'}</span>
+                    <span className="text-[10px] text-slate-400 truncate">{item.date}</span>
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm leading-snug line-clamp-2 group-hover:text-blue-700 transition-colors">{item.title}</h3>
+                  <p className="mt-2 text-xs text-slate-500 leading-relaxed line-clamp-3">{item.summary}</p>
+                  <span className="inline-flex items-center gap-1 mt-4 text-xs font-bold text-blue-600">Leer noticia <ArrowRight className="w-3.5 h-3.5" /></span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-slate-300 bg-white/70 px-4 py-6 text-center">
+              <p className="text-sm font-semibold text-slate-600">Próximamente habrá novedades.</p>
+              <p className="text-xs text-slate-500 mt-1">Las noticias publicadas aparecerán aquí.</p>
+            </div>
+          )}
+          <div className="mt-4 flex items-center justify-center gap-2 text-[11px] font-medium text-slate-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />Mantente al día con las novedades de Ayvi
+          </div>
+        </section>
       )}
     </div>
   );
