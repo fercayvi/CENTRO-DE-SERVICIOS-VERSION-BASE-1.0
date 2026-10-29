@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   LogOut, 
   Layers, 
@@ -297,6 +297,7 @@ export default function AdminPanel({
 
   // News Edit / Create Modal state
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
+  const cropDragRef = useRef<{ pointerId: number; startX: number; startY: number; imageX: number; imageY: number } | null>(null);
   const [isNewsModalOpen, setIsNewsModalOpen] = useState<boolean>(false);
   const [isNewNews, setIsNewNews] = useState<boolean>(false);
 
@@ -2233,40 +2234,44 @@ const handleOpenNewNewsModal = () => {
                         helperText="Se mostrará en la vista previa y en el detalle del comunicado."
                       />
                       {editingNews.imageUrl && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                          <label className="space-y-2">
-                            <span className="flex items-center justify-between text-xs font-bold text-slate-700">
-                              <span>Encuadre horizontal</span>
-                              <span className="tabular-nums text-slate-500">{editingNews.imagePositionX ?? 50}%</span>
-                            </span>
-                            <input
-                              type="range"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value={editingNews.imagePositionX ?? 50}
-                              onChange={(e) => setEditingNews({ ...editingNews, imagePositionX: Number(e.target.value) })}
-                              className="w-full accent-blue-600"
-                            />
-                          </label>
-                          <label className="space-y-2">
-                            <span className="flex items-center justify-between text-xs font-bold text-slate-700">
-                              <span>Encuadre vertical</span>
-                              <span className="tabular-nums text-slate-500">{editingNews.imagePositionY ?? 50}%</span>
-                            </span>
-                            <input
-                              type="range"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value={editingNews.imagePositionY ?? 50}
-                              onChange={(e) => setEditingNews({ ...editingNews, imagePositionY: Number(e.target.value) })}
-                              className="w-full accent-blue-600"
-                            />
+                        <div className="space-y-4 pt-2">
+                          <div>
+                            <div className="flex items-center justify-between gap-3 mb-2">
+                              <span className="text-xs font-bold text-slate-700">Ajusta el encuadre</span>
+                              <button type="button" onClick={() => setEditingNews({ ...editingNews, imagePositionX: 50, imagePositionY: 50, imageZoom: 100 })} className="text-xs font-semibold text-blue-600 hover:text-blue-800">Restablecer</button>
+                            </div>
+                            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-200 cursor-grab active:cursor-grabbing touch-none select-none"
+                              onPointerDown={(e) => {
+                                cropDragRef.current = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, imageX: editingNews.imagePositionX ?? 50, imageY: editingNews.imagePositionY ?? 50 };
+                                e.currentTarget.setPointerCapture(e.pointerId);
+                              }}
+                              onPointerMove={(e) => {
+                                const drag = cropDragRef.current;
+                                if (!drag || drag.pointerId !== e.pointerId) return;
+                                const bounds = e.currentTarget.getBoundingClientRect();
+                                const nextX = Math.max(0, Math.min(100, drag.imageX - ((e.clientX - drag.startX) / bounds.width) * 100));
+                                const nextY = Math.max(0, Math.min(100, drag.imageY - ((e.clientY - drag.startY) / bounds.height) * 100));
+                                setEditingNews(prev => prev ? { ...prev, imagePositionX: nextX, imagePositionY: nextY } : prev);
+                              }}
+                              onPointerUp={(e) => {
+                                cropDragRef.current = null;
+                                if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+                              }}
+                              onPointerCancel={() => { cropDragRef.current = null; }}
+                              aria-label="Arrastra la imagen para ajustar el encuadre"
+                            >
+                              <img src={editingNews.imageUrl} alt="Encuadre de la imagen" draggable={false} className="w-full h-full object-cover pointer-events-none"
+                                style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} />
+                              <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/70 text-white text-[11px] px-3 py-1 pointer-events-none">Arrastra para ajustar</span>
+                            </div>
+                          </div>
+                          <label className="block space-y-2">
+                            <span className="flex items-center justify-between text-xs font-bold text-slate-700"><span>Zoom</span><span className="tabular-nums text-slate-500">{editingNews.imageZoom ?? 100}%</span></span>
+                            <input type="range" min="100" max="200" step="1" value={editingNews.imageZoom ?? 100} onChange={(e) => setEditingNews({ ...editingNews, imageZoom: Number(e.target.value) })} className="w-full accent-blue-600" />
                           </label>
                         </div>
                       )}
-                      <p className="text-xs text-slate-500">Ajusta los controles para mover el encuadre de la foto dentro de la tarjeta. No modifica el archivo original.</p>
+                      <p className="text-xs text-slate-500">Mueve la foto con el mouse o el dedo y ajusta el zoom. El archivo original no se modifica.</p>
                     </section>
                   </div>
 
@@ -2313,7 +2318,7 @@ const handleOpenNewNewsModal = () => {
                       </div>
                       <div className="rounded-xl border border-slate-200 overflow-hidden">
                         {editingNews.imageUrl ? (
-                          <img src={editingNews.imageUrl} alt="" className="w-full h-36 object-cover" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%` }} />
+                          <img src={editingNews.imageUrl} alt="" className="w-full h-36 object-cover" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} />
                         ) : (
                           <div className="h-24 bg-slate-100 flex items-center justify-center text-slate-400"><ImageIcon className="w-7 h-7" /></div>
                         )}
