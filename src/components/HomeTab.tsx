@@ -61,7 +61,6 @@ export default function HomeTab({
   onViewAllNews,
 }: HomeTabProps) {
   const isAllServicesDefault = settings?.defaultHomeView === 'all_services';
-  const showNewsPreview = settings?.showNewsOnHome === true && (controlledCategory === null || controlledCategory === undefined || controlledCategory === 'all' || controlledCategory === 'Todos los trámites');
   const previewNews = [...newsList].sort((a, b) => (b.date || '').localeCompare(a.date || '')).slice(0, 3);
 
   // Manejo de Estado (inicializado en 'all' si defaultHomeView es 'all_services', de lo contrario null)
@@ -108,6 +107,8 @@ export default function HomeTab({
     activeCategoryObj?.id === 'all' ||
     (typeof categoryDisplayTitle === 'string' &&
       categoryDisplayTitle.trim().toLowerCase() === 'todos los trámites');
+
+  const showNewsPreview = settings?.showNewsOnHome === true && (selectedCategory === null || isShowingAllServices);
 
   // Filtrado de servicios para Nivel 2
   const filteredServices = useMemo(() => {
