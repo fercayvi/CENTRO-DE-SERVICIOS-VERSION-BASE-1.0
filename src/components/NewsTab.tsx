@@ -6,10 +6,10 @@ import { newsData } from '../data';
 export interface NewsTabProps {
   newsList?: NewsItem[];
   onUnreadCountChange?: (count: number) => void;
+  onSelectNews?: (news: NewsItem) => void;
 }
 
-export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps) {
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+export default function NewsTab({ newsList, onUnreadCountChange, onSelectNews }: NewsTabProps) {
   const displayNews = newsList || newsData;
 
   // Local storage read state
@@ -53,7 +53,7 @@ export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps)
   };
 
   const handleOpenNews = (news: NewsItem) => {
-    setSelectedNews(news);
+    onSelectNews?.(news);
     markAsRead(news.id);
   };
 
@@ -130,42 +130,6 @@ export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps)
         })}
       </div>
 
-      {/* News Detail Popup Modal */}
-      {selectedNews && (
-        <div id="news-modal" className="fixed inset-0 bg-slate-900/40 backdrop-blur-2xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-2xl p-5 sm:p-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fadeIn shadow-2xl border border-slate-200">
-            <div className="flex justify-end items-center">
-              <button 
-                id="close-news-modal"
-                onClick={() => setSelectedNews(null)}
-                className="w-9 h-9 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
-                aria-label="Cerrar"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="space-y-1">
-              {selectedNews.imageUrl && <img src={selectedNews.imageUrl} alt="" className="w-full max-h-64 object-cover rounded-xl mb-3" />}
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">{selectedNews.title}</h3>
-              <p className="text-xs text-slate-500 font-medium">{selectedNews.date} • Publicado por Comunicación Interna</p>
-            </div>
-
-            <p className="text-sm text-slate-700 leading-relaxed font-normal whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-200">
-              {selectedNews.content}
-            </p>
-
-            {selectedNews.attachmentUrl && <a href={selectedNews.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-2.5 border border-slate-300 text-slate-700 font-bold rounded-xl text-sm">{selectedNews.attachmentName || 'Descargar documento'}</a>}
-            {selectedNews.linkUrl && <a href={selectedNews.linkUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm">{selectedNews.linkLabel || 'Conoce más'}</a>}
-            <button
-              onClick={() => setSelectedNews(null)}
-              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition-colors shadow-xs cursor-pointer min-h-[44px]"
-            >
-              Entendido, volver a comunicados
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
