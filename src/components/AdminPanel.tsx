@@ -2220,51 +2220,9 @@ const handleOpenNewNewsModal = () => {
                   <div className="space-y-6 min-w-0">
                     <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6 space-y-5">
                       <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">01 · Contenido principal</span>
-                        <h3 className="text-lg font-bold text-slate-900 mt-1">Información de la noticia</h3>
-                        <p className="text-sm text-slate-500 mt-1">Define el título, el resumen y el contenido que verá el colaborador.</p>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-bold text-slate-700">Título del comunicado *</label>
-                        <input
-                          type="text"
-                          value={editingNews.title}
-                          onChange={(e) => setEditingNews({ ...editingNews, title: e.target.value })}
-                          placeholder="Ej. Jornada de Evaluación en Planta"
-                          className="w-full px-4 py-3 text-base font-semibold border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-bold text-slate-700">Resumen corto *</label>
-                        <textarea
-                          rows={2}
-                          value={editingNews.summary}
-                          onChange={(e) => setEditingNews({ ...editingNews, summary: e.target.value })}
-                          placeholder="Texto breve que aparecerá en la tarjeta de la noticia..."
-                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-y"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-bold text-slate-700">Contenido completo *</label>
-                        <textarea
-                          rows={12}
-                          value={editingNews.content}
-                          onChange={(e) => setEditingNews({ ...editingNews, content: e.target.value })}
-                          placeholder="Desarrolla aquí el comunicado. Puedes separar la información por párrafos..."
-                          className="w-full px-4 py-3 text-sm leading-relaxed border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-y"
-                          required
-                        />
-                        <p className="text-xs text-slate-400">Se conservarán los saltos de línea al mostrar la noticia.</p>
-                      </div>
-                    </section>
-
-                    <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6 space-y-5">
-                      <div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">02 · Recursos</span>
-                        <h3 className="text-lg font-bold text-slate-900 mt-1">Imagen y archivos</h3>
-                        <p className="text-sm text-slate-500 mt-1">Agrega recursos para complementar la publicación. Todos son opcionales.</p>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">02 · Imagen</span>
+                        <h3 className="text-lg font-bold text-slate-900 mt-1">Imagen de portada</h3>
+                        <p className="text-sm text-slate-500 mt-1">Agrega una imagen para complementar la publicación. Es opcional.</p>
                       </div>
                       <MediaUploadField
                         type="image"
@@ -2274,40 +2232,6 @@ const handleOpenNewNewsModal = () => {
                         idPrefix="news-cover"
                         helperText="Se mostrará en la vista previa y en el detalle del comunicado."
                       />
-                      <div className="border-t border-slate-100 pt-5 space-y-3">
-                        <label className="block text-sm font-bold text-slate-700">Enlace externo</label>
-                        <input
-                          type="url"
-                          value={editingNews.linkUrl || ''}
-                          onChange={(e) => setEditingNews({ ...editingNews, linkUrl: e.target.value })}
-                          placeholder="https://..."
-                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl min-h-[44px]"
-                        />
-                        <input
-                          type="text"
-                          value={editingNews.linkLabel || ''}
-                          onChange={(e) => setEditingNews({ ...editingNews, linkLabel: e.target.value })}
-                          placeholder="Texto del botón: Consulta aquí"
-                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl min-h-[44px]"
-                        />
-                      </div>
-                      <div className="border-t border-slate-100 pt-5 space-y-3">
-                        <label className="block text-sm font-bold text-slate-700">Documento adjunto</label>
-                        <MediaUploadField
-                          type="pdf"
-                          label="PDF o documento"
-                          value={editingNews.attachmentUrl || ''}
-                          onChange={(value) => setEditingNews({ ...editingNews, attachmentUrl: value })}
-                          idPrefix="news-attachment"
-                        />
-                        <input
-                          type="text"
-                          value={editingNews.attachmentName || ''}
-                          onChange={(e) => setEditingNews({ ...editingNews, attachmentName: e.target.value })}
-                          placeholder="Nombre visible: Calendario de pagos 2026"
-                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl min-h-[44px]"
-                        />
-                      </div>
                     </section>
                   </div>
 
