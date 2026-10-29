@@ -79,7 +79,200 @@ export const initialServices: Service[] = [
       "sueldo"
     ],
     "hidden": false,
-    "decisionTree": [],
+    "decisionTree": [
+      {
+        "id": "node_1793307734541_ap52",
+        "title": "¿Cuándo se pagan los Bonos?",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793307867213_5hm29",
+            "type": "text",
+            "title": "¿Cuándo se pagan los Bonos?",
+            "content": "<p data-path-to-node=\"1\">El <b data-path-to-node=\"1,0\" data-index-in-node=\"24\">Premio de Producción</b> y el <b data-path-to-node=\"1,0\" data-index-in-node=\"50\">Bono Volumen</b> se pagan bajo las siguientes condiciones:   </p><ul data-path-to-node=\"2\"><li><p data-path-to-node=\"2,0,0\">Se depositan <b data-path-to-node=\"2,0,0,0\" data-index-in-node=\"13\">cada viernes</b>.   </p></li><li><p data-path-to-node=\"2,1,0\">Se pagan de manera <b data-path-to-node=\"2,1,0,0\" data-index-in-node=\"19\">desfasada</b>, de acuerdo con tu periodo de nómina.   </p></li><li><p data-path-to-node=\"2,2,0\">El dinero se deposita <b data-path-to-node=\"2,2,0,0\" data-index-in-node=\"22\">directamente en tu cuenta de nómina</b>.<br></p></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1793307897911_ytxrg",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Revisa siempre tus depósitos. Si tienes alguna duda o notas algo incorrecto, acude al Módulo de Servicio al Personal."
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793307867213_5hm29",
+              "type": "text",
+              "title": "¿Cuándo se pagan los Bonos?",
+              "content": "<p data-path-to-node=\"1\">El <b data-path-to-node=\"1,0\" data-index-in-node=\"24\">Premio de Producción</b> y el <b data-path-to-node=\"1,0\" data-index-in-node=\"50\">Bono Volumen</b> se pagan bajo las siguientes condiciones:   </p><ul data-path-to-node=\"2\"><li><p data-path-to-node=\"2,0,0\">Se depositan <b data-path-to-node=\"2,0,0,0\" data-index-in-node=\"13\">cada viernes</b>.   </p></li><li><p data-path-to-node=\"2,1,0\">Se pagan de manera <b data-path-to-node=\"2,1,0,0\" data-index-in-node=\"19\">desfasada</b>, de acuerdo con tu periodo de nómina.   </p></li><li><p data-path-to-node=\"2,2,0\">El dinero se deposita <b data-path-to-node=\"2,2,0,0\" data-index-in-node=\"22\">directamente en tu cuenta de nómina</b>.<br></p></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1793307897911_ytxrg",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Revisa siempre tus depósitos. Si tienes alguna duda o notas algo incorrecto, acude al Módulo de Servicio al Personal."
+            }
+          ]
+        }
+      },
+      {
+        "id": "node_1793307919274_t1nl",
+        "title": "¿Cuándo aplica el Premio de Producción?",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793307935191_ald91",
+            "type": "text",
+            "title": "¿Cuándo aplica el Premio de Producción?",
+            "content": "<p data-path-to-node=\"1\">Aquí te explicamos en qué situaciones se mantiene tu premio y en cuáles no:   </p><p data-path-to-node=\"2,0,0\"><b data-path-to-node=\"2,0,0,0\" data-index-in-node=\"0\">Situaciones en las que SÍ aplica el premio:</b>   </p><ul data-path-to-node=\"2,0,1\"><li><p data-path-to-node=\"2,0,1,0,0\">Tiempo por tiempo.   </p></li><li><p data-path-to-node=\"2,0,1,1,0\">Cita del SAT.   </p></li><li><p data-path-to-node=\"2,0,1,2,0\">Junta de sindicato.   </p></li><li><p data-path-to-node=\"2,0,1,3,0\">Vacaciones.   </p></li></ul><p data-path-to-node=\"2,1,0\"><b data-path-to-node=\"2,1,0,0\" data-index-in-node=\"0\">Situaciones en las que NO aplica el premio:</b>   </p><ul data-path-to-node=\"2,1,1\"><li><p data-path-to-node=\"2,1,1,0,0\">Falta injustificada.   </p></li><li><p data-path-to-node=\"2,1,1,1,0\">Permiso sin goce de sueldo.   </p></li><li><p data-path-to-node=\"2,1,1,2,0\">Incapacidad.   </p></li><li><p data-path-to-node=\"2,1,1,3,0\">Nuevo ingreso sin cumplir el periodo requerido.   <br></p></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1793307986161_89c6x",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "El Premio de Producción (al igual que el Bono Volumen) se paga de forma proporcional a los días que hayas laborado en la semana."
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793307935191_ald91",
+              "type": "text",
+              "title": "¿Cuándo aplica el Premio de Producción?",
+              "content": "<p data-path-to-node=\"1\">Aquí te explicamos en qué situaciones se mantiene tu premio y en cuáles no:   </p><p data-path-to-node=\"2,0,0\"><b data-path-to-node=\"2,0,0,0\" data-index-in-node=\"0\">Situaciones en las que SÍ aplica el premio:</b>   </p><ul data-path-to-node=\"2,0,1\"><li><p data-path-to-node=\"2,0,1,0,0\">Tiempo por tiempo.   </p></li><li><p data-path-to-node=\"2,0,1,1,0\">Cita del SAT.   </p></li><li><p data-path-to-node=\"2,0,1,2,0\">Junta de sindicato.   </p></li><li><p data-path-to-node=\"2,0,1,3,0\">Vacaciones.   </p></li></ul><p data-path-to-node=\"2,1,0\"><b data-path-to-node=\"2,1,0,0\" data-index-in-node=\"0\">Situaciones en las que NO aplica el premio:</b>   </p><ul data-path-to-node=\"2,1,1\"><li><p data-path-to-node=\"2,1,1,0,0\">Falta injustificada.   </p></li><li><p data-path-to-node=\"2,1,1,1,0\">Permiso sin goce de sueldo.   </p></li><li><p data-path-to-node=\"2,1,1,2,0\">Incapacidad.   </p></li><li><p data-path-to-node=\"2,1,1,3,0\">Nuevo ingreso sin cumplir el periodo requerido.   <br></p></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1793307986161_89c6x",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "El Premio de Producción (al igual que el Bono Volumen) se paga de forma proporcional a los días que hayas laborado en la semana."
+            }
+          ]
+        }
+      },
+      {
+        "id": "node_1793308017307_x3pv",
+        "title": "¿Qué es y cuándo aplica el Bono Volumen?",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793308043494_8ompo",
+            "type": "text",
+            "title": "¿Qué es y cuándo aplica el Bono Volumen?",
+            "content": "<p data-path-to-node=\"1\">El <b data-path-to-node=\"1,0\" data-index-in-node=\"24\">Bono Volumen</b> es un premio por área que se te otorga cuando se cumple la meta semanal establecida.   </p><p data-path-to-node=\"2\">Aquí te explicamos en qué casos se mantiene tu bono y en cuáles no:</p><p data-path-to-node=\"2\"><br></p><p data-path-to-node=\"3,0,0\"><b data-path-to-node=\"3,0,0,0\" data-index-in-node=\"0\">Situaciones en las que SÍ aplica el bono:</b>   </p><ul data-path-to-node=\"3,0,1\"><li><p data-path-to-node=\"3,0,1,0,0\">Tiempo por tiempo.   </p></li><li><p data-path-to-node=\"3,0,1,1,0\">Cita del SAT.   </p></li><li><p data-path-to-node=\"3,0,1,2,0\">Junta de sindicato.   </p></li><li><p data-path-to-node=\"3,0,1,3,0\">Vacaciones.   </p></li></ul><p data-path-to-node=\"3,1,0\"><b data-path-to-node=\"3,1,0,0\" data-index-in-node=\"0\">Situaciones en las que NO aplica el bono:</b>   </p><ul data-path-to-node=\"3,1,1\"><li><p data-path-to-node=\"3,1,1,0,0\">Falta injustificada.   </p></li><li><p data-path-to-node=\"3,1,1,1,0\">Permiso sin goce de sueldo.   </p></li><li><p data-path-to-node=\"3,1,1,2,0\">Incapacidad.   </p></li><li><p data-path-to-node=\"3,1,1,3,0\">Nuevo ingreso sin cumplir el periodo requerido. <br></p></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1793308113744_6a25g",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Al igual que el Premio de Producción, este bono se paga de forma proporcional a los días que trabajaste en la semana.   \n\nTu supervisor será quien te informe si tu área alcanzó la meta y si eres acreedor a este pago."
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793308043494_8ompo",
+              "type": "text",
+              "title": "¿Qué es y cuándo aplica el Bono Volumen?",
+              "content": "<p data-path-to-node=\"1\">El <b data-path-to-node=\"1,0\" data-index-in-node=\"24\">Bono Volumen</b> es un premio por área que se te otorga cuando se cumple la meta semanal establecida.   </p><p data-path-to-node=\"2\">Aquí te explicamos en qué casos se mantiene tu bono y en cuáles no:</p><p data-path-to-node=\"2\"><br></p><p data-path-to-node=\"3,0,0\"><b data-path-to-node=\"3,0,0,0\" data-index-in-node=\"0\">Situaciones en las que SÍ aplica el bono:</b>   </p><ul data-path-to-node=\"3,0,1\"><li><p data-path-to-node=\"3,0,1,0,0\">Tiempo por tiempo.   </p></li><li><p data-path-to-node=\"3,0,1,1,0\">Cita del SAT.   </p></li><li><p data-path-to-node=\"3,0,1,2,0\">Junta de sindicato.   </p></li><li><p data-path-to-node=\"3,0,1,3,0\">Vacaciones.   </p></li></ul><p data-path-to-node=\"3,1,0\"><b data-path-to-node=\"3,1,0,0\" data-index-in-node=\"0\">Situaciones en las que NO aplica el bono:</b>   </p><ul data-path-to-node=\"3,1,1\"><li><p data-path-to-node=\"3,1,1,0,0\">Falta injustificada.   </p></li><li><p data-path-to-node=\"3,1,1,1,0\">Permiso sin goce de sueldo.   </p></li><li><p data-path-to-node=\"3,1,1,2,0\">Incapacidad.   </p></li><li><p data-path-to-node=\"3,1,1,3,0\">Nuevo ingreso sin cumplir el periodo requerido. <br></p></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1793308113744_6a25g",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Al igual que el Premio de Producción, este bono se paga de forma proporcional a los días que trabajaste en la semana.   \n\nTu supervisor será quien te informe si tu área alcanzó la meta y si eres acreedor a este pago."
+            }
+          ]
+        }
+      },
+      {
+        "id": "node_1793308156371_gduj",
+        "title": "¿Dudas con tu descuento de Comedor o retención de ISR?",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793308192353_f9t5k",
+            "type": "text",
+            "title": "Descuento de Comedor",
+            "content": "<ul><li><b>Se aplica de forma desfasada</b>, al igual que tu pago de nómina. </li><li><b>Corresponde al consumo que realizaste durante los 7 días</b> de la semana que se te está pagando.</li><li><b>Tu huella de comedor es única</b>; esto asegura que no haya registros incorrectos ni te cobren consumos adicionales.</li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "txt_1793308300612_0fmii",
+            "type": "text",
+            "title": "¿Te retuvieron más de ISR?",
+            "content": "<ul><li>En los meses que tienen <b>5 semanas de pago</b>, es normal que la retención de ISR aumente en la última semana.   </li><li>Esto se debe al <b>ajuste del cálculo mensual</b>.   </li></ul><p><br></p>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1793308352800_1y7vv",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Si necesitas una aclaración específica sobre el comedor o el cobro de tus impuestos, acude directamente al Módulo de Servicio al Personal.   "
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793308192353_f9t5k",
+              "type": "text",
+              "title": "Descuento de Comedor",
+              "content": "<ul><li><b>Se aplica de forma desfasada</b>, al igual que tu pago de nómina. </li><li><b>Corresponde al consumo que realizaste durante los 7 días</b> de la semana que se te está pagando.</li><li><b>Tu huella de comedor es única</b>; esto asegura que no haya registros incorrectos ni te cobren consumos adicionales.</li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "txt_1793308300612_0fmii",
+              "type": "text",
+              "title": "¿Te retuvieron más de ISR?",
+              "content": "<ul><li>En los meses que tienen <b>5 semanas de pago</b>, es normal que la retención de ISR aumente en la última semana.   </li><li>Esto se debe al <b>ajuste del cálculo mensual</b>.   </li></ul><p><br></p>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1793308352800_1y7vv",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Si necesitas una aclaración específica sobre el comedor o el cobro de tus impuestos, acude directamente al Módulo de Servicio al Personal.   "
+            }
+          ]
+        }
+      }
+    ],
     "location": "",
     "schedule": "",
     "contact": "",
