@@ -2221,6 +2221,46 @@ const handleOpenNewNewsModal = () => {
                   <div className="space-y-6 min-w-0">
                     <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6 space-y-5">
                       <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">01 · Contenido</span>
+                        <h3 className="text-lg font-bold text-slate-900 mt-1">Contenido de la noticia</h3>
+                        <p className="text-sm text-slate-500 mt-1">Escribe el título, un resumen para la tarjeta y el texto completo del comunicado.</p>
+                      </div>
+                      <label className="block space-y-2">
+                        <span className="text-sm font-bold text-slate-700">Título de la noticia *</span>
+                        <input
+                          type="text"
+                          value={editingNews.title || ''}
+                          onChange={(e) => setEditingNews({ ...editingNews, title: e.target.value })}
+                          placeholder="Escribe el título de la noticia"
+                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                          required
+                        />
+                      </label>
+                      <label className="block space-y-2">
+                        <span className="text-sm font-bold text-slate-700">Resumen</span>
+                        <textarea
+                          rows={3}
+                          value={editingNews.summary || ''}
+                          onChange={(e) => setEditingNews({ ...editingNews, summary: e.target.value })}
+                          placeholder="Un resumen breve que aparecerá en la tarjeta de inicio."
+                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl resize-y focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                        />
+                      </label>
+                      <label className="block space-y-2">
+                        <span className="text-sm font-bold text-slate-700">Texto de la noticia</span>
+                        <textarea
+                          rows={10}
+                          value={editingNews.content || ''}
+                          onChange={(e) => setEditingNews({ ...editingNews, content: e.target.value })}
+                          placeholder="Redacta aquí el comunicado completo..."
+                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl resize-y leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                        />
+                        <span className="text-xs text-slate-500">Este texto aparecerá al abrir la noticia. Puedes usar saltos de línea.</span>
+                      </label>
+                    </section>
+
+                    <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6 space-y-5">
+                      <div>
                         <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">02 · Imagen</span>
                         <h3 className="text-lg font-bold text-slate-900 mt-1">Imagen de portada</h3>
                         <p className="text-sm text-slate-500 mt-1">Agrega una imagen para complementar la publicación. Es opcional.</p>
