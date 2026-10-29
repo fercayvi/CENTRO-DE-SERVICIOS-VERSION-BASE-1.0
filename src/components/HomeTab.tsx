@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   LayoutGrid,
   Wallet,
@@ -7,7 +7,8 @@ import {
   ArrowLeft,
   Info,
   Newspaper,
-  ArrowRight
+  ArrowRight,
+  ChevronDown
 } from 'lucide-react';
 import { Service, CategoryConfig, SiteSettings, NewsItem } from '../types';
 import { defaultCategories } from '../data';
@@ -62,6 +63,28 @@ export default function HomeTab({
   onViewAllNews,
   onSelectNews,
 }: HomeTabProps) {
+  const [showScrollHint, setShowScrollHint] = useState(false);
+
+  // Indica que hay más contenido debajo y se oculta al comenzar a desplazarse.
+  useEffect(() => {
+    const scrollContainer = document.getElementById('phone-main-scrollable-content');
+    if (!scrollContainer) return;
+
+    const updateHint = () => {
+      const hasMoreContent = scrollContainer.scrollHeight > scrollContainer.clientHeight + 80;
+      setShowScrollHint(hasMoreContent && scrollContainer.scrollTop < 40);
+    };
+
+    updateHint();
+    scrollContainer.addEventListener('scroll', updateHint, { passive: true });
+    window.addEventListener('resize', updateHint);
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', updateHint);
+      window.removeEventListener('resize', updateHint);
+    };
+  }, [services.length, newsList.length, controlledCategory]);
+
   const isAllServicesDefault = settings?.defaultHomeView === 'all_services';
   const previewNews = [...newsList].filter(item => item.showOnHome !== false).sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || (b.date || '').localeCompare(a.date || '')).slice(0, 3);
 
@@ -359,6 +382,23 @@ export default function HomeTab({
             <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />Mantente al día con las novedades de Ayvi
           </div>
         </section>
+      )}
+      {showScrollHint && (
+        <button
+          type="button"
+          onClick={() => {
+            const scrollContainer = document.getElementById('phone-main-scrollable-content');
+            scrollContainer?.scrollBy({
+              top: Math.max(window.innerHeight * 0.65, 320),
+              behavior: 'smooth'
+            });
+          }}
+          className="fixed bottom-24 sm:bottom-8 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/95 px-4 py-2.5 text-xs sm:text-sm font-semibold text-blue-700 shadow-lg backdrop-blur-sm transition-all hover:bg-blue-50 hover:shadow-xl animate-bounce"
+          aria-label="Desliza hacia abajo para descubrir más contenido"
+        >
+          <span>Desliza para descubrir más</span>
+          <ChevronDown className="h-4 w-4" />
+        </button>
       )}
     </div>
   );
