@@ -1475,6 +1475,28 @@ const handleOpenNewNewsModal = () => {
               </div>
             </div>
 
+            {/* Setting Card: News preview on home */}
+            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0"><Newspaper className="w-5 h-5" /></div>
+                  <div>
+                    <h4 className="text-sm sm:text-base font-bold text-slate-900">Mostrar noticias en la pantalla principal</h4>
+                    <p className="text-xs text-slate-500 mt-1 max-w-xl">Muestra una vista previa de hasta tres noticias debajo de las tarjetas principales. Al seleccionarlas, los colaboradores pueden entrar al apartado de Noticias.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 self-start sm:self-center">
+                  <span className={`text-xs font-bold ${currentSettings.showNewsOnHome ? 'text-emerald-700' : 'text-slate-500'}`}>{currentSettings.showNewsOnHome ? 'Activado' : 'Desactivado'}</span>
+                  <button type="button" role="switch" id="toggle-news-on-home" aria-label="Mostrar noticias en la pantalla principal" aria-checked={currentSettings.showNewsOnHome === true}
+                    onClick={() => setSettings?.({ ...currentSettings, showNewsOnHome: currentSettings.showNewsOnHome !== true })}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${currentSettings.showNewsOnHome ? 'bg-blue-600' : 'bg-slate-300'}`}
+                    title="Mostrar u ocultar noticias en Inicio">
+                    <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${currentSettings.showNewsOnHome ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {/* Note & export reminder */}
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start gap-3">
               <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
