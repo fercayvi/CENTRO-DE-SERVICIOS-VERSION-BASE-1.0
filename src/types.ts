@@ -202,7 +202,14 @@ export interface NewsItem {
   content: string;
   date: string;
   imageName: string;
-  category: 'evento' | 'comunicado' | 'logro';
+  category: 'evento' | 'comunicado' | 'logro'; // Compatibilidad con comunicados anteriores
+  imageUrl?: string;
+  linkUrl?: string;
+  linkLabel?: string;
+  attachmentUrl?: string;
+  attachmentName?: string;
+  featured?: boolean;
+  showOnHome?: boolean;
 }
 
 export interface Aviso {
