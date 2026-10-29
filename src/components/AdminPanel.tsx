@@ -2280,7 +2280,7 @@ const handleOpenNewNewsModal = () => {
                               <span className="text-xs font-bold text-slate-700">Ajusta el encuadre</span>
                               <button type="button" onClick={() => setEditingNews({ ...editingNews, imagePositionX: 50, imagePositionY: 50, imageZoom: 100 })} className="text-xs font-semibold text-blue-600 hover:text-blue-800">Restablecer</button>
                             </div>
-                            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-200 cursor-grab active:cursor-grabbing touch-none select-none"
+                            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-white border border-slate-200 cursor-grab active:cursor-grabbing touch-none select-none"
                               onPointerDown={(e) => {
                                 cropDragRef.current = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, imageX: editingNews.imagePositionX ?? 50, imageY: editingNews.imagePositionY ?? 50 };
                                 e.currentTarget.setPointerCapture(e.pointerId);
@@ -2300,14 +2300,14 @@ const handleOpenNewNewsModal = () => {
                               onPointerCancel={() => { cropDragRef.current = null; }}
                               aria-label="Arrastra la imagen para ajustar el encuadre"
                             >
-                              <img src={editingNews.imageUrl} alt="Encuadre de la imagen" draggable={false} className="w-full h-full object-cover pointer-events-none"
+                              <img src={editingNews.imageUrl} alt="Encuadre de la imagen" draggable={false} className="w-full h-full object-contain pointer-events-none"
                                 style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} />
                               <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/70 text-white text-[11px] px-3 py-1 pointer-events-none">Arrastra para ajustar</span>
                             </div>
                           </div>
                           <label className="block space-y-2">
                             <span className="flex items-center justify-between text-xs font-bold text-slate-700"><span>Zoom</span><span className="tabular-nums text-slate-500">{editingNews.imageZoom ?? 100}%</span></span>
-                            <input type="range" min="100" max="200" step="1" value={editingNews.imageZoom ?? 100} onChange={(e) => setEditingNews({ ...editingNews, imageZoom: Number(e.target.value) })} className="w-full accent-blue-600" />
+                            <input type="range" min="50" max="200" step="1" value={editingNews.imageZoom ?? 100} onChange={(e) => setEditingNews({ ...editingNews, imageZoom: Number(e.target.value) })} className="w-full accent-blue-600" />
                           </label>
                         </div>
                       )}
@@ -2356,9 +2356,9 @@ const handleOpenNewNewsModal = () => {
                         <h3 className="text-sm font-bold text-slate-900">Vista previa</h3>
                         <Eye className="w-4 h-4 text-slate-400" />
                       </div>
-                      <div className="rounded-xl border border-slate-200 overflow-hidden">
+                      <div className="rounded-xl border border-slate-200 overflow-hidden bg-white">
                         {editingNews.imageUrl ? (
-                          <img src={editingNews.imageUrl} alt="" className="w-full h-36 object-cover" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} />
+                          <div className="w-full h-36 overflow-hidden bg-white"><img src={editingNews.imageUrl} alt="" className="w-full h-full object-contain" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} />
                         ) : (
                           <div className="h-24 bg-slate-100 flex items-center justify-center text-slate-400"><ImageIcon className="w-7 h-7" /></div>
                         )}
