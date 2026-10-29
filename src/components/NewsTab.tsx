@@ -134,10 +134,7 @@ export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps)
       {selectedNews && (
         <div id="news-modal" className="fixed inset-0 bg-slate-900/40 backdrop-blur-2xs z-50 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-2xl p-5 sm:p-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fadeIn shadow-2xl border border-slate-200">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                {selectedNews.category}
-              </span>
+            <div className="flex justify-end items-center">
               <button 
                 id="close-news-modal"
                 onClick={() => setSelectedNews(null)}
@@ -162,7 +159,7 @@ export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps)
             {selectedNews.linkUrl && <a href={selectedNews.linkUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm">{selectedNews.linkLabel || 'Conoce más'}</a>}
             <button
               onClick={() => setSelectedNews(null)}
-              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-xs cursor-pointer min-h-[44px]"
+              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition-colors shadow-xs cursor-pointer min-h-[44px]"
             >
               Entendido, volver a comunicados
             </button>
