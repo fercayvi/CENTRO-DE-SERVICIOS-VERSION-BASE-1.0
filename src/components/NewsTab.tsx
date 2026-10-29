@@ -102,17 +102,7 @@ export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps)
             >
               <div className="space-y-1.5 flex-1 pr-3">
                 <div className="flex items-center gap-2 flex-wrap">
-                  {/* Category Pill */}
-                  <span className={`text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-md ${
-                    news.category === 'evento' 
-                      ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' 
-                      : news.category === 'comunicado' 
-                      ? 'bg-rose-50 text-rose-700 border border-rose-200' 
-                      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  }`}>
-                    {news.category}
-                  </span>
-
+                  {news.featured && <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-0.5">Destacado</span>}
                   {/* Notification Badge: "Nuevo" */}
                   {isUnread && (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-rose-600 text-white shadow-2xs">
@@ -159,6 +149,7 @@ export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps)
             </div>
             
             <div className="space-y-1">
+              {selectedNews.imageUrl && <img src={selectedNews.imageUrl} alt="" className="w-full max-h-64 object-cover rounded-xl mb-3" />}
               <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">{selectedNews.title}</h3>
               <p className="text-xs text-slate-500 font-medium">{selectedNews.date} • Publicado por Comunicación Interna</p>
             </div>
@@ -167,9 +158,11 @@ export default function NewsTab({ newsList, onUnreadCountChange }: NewsTabProps)
               {selectedNews.content}
             </p>
 
+            {selectedNews.attachmentUrl && <a href={selectedNews.attachmentUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-2.5 border border-slate-300 text-slate-700 font-bold rounded-xl text-sm">{selectedNews.attachmentName || 'Descargar documento'}</a>}
+            {selectedNews.linkUrl && <a href={selectedNews.linkUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm">{selectedNews.linkLabel || 'Conoce más'}</a>}
             <button
               onClick={() => setSelectedNews(null)}
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-xs cursor-pointer min-h-[44px]"
+              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors shadow-xs cursor-pointer min-h-[44px]"
             >
               Entendido, volver a comunicados
             </button>
