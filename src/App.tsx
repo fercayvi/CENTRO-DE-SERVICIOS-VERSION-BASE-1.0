@@ -326,6 +326,11 @@ export default function App() {
                         onSelectCategory={setSelectedCategory}
                         categories={categories}
                         settings={settings}
+                        newsList={news}
+                        onViewAllNews={() => {
+                          setCurrentTab('noticias');
+                          setSelectedCategory(null);
+                        }}
                       />
                     </div>
                   )}
