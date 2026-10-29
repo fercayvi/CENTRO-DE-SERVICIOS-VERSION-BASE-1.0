@@ -763,7 +763,7 @@ const handleOpenNewNewsModal = () => {
     title: '',
     summary: '',
     content: '',
-    date: editingNews.date?.trim() || new Date().toLocaleDateString('es-MX', {
+    date: new Date().toLocaleDateString('es-MX', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -787,7 +787,7 @@ const handleOpenNewNewsModal = () => {
   if (isNewNews) {
     const publishedNews = {
       ...editingNews,
-      date: new Date().toLocaleDateString('es-MX', {
+      date: editingNews.date?.trim() || new Date().toLocaleDateString('es-MX', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -2184,107 +2184,221 @@ const handleOpenNewNewsModal = () => {
         </React.Suspense>
       )}
 
-      {/* --- MODAL FOR ADDING / EDITING NEWS --- */}
+      {/* --- FULL-SCREEN EDITOR FOR NEWS --- */}
       {isNewsModalOpen && editingNews && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200/90 shadow-xl overflow-hidden">
-            <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between">
-              <h3 className="text-base font-bold">
-                {isNewNews ? 'Publicar Nueva Noticia' : 'Editar Noticia'}
-              </h3>
-              <button 
-                onClick={() => setIsNewsModalOpen(false)} 
-                className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 active:scale-95 cursor-pointer"
+        <div className="fixed inset-0 z-[60] bg-slate-50 flex flex-col animate-fadeIn">
+          <header className="shrink-0 bg-slate-950 text-white border-b border-slate-800 shadow-lg">
+            <div className="max-w-[1500px] mx-auto w-full px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-300 flex items-center justify-center shrink-0">
+                  <Newspaper className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <span className="block text-[10px] font-bold uppercase tracking-[0.16em] text-blue-300">
+                    Centro de Servicios · Editor de contenido
+                  </span>
+                  <h2 className="text-sm sm:text-base font-bold truncate">
+                    {isNewNews ? 'Crear noticia' : 'Editar noticia'}
+                  </h2>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsNewsModalOpen(false)}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
+                <span className="hidden sm:inline">Cerrar editor</span>
               </button>
             </div>
+          </header>
 
-            <form onSubmit={handleSaveNews} className="p-5 sm:p-6 space-y-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs sm:text-sm font-bold text-slate-800">
-                  Título del Comunicado *
-                </label>
-                <input
-                  type="text"
-                  value={editingNews.title}
-                  onChange={(e) => setEditingNews({ ...editingNews, title: e.target.value })}
-                  placeholder="Ej. Jornada de Evaluación en Planta"
-                  className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[44px]"
-                  required
-                />
-              </div>
+          <form onSubmit={handleSaveNews} className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 overflow-y-auto">
+              <div className="max-w-[1500px] mx-auto w-full p-4 sm:p-6 lg:p-8">
+                <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+                  <div className="space-y-6 min-w-0">
+                    <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6 space-y-5">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">01 · Contenido principal</span>
+                        <h3 className="text-lg font-bold text-slate-900 mt-1">Información de la noticia</h3>
+                        <p className="text-sm text-slate-500 mt-1">Define el título, el resumen y el contenido que verá el colaborador.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-slate-700">Título del comunicado *</label>
+                        <input
+                          type="text"
+                          value={editingNews.title}
+                          onChange={(e) => setEditingNews({ ...editingNews, title: e.target.value })}
+                          placeholder="Ej. Jornada de Evaluación en Planta"
+                          className="w-full px-4 py-3 text-base font-semibold border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-slate-700">Resumen corto *</label>
+                        <textarea
+                          rows={2}
+                          value={editingNews.summary}
+                          onChange={(e) => setEditingNews({ ...editingNews, summary: e.target.value })}
+                          placeholder="Texto breve que aparecerá en la tarjeta de la noticia..."
+                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-y"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-slate-700">Contenido completo *</label>
+                        <textarea
+                          rows={12}
+                          value={editingNews.content}
+                          onChange={(e) => setEditingNews({ ...editingNews, content: e.target.value })}
+                          placeholder="Desarrolla aquí el comunicado. Puedes separar la información por párrafos..."
+                          className="w-full px-4 py-3 text-sm leading-relaxed border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 resize-y"
+                          required
+                        />
+                        <p className="text-xs text-slate-400">Se conservarán los saltos de línea al mostrar la noticia.</p>
+                      </div>
+                    </section>
 
-<div className="space-y-1.5">
-                <label className="block text-xs sm:text-sm font-bold text-slate-800">
-                  Resumen Corto *
-                </label>
-                <input
-                  type="text"
-                  value={editingNews.summary}
-                  onChange={(e) => setEditingNews({ ...editingNews, summary: e.target.value })}
-                  placeholder="Texto visible en la vista previa..."
-                  className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[44px]"
-                  required
-                />
-              </div>
+                    <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6 space-y-5">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">02 · Recursos</span>
+                        <h3 className="text-lg font-bold text-slate-900 mt-1">Imagen y archivos</h3>
+                        <p className="text-sm text-slate-500 mt-1">Agrega recursos para complementar la publicación. Todos son opcionales.</p>
+                      </div>
+                      <MediaUploadField
+                        type="image"
+                        label="Imagen de portada"
+                        value={editingNews.imageUrl || ''}
+                        onChange={(value) => setEditingNews({ ...editingNews, imageUrl: value })}
+                        idPrefix="news-cover"
+                        helperText="Se mostrará en la vista previa y en el detalle del comunicado."
+                      />
+                      <div className="border-t border-slate-100 pt-5 space-y-3">
+                        <label className="block text-sm font-bold text-slate-700">Enlace externo</label>
+                        <input
+                          type="url"
+                          value={editingNews.linkUrl || ''}
+                          onChange={(e) => setEditingNews({ ...editingNews, linkUrl: e.target.value })}
+                          placeholder="https://..."
+                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl min-h-[44px]"
+                        />
+                        <input
+                          type="text"
+                          value={editingNews.linkLabel || ''}
+                          onChange={(e) => setEditingNews({ ...editingNews, linkLabel: e.target.value })}
+                          placeholder="Texto del botón: Consulta aquí"
+                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl min-h-[44px]"
+                        />
+                      </div>
+                      <div className="border-t border-slate-100 pt-5 space-y-3">
+                        <label className="block text-sm font-bold text-slate-700">Documento adjunto</label>
+                        <MediaUploadField
+                          type="pdf"
+                          label="PDF o documento"
+                          value={editingNews.attachmentUrl || ''}
+                          onChange={(value) => setEditingNews({ ...editingNews, attachmentUrl: value })}
+                          idPrefix="news-attachment"
+                        />
+                        <input
+                          type="text"
+                          value={editingNews.attachmentName || ''}
+                          onChange={(e) => setEditingNews({ ...editingNews, attachmentName: e.target.value })}
+                          placeholder="Nombre visible: Calendario de pagos 2026"
+                          className="w-full px-4 py-3 text-sm border border-slate-300 rounded-xl min-h-[44px]"
+                        />
+                      </div>
+                    </section>
+                  </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs sm:text-sm font-bold text-slate-800">
-                  Contenido Completo *
-                </label>
-                <textarea
-                  rows={4}
-                  value={editingNews.content}
-                  onChange={(e) => setEditingNews({ ...editingNews, content: e.target.value })}
-                  placeholder="Detalle de la noticia..."
-                  className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 leading-relaxed"
-                  required
-                />
-              </div>
+                  <aside className="space-y-5 xl:sticky xl:top-6">
+                    <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 space-y-4">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">03 · Publicación</span>
+                        <h3 className="text-base font-bold text-slate-900 mt-1">Configuración</h3>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-slate-700">Fecha de publicación</label>
+                        <input
+                          type="text"
+                          value={editingNews.date || ''}
+                          onChange={(e) => setEditingNews({ ...editingNews, date: e.target.value })}
+                          placeholder="Ej. 29 de octubre de 2026"
+                          className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]"
+                        />
+                      </div>
+                      <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editingNews.featured === true}
+                          onChange={(e) => setEditingNews({ ...editingNews, featured: e.target.checked })}
+                          className="mt-0.5"
+                        />
+                        <span><strong className="block text-sm text-slate-800">Destacar comunicado</strong><span className="text-xs text-slate-500">Da prioridad visual a esta noticia.</span></span>
+                      </label>
+                      <label className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editingNews.showOnHome !== false}
+                          onChange={(e) => setEditingNews({ ...editingNews, showOnHome: e.target.checked })}
+                          className="mt-0.5"
+                        />
+                        <span><strong className="block text-sm text-slate-800">Mostrar en inicio</strong><span className="text-xs text-slate-500">Controla si aparece en la página principal.</span></span>
+                      </label>
+                    </section>
 
-                <div className="space-y-1.5">
-                <label className="block text-xs sm:text-sm font-bold text-slate-800">Fecha de publicación</label>
-                <input type="text" value={editingNews.date || ''} onChange={(e) => setEditingNews({ ...editingNews, date: e.target.value })} placeholder="Ej. 29 de octubre de 2026" className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
+                    <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-bold text-slate-900">Vista previa</h3>
+                        <Eye className="w-4 h-4 text-slate-400" />
+                      </div>
+                      <div className="rounded-xl border border-slate-200 overflow-hidden">
+                        {editingNews.imageUrl ? (
+                          <img src={editingNews.imageUrl} alt="" className="w-full h-36 object-cover" />
+                        ) : (
+                          <div className="h-24 bg-slate-100 flex items-center justify-center text-slate-400"><ImageIcon className="w-7 h-7" /></div>
+                        )}
+                        <div className="p-4 space-y-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {editingNews.featured && <span className="text-[10px] font-bold uppercase text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-0.5">Destacado</span>}
+                            <span className="text-[11px] text-slate-500">{editingNews.date || 'Fecha de publicación'}</span>
+                          </div>
+                          <h4 className="text-sm font-bold text-slate-900">{editingNews.title || 'Título de la noticia'}</h4>
+                          <p className="text-xs text-slate-600 leading-relaxed">{editingNews.summary || 'El resumen aparecerá aquí...'}</p>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-slate-400">La vista previa es orientativa; el diseño final depende de la vista pública del portal.</p>
+                    </section>
+                  </aside>
+                </div>
               </div>
-              <MediaUploadField type="image" label="Imagen de portada" value={editingNews.imageUrl || ''} onChange={(value) => setEditingNews({ ...editingNews, imageUrl: value })} idPrefix="news-cover" helperText="Opcional. Se mostrará en la vista previa y en el detalle del comunicado." />
-              <div className="space-y-1.5">
-                <label className="block text-xs sm:text-sm font-bold text-slate-800">Enlace externo (opcional)</label>
-                <input type="url" value={editingNews.linkUrl || ''} onChange={(e) => setEditingNews({ ...editingNews, linkUrl: e.target.value })} placeholder="https://..." className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
-                <input type="text" value={editingNews.linkLabel || ''} onChange={(e) => setEditingNews({ ...editingNews, linkLabel: e.target.value })} placeholder="Texto del botón: Consulta aquí" className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
+            </div>
+
+            <footer className="shrink-0 bg-white border-t border-slate-200 shadow-[0_-4px_16px_rgba(15,23,42,0.04)]">
+              <div className="max-w-[1500px] mx-auto w-full px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+                <p className="hidden sm:block text-xs text-slate-500">Los cambios se aplicarán al guardar la noticia.</p>
+                <div className="flex items-center gap-2 ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => setIsNewsModalOpen(false)}
+                    className="px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 min-h-[42px]"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl inline-flex items-center gap-2 shadow-sm min-h-[42px]"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{isNewNews ? 'Publicar noticia' : 'Guardar cambios'}</span>
+                  </button>
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="block text-xs sm:text-sm font-bold text-slate-800">Documento adjunto (opcional)</label>
-                <MediaUploadField type="pdf" label="PDF o documento" value={editingNews.attachmentUrl || ''} onChange={(value) => setEditingNews({ ...editingNews, attachmentUrl: value })} idPrefix="news-attachment" />
-                <input type="text" value={editingNews.attachmentName || ''} onChange={(e) => setEditingNews({ ...editingNews, attachmentName: e.target.value })} placeholder="Nombre del documento: Calendario de pagos 2026" className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
-              </div>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <label className="flex items-center gap-2"><input type="checkbox" checked={editingNews.featured === true} onChange={(e) => setEditingNews({ ...editingNews, featured: e.target.checked })} /> Destacar comunicado</label>
-                <label className="flex items-center gap-2"><input type="checkbox" checked={editingNews.showOnHome !== false} onChange={(e) => setEditingNews({ ...editingNews, showOnHome: e.target.checked })} /> Mostrar en inicio</label>
-              </div>
-            <div className="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setIsNewsModalOpen(false)}
-                  className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:bg-slate-100 cursor-pointer min-h-[42px] focus:outline-none focus:ring-2 focus:ring-slate-400/20 active:scale-[0.98]"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl flex items-center gap-2 shadow-xs active:scale-[0.98] cursor-pointer min-h-[42px] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>Publicar Noticia</span>
-                </button>
-              </div>
-            </form>
-          </div>
+            </footer>
+          </form>
         </div>
       )}
-
-
-
+ 
       {/* --- CUSTOM DELETE CONFIRMATION MODAL --- */}
       {deleteConfirmTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
