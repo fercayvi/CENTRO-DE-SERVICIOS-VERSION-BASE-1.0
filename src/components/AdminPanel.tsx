@@ -769,7 +769,14 @@ const handleOpenNewNewsModal = () => {
       year: 'numeric',
     }),
     imageName: 'welcome_team',
-    category: 'comunicado'
+    category: 'comunicado',
+    imageUrl: '',
+    linkUrl: '',
+    linkLabel: 'Conoce más',
+    attachmentUrl: '',
+    attachmentName: '',
+    featured: false,
+    showOnHome: true
   });
   setIsNewsModalOpen(true);
 };
@@ -2258,6 +2265,25 @@ const handleOpenNewNewsModal = () => {
                 />
               </div>
 
+              <div className="space-y-1.5">
+                <label className="block text-xs sm:text-sm font-bold text-slate-800">Fecha de publicación</label>
+                <input type="text" value={editingNews.date || ''} onChange={(e) => setEditingNews({ ...editingNews, date: e.target.value })} placeholder="Ej. 29 de octubre de 2026" className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
+              </div>
+              <MediaUploadField type="image" label="Imagen de portada" value={editingNews.imageUrl || ''} onChange={(value) => setEditingNews({ ...editingNews, imageUrl: value })} idPrefix="news-cover" helperText="Opcional. Se mostrará en la vista previa y en el detalle del comunicado." />
+              <div className="space-y-1.5">
+                <label className="block text-xs sm:text-sm font-bold text-slate-800">Enlace externo (opcional)</label>
+                <input type="url" value={editingNews.linkUrl || ''} onChange={(e) => setEditingNews({ ...editingNews, linkUrl: e.target.value })} placeholder="https://..." className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
+                <input type="text" value={editingNews.linkLabel || ''} onChange={(e) => setEditingNews({ ...editingNews, linkLabel: e.target.value })} placeholder="Texto del botón: Consulta aquí" className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="block text-xs sm:text-sm font-bold text-slate-800">Documento adjunto (opcional)</label>
+                <MediaUploadField type="pdf" label="PDF o documento" value={editingNews.attachmentUrl || ''} onChange={(value) => setEditingNews({ ...editingNews, attachmentUrl: value })} idPrefix="news-attachment" />
+                <input type="text" value={editingNews.attachmentName || ''} onChange={(e) => setEditingNews({ ...editingNews, attachmentName: e.target.value })} placeholder="Nombre del documento: Calendario de pagos 2026" className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
+              </div>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <label className="flex items-center gap-2"><input type="checkbox" checked={editingNews.featured === true} onChange={(e) => setEditingNews({ ...editingNews, featured: e.target.checked })} /> Destacar comunicado</label>
+                <label className="flex items-center gap-2"><input type="checkbox" checked={editingNews.showOnHome !== false} onChange={(e) => setEditingNews({ ...editingNews, showOnHome: e.target.checked })} /> Mostrar en inicio</label>
+              </div>
               <div className="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
                 <button
                   type="button"
