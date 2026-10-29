@@ -15,7 +15,7 @@ export default function NewsDetail({ news, onBack }: NewsDetailProps) {
           <ChevronLeft className="w-5 h-5" /> Volver a noticias
         </button>
       </div>
-      {news.imageUrl && <img src={news.imageUrl} alt="" className="w-full max-h-[420px] object-cover" />}
+      {news.imageUrl && <div className="w-full h-[220px] sm:h-[320px] max-h-[420px] overflow-hidden bg-white flex items-center justify-center"><img src={news.imageUrl} alt="" className="w-full h-full object-contain" style={{ objectPosition: `${news.imagePositionX ?? 50}% ${news.imagePositionY ?? 50}%`, transform: `scale(${(news.imageZoom ?? 100) / 100})`, transformOrigin: "center" }} /></div>}
       <div className="p-5 sm:p-8 lg:p-10 space-y-6">
         <div className="flex items-center gap-2 flex-wrap">
           {news.featured && <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-1">Destacado</span>}
