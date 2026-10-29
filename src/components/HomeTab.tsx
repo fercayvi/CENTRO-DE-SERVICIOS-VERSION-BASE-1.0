@@ -6,7 +6,6 @@ import {
   CalendarClock,
   ArrowLeft,
   Info,
-  Newspaper,
   ArrowRight,
   ChevronDown
 } from 'lucide-react';
@@ -65,22 +64,35 @@ export default function HomeTab({
 }: HomeTabProps) {
   const [showScrollHint, setShowScrollHint] = useState(false);
 
-  // Indica que hay más contenido debajo y se oculta al comenzar a desplazarse.
+  // Detecta desplazamiento tanto en el contenedor interno como en la ventana.
   useEffect(() => {
     const scrollContainer = document.getElementById('phone-main-scrollable-content');
     if (!scrollContainer) return;
 
     const updateHint = () => {
-      const hasMoreContent = scrollContainer.scrollHeight > scrollContainer.clientHeight + 80;
-      setShowScrollHint(hasMoreContent && scrollContainer.scrollTop < 40);
+      const containerHasOverflow = scrollContainer.scrollHeight > scrollContainer.clientHeight + 80;
+      const windowHasOverflow = document.documentElement.scrollHeight > window.innerHeight + 80;
+      const hasMoreContent = containerHasOverflow || windowHasOverflow;
+      const currentScroll = Math.max(window.scrollY, scrollContainer.scrollTop);
+      setShowScrollHint(hasMoreContent && currentScroll < 40);
     };
 
-    updateHint();
+    const observer = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(updateHint)
+      : null;
+    observer?.observe(scrollContainer);
+    if (scrollContainer.firstElementChild) observer?.observe(scrollContainer.firstElementChild);
+
+    const frame = window.requestAnimationFrame(updateHint);
     scrollContainer.addEventListener('scroll', updateHint, { passive: true });
+    window.addEventListener('scroll', updateHint, { passive: true });
     window.addEventListener('resize', updateHint);
 
     return () => {
+      window.cancelAnimationFrame(frame);
+      observer?.disconnect();
       scrollContainer.removeEventListener('scroll', updateHint);
+      window.removeEventListener('scroll', updateHint);
       window.removeEventListener('resize', updateHint);
     };
   }, [services.length, newsList.length, controlledCategory]);
@@ -346,10 +358,6 @@ export default function HomeTab({
         <section className="mt-8 sm:mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/50 p-4 sm:p-6 shadow-xs animate-fadeIn">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
             <div>
-              <div className="flex items-center gap-2 text-blue-700 mb-1">
-                <Newspaper className="w-5 h-5" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em]">Novedades</span>
-              </div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Entérate de lo que pasa en Ayvi</h2>
               <p className="text-sm text-slate-500 mt-1">Comunicados, eventos y logros de nuestra comunidad.</p>
             </div>
@@ -378,9 +386,6 @@ export default function HomeTab({
               <p className="text-xs text-slate-500 mt-1">Las noticias publicadas aparecerán aquí.</p>
             </div>
           )}
-          <div className="mt-4 flex items-center justify-center gap-2 text-[11px] font-medium text-slate-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />Mantente al día con las novedades de Ayvi
-          </div>
         </section>
       )}
       {showScrollHint && (
@@ -388,10 +393,15 @@ export default function HomeTab({
           type="button"
           onClick={() => {
             const scrollContainer = document.getElementById('phone-main-scrollable-content');
-            scrollContainer?.scrollBy({
-              top: Math.max(window.innerHeight * 0.65, 320),
-              behavior: 'smooth'
-            });
+            const containerHasOverflow = Boolean(
+              scrollContainer && scrollContainer.scrollHeight > scrollContainer.clientHeight + 80
+            );
+            const distance = Math.max(window.innerHeight * 0.65, 320);
+            if (containerHasOverflow) {
+              scrollContainer?.scrollBy({ top: distance, behavior: 'smooth' });
+            } else {
+              window.scrollBy({ top: distance, behavior: 'smooth' });
+            }
           }}
           className="fixed bottom-24 sm:bottom-8 left-1/2 -translate-x-1/2 z-30 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/95 px-4 py-2.5 text-xs sm:text-sm font-semibold text-blue-700 shadow-lg backdrop-blur-sm transition-all hover:bg-blue-50 hover:shadow-xl animate-bounce"
           aria-label="Desliza hacia abajo para descubrir más contenido"
