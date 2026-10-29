@@ -48,6 +48,7 @@ interface HomeTabProps {
   settings?: SiteSettings;
   newsList?: NewsItem[];
   onViewAllNews?: () => void;
+  onSelectNews?: (news: NewsItem) => void;
 }
 
 export default function HomeTab({
@@ -59,6 +60,7 @@ export default function HomeTab({
   settings,
   newsList = [],
   onViewAllNews,
+  onSelectNews,
 }: HomeTabProps) {
   const isAllServicesDefault = settings?.defaultHomeView === 'all_services';
   const previewNews = [...newsList].filter(item => item.showOnHome !== false).sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || (b.date || '').localeCompare(a.date || '')).slice(0, 3);
@@ -335,8 +337,8 @@ export default function HomeTab({
           {previewNews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {previewNews.map((item) => (
-                <button type="button" key={item.id} onClick={onViewAllNews} className="group min-w-0 rounded-xl border border-slate-200 bg-white p-4 text-left hover:border-blue-300 hover:shadow-sm transition-all">
-                  {item.imageUrl && <img src={item.imageUrl} alt="" className="w-full h-32 object-cover rounded-lg mb-3" />}
+                <button type="button" key={item.id} onClick={() => onSelectNews?.(item)} className="group min-w-0 rounded-xl border border-slate-200 bg-white p-4 text-left hover:border-blue-300 hover:shadow-sm transition-all">
+                  {item.imageUrl && <img src={item.imageUrl} alt="" className="w-full h-32 object-cover rounded-lg mb-3" style={{ objectPosition: `${item.imagePositionX ?? 50}% ${item.imagePositionY ?? 50}%` }} />}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     {item.featured ? <span className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700">Destacado</span> : <span />}
                     <span className="text-[10px] text-slate-400 truncate">{item.date}</span>
