@@ -2232,6 +2232,41 @@ const handleOpenNewNewsModal = () => {
                         idPrefix="news-cover"
                         helperText="Se mostrará en la vista previa y en el detalle del comunicado."
                       />
+                      {editingNews.imageUrl && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                          <label className="space-y-2">
+                            <span className="flex items-center justify-between text-xs font-bold text-slate-700">
+                              <span>Encuadre horizontal</span>
+                              <span className="tabular-nums text-slate-500">{editingNews.imagePositionX ?? 50}%</span>
+                            </span>
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value={editingNews.imagePositionX ?? 50}
+                              onChange={(e) => setEditingNews({ ...editingNews, imagePositionX: Number(e.target.value) })}
+                              className="w-full accent-blue-600"
+                            />
+                          </label>
+                          <label className="space-y-2">
+                            <span className="flex items-center justify-between text-xs font-bold text-slate-700">
+                              <span>Encuadre vertical</span>
+                              <span className="tabular-nums text-slate-500">{editingNews.imagePositionY ?? 50}%</span>
+                            </span>
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value={editingNews.imagePositionY ?? 50}
+                              onChange={(e) => setEditingNews({ ...editingNews, imagePositionY: Number(e.target.value) })}
+                              className="w-full accent-blue-600"
+                            />
+                          </label>
+                        </div>
+                      )}
+                      <p className="text-xs text-slate-500">Ajusta los controles para mover el encuadre de la foto dentro de la tarjeta. No modifica el archivo original.</p>
                     </section>
                   </div>
 
@@ -2278,7 +2313,7 @@ const handleOpenNewNewsModal = () => {
                       </div>
                       <div className="rounded-xl border border-slate-200 overflow-hidden">
                         {editingNews.imageUrl ? (
-                          <img src={editingNews.imageUrl} alt="" className="w-full h-36 object-cover" />
+                          <img src={editingNews.imageUrl} alt="" className="w-full h-36 object-cover" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%` }} />
                         ) : (
                           <div className="h-24 bg-slate-100 flex items-center justify-center text-slate-400"><ImageIcon className="w-7 h-7" /></div>
                         )}
