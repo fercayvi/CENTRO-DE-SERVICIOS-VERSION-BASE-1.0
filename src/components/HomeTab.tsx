@@ -61,7 +61,7 @@ export default function HomeTab({
   onViewAllNews,
 }: HomeTabProps) {
   const isAllServicesDefault = settings?.defaultHomeView === 'all_services';
-  const previewNews = [...newsList].sort((a, b) => (b.date || '').localeCompare(a.date || '')).slice(0, 3);
+  const previewNews = [...newsList].filter(item => item.showOnHome !== false).sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || (b.date || '').localeCompare(a.date || '')).slice(0, 3);
 
   // Manejo de Estado (inicializado en 'all' si defaultHomeView es 'all_services', de lo contrario null)
   const [internalCategory, setInternalCategory] = useState<string | null>(() => {
@@ -336,11 +336,9 @@ export default function HomeTab({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {previewNews.map((item) => (
                 <button type="button" key={item.id} onClick={onViewAllNews} className="group min-w-0 rounded-xl border border-slate-200 bg-white p-4 text-left hover:border-blue-300 hover:shadow-sm transition-all">
+                  {item.imageUrl && <img src={item.imageUrl} alt="" className="w-full h-32 object-cover rounded-lg mb-3" />}
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
-                      item.category === 'evento' ? 'bg-violet-50 text-violet-700' :
-                      item.category === 'logro' ? 'bg-emerald-50 text-emerald-700' : 'bg-blue-50 text-blue-700'
-                    }`}>{item.category === 'evento' ? 'Evento' : item.category === 'logro' ? 'Logro' : 'Comunicado'}</span>
+                    {item.featured ? <span className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700">Destacado</span> : <span />}
                     <span className="text-[10px] text-slate-400 truncate">{item.date}</span>
                   </div>
                   <h3 className="font-bold text-slate-900 text-sm leading-snug line-clamp-2 group-hover:text-blue-700 transition-colors">{item.title}</h3>
