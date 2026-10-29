@@ -338,7 +338,7 @@ export default function HomeTab({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {previewNews.map((item) => (
                 <button type="button" key={item.id} onClick={() => onSelectNews?.(item)} className="group min-w-0 rounded-xl border border-slate-200 bg-white p-4 text-left hover:border-blue-300 hover:shadow-sm transition-all">
-                  {item.imageUrl && <div className="w-full h-32 overflow-hidden rounded-lg mb-3"><img src={item.imageUrl} alt="" className="w-full h-full object-cover" style={{ objectPosition: `${item.imagePositionX ?? 50}% ${item.imagePositionY ?? 50}%`, transform: `scale(${(item.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} /></div>}
+                  {item.imageUrl && <div className="w-full h-32 overflow-hidden rounded-lg mb-3 bg-white"><img src={item.imageUrl} alt="" className="w-full h-full object-contain" style={{ objectPosition: `${item.imagePositionX ?? 50}% ${item.imagePositionY ?? 50}%`, transform: `scale(${(item.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} /></div>}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     {item.featured ? <span className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700">Destacado</span> : <span />}
                     <span className="text-[10px] text-slate-400 truncate">{item.date}</span>
