@@ -763,20 +763,13 @@ const handleOpenNewNewsModal = () => {
     title: '',
     summary: '',
     content: '',
-    date: new Date().toLocaleDateString('es-MX', {
+    date: editingNews.date?.trim() || new Date().toLocaleDateString('es-MX', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     }),
     imageName: 'welcome_team',
-    category: 'comunicado',
-    imageUrl: '',
-    linkUrl: '',
-    linkLabel: 'Conoce más',
-    attachmentUrl: '',
-    attachmentName: '',
-    featured: false,
-    showOnHome: true
+    category: 'comunicado'
   });
   setIsNewsModalOpen(true);
 };
@@ -794,7 +787,7 @@ const handleOpenNewNewsModal = () => {
   if (isNewNews) {
     const publishedNews = {
       ...editingNews,
-      date: editingNews.date?.trim() || new Date().toLocaleDateString('es-MX', {
+      date: new Date().toLocaleDateString('es-MX', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -1691,6 +1684,552 @@ const handleOpenNewNewsModal = () => {
                 {serviceModalTab === 'general' && (
                   <div className="space-y-4 animate-fadeIn">
                     <div className="space-y-1.5">
+                      <label className="block text-xs sm:text-sm font-bold text-slate-700">
+                        Título del Trámite *
+                      </label>
+                      <input
+                        type="text"
+                        value={editingService.title}
+                        onChange={(e) => setEditingService({ ...editingService, title: e.target.value })}
+                        placeholder="Ej. Poliza de Seguro Social o Permiso de Falta"
+                        className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[44px]"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs sm:text-sm font-bold text-slate-700">
+                        Módulo / Categoría Oficial *
+                      </label>
+                      <select
+                        value={editingService.category}
+                        onChange={(e) => setEditingService({ ...editingService, category: e.target.value as any })}
+                        className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[44px]"
+                      >
+                        {categoryForms.filter(c => c.id !== 'all').map((cat) => (
+                          <option key={cat.id} value={cat.label}>
+                            {cat.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs sm:text-sm font-bold text-slate-700">
+                        Ícono de la Tarjeta *
+                      </label>
+                      <select
+                        value={editingService.iconName || editingService.icon || 'FileText'}
+                        onChange={(e) => setEditingService({ ...editingService, iconName: e.target.value, icon: e.target.value })}
+                        className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[44px]"
+                      >
+                        <option value="Banknote">💵 Billete (Banknote)</option>
+                        <option value="FileText">📄 Documento (FileText)</option>
+                        <option value="FileCheck">✅ Documento Verificado (FileCheck)</option>
+                        <option value="HelpCircle">❓ Duda / Ayuda (HelpCircle)</option>
+                        <option value="CreditCard">💳 Tarjeta (CreditCard)</option>
+                        <option value="PiggyBank">🐷 Ahorro (PiggyBank)</option>
+                        <option value="Home">🏠 Casa (Home)</option>
+                        <option value="Calendar">📅 Calendario (Calendar)</option>
+                        <option value="CalendarDays">📆 Días Calendario (CalendarDays)</option>
+                        <option value="Shield">🛡️ Seguridad / Salud (Shield)</option>
+                        <option value="ShieldAlert">🛡️ Alerta de Seguridad (ShieldAlert)</option>
+                        <option value="Clock">⏰ Reloj (Clock)</option>
+                        <option value="Briefcase">💼 Maletín (Briefcase)</option>
+                      </select>
+                    </div>
+
+                    {/* FOTO DE PORTADA / TARJETA */}
+                    <div className="p-4 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-2">
+                      <MediaUploadField
+                        type="image"
+                        label="Foto de la Tarjeta / Portada (Opcional)"
+                        value={editingService.cardImage || ''}
+                        onChange={(val) => setEditingService(prev => prev ? ({ ...prev, cardImage: val }) : prev)}
+                        placeholderUrl="https://ejemplo.com/foto_tarjeta.jpg o .png"
+                        helperText="Si cargas una foto o logo aquí, reemplazará al ícono vectorial genérico en la tarjeta del catálogo."
+                        idPrefix="admin-panel-service-card"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs sm:text-sm font-bold text-slate-700">
+                        Descripción Corta (Tarjeta Catálogo) *
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={editingService.shortDesc}
+                        onChange={(e) => setEditingService({ ...editingService, shortDesc: e.target.value })}
+                        placeholder="Resumen para la vista en cuadrícula..."
+                        className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 leading-relaxed"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs sm:text-sm font-bold text-slate-700">
+                        Descripción Completa (Vista Detalle)
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={editingService.fullDescription || ''}
+                        onChange={(e) => setEditingService({ ...editingService, fullDescription: e.target.value })}
+                        placeholder="Explicación detallada del trámite para el trabajador..."
+                        className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 leading-relaxed"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB: ÁRBOL DE DECISIÓN DINÁMICO */}
+                {serviceModalTab === 'arbol' && (
+                  <div className="space-y-5 animate-fadeIn">
+                    <div className="bg-gradient-to-r from-blue-50 via-indigo-50/40 to-slate-50 border border-blue-200/80 rounded-2xl p-6 shadow-xs">
+                      <div className="space-y-1.5">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-100/70 text-blue-700 text-[11px] font-bold uppercase tracking-wider">
+                          <GitBranch className="w-3.5 h-3.5" />
+                          <span>Editor Visual Bidimensional</span>
+                        </div>
+                        <h4 className="text-sm font-bold text-gray-900">
+                          Editor de Diagrama de Flujo (Flowchart Canvas)
+                        </h4>
+                        <p className="text-xs text-gray-600 max-w-xl leading-relaxed">
+                          Diseña el árbol de decisiones en un lienzo infinito interactivo con zoom, paneo libre y panel de propiedades lateral.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsFlowEditorOpen(true)}
+                        className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer active:scale-95"
+                      >
+                        <GitBranch className="w-4 h-4" />
+                        <span>Abrir Editor en Pantalla Completa</span>
+                      </button>
+
+                      <div className="mt-4 pt-3 border-t border-blue-100 flex items-center justify-between text-xs text-blue-900/80 font-medium">
+                        <span>Estado actual: {editingService.decisionTree?.length || 0} ramas de nivel raíz</span>
+                        <span className="text-[11px] text-blue-600 font-semibold">React Flow 2D Canvas</span>
+                      </div>
+                    </div>
+
+                    {/* Live Interactive Preview */}
+                    {editingService.decisionTree && editingService.decisionTree.length > 0 ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between px-1">
+                          <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <Eye className="w-3.5 h-3.5 text-blue-600" />
+                            Vista Previa Interactiva (Estilo Colaborador)
+                          </span>
+                          <span className="text-[10px] text-slate-500 font-medium">
+                            Navegación paso a paso
+                          </span>
+                        </div>
+
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                          <DecisionTreeNavigator
+                            tree={editingService.decisionTree}
+                            serviceTitle={editingService.title}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 px-4 bg-slate-50 border border-dashed border-slate-200 rounded-2xl space-y-3">
+                        <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+                          <GitBranch className="w-6 h-6" />
+                        </div>
+                        <div className="space-y-1">
+                          <h5 className="text-xs font-bold text-slate-800">No hay árbol de decisiones creado aún</h5>
+                          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                            Haz clic en el botón superior para abrir el lienzo visual y comenzar a trazar las preguntas y opciones de este trámite.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setIsFlowEditorOpen(true)}
+                          className="px-4 py-2 bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 rounded-xl text-xs font-bold transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>Crear Primer Diagrama</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 2: PROCEDIMIENTO PASO A PASO */}
+                {serviceModalTab === 'pasos' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs sm:text-sm font-bold text-slate-700">
+                        Pasos del Procedimiento ({editingService.steps?.length || 0})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleAddStep}
+                        className="px-3.5 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 border border-blue-200/80 cursor-pointer min-h-[36px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 active:scale-[0.98]"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Agregar Paso</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-3.5">
+                      {editingService.steps && editingService.steps.length > 0 ? (
+                        editingService.steps.map((step, idx) => (
+                          <div key={idx} className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/90 space-y-3 relative shadow-2xs">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-bold text-white bg-slate-900 px-2.5 py-1 rounded-md">
+                                Paso {step.num || idx + 1}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveStep(idx)}
+                                className="text-rose-500 hover:text-rose-700 p-2 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-rose-500/20"
+                                title="Eliminar paso"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+
+                            <input
+                              type="text"
+                              value={step.title}
+                              onChange={(e) => handleUpdateStep(idx, 'title', e.target.value)}
+                              placeholder="Título del paso (ej. Validación con Supervisor)"
+                              className="w-full px-4 py-2 text-sm font-bold border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[42px]"
+                            />
+
+                            <textarea
+                              rows={2}
+                              value={step.desc}
+                              onChange={(e) => handleUpdateStep(idx, 'desc', e.target.value)}
+                              placeholder="Descripción detallada de lo que debe realizar el colaborador..."
+                              className="w-full px-4 py-2.5 text-sm font-normal border border-slate-300 rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 leading-relaxed"
+                            />
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs sm:text-sm text-slate-500 italic text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                          No se han definido pasos. Haz clic en "Agregar Paso".
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: REQUISITOS Y CONTACTO */}
+                {serviceModalTab === 'requisitos' && (
+                  <div className="space-y-5 animate-fadeIn">
+                    {/* Lista de Requisitos */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="block text-xs sm:text-sm font-bold text-slate-700">
+                          Requisitos Necesarios
+                        </label>
+                        <button
+                          type="button"
+                          onClick={handleAddRequirement}
+                          className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 border border-emerald-200/80 cursor-pointer min-h-[36px] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 active:scale-[0.98]"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Agregar Requisito</span>
+                        </button>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {editingService.requirements && editingService.requirements.length > 0 ? (
+                          editingService.requirements.map((req, idx) => (
+                            <div key={idx} className="flex items-center gap-2.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                              <input
+                                type="text"
+                                value={req}
+                                onChange={(e) => handleUpdateRequirement(idx, e.target.value)}
+                                placeholder="Ej. Gafete oficial activo o Identificación INE"
+                                className="flex-1 px-4 py-2 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[42px]"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveRequirement(idx)}
+                                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-rose-500/20"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-xs sm:text-sm text-slate-500 italic py-3">No hay requisitos registrados.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <hr className="border-slate-100" />
+
+                    {/* Campos de Atención y Ubicación */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">
+                        Ubicación, Horario y Teléfono
+                      </h4>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                          <MapPin className="w-4 h-4 text-slate-500" />
+                          <span>Ubicación de Atención</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={editingService.location || ''}
+                          onChange={(e) => setEditingService({ ...editingService, location: e.target.value })}
+                          placeholder="Ej. Planta Baja • Edificio de Recursos Humanos"
+                          className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[42px]"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                          <Clock className="w-4 h-4 text-slate-500" />
+                          <span>Horario de Atención</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={editingService.schedule || ''}
+                          onChange={(e) => setEditingService({ ...editingService, schedule: e.target.value })}
+                          placeholder="Ej. Lunes a Viernes de 8:00 AM a 5:00 PM"
+                          className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[42px]"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                          <Phone className="w-4 h-4 text-slate-500" />
+                          <span>Teléfono o Extensión de Contacto</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={editingService.contact || ''}
+                          onChange={(e) => setEditingService({ ...editingService, contact: e.target.value })}
+                          placeholder="Ej. Atención a Nóminas - Ext. 201"
+                          className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[42px]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 4: ARCHIVOS Y MULTIMEDIA (DOBLE OPCIÓN: SUBIDA LOCAL O ENLACE URL) */}
+                {serviceModalTab === 'multimedia' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="border-b border-slate-100 pb-2">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-blue-600" />
+                        <span>Archivos y Multimedia (Ruta local o enlace URL)</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Selecciona un archivo para guardarlo automáticamente en public/ mientras el servidor de desarrollo de Codespaces está activo, o utiliza una URL pública. La selección no carga ni convierte el archivo.
+                      </p>
+                    </div>
+
+                    {/* 1. FOTO DE LA TARJETA / PORTADA */}
+                    <MediaUploadField
+                      type="image"
+                      label="Foto de la Tarjeta / Portada (Catálogo Principal)"
+                      value={editingService.cardImage || ''}
+                      onChange={(val) => setEditingService(prev => prev ? ({ ...prev, cardImage: val }) : prev)}
+                      placeholderUrl="https://ejemplo.com/foto_portada.jpg o .png"
+                      helperText="Reemplaza al ícono genérico en la cuadrícula de inicio. Si está vacío, se mostrará el ícono seleccionado."
+                      idPrefix="admin-panel-service-card-media"
+                    />
+
+                    {/* 2. IMAGEN / INFOGRAFÍA */}
+                    <MediaUploadField
+                      type="image"
+                      label="Infografía o Imagen Principal"
+                      value={editingService.imageUrl || ''}
+                      onChange={(val) => setEditingService({ ...editingService, imageUrl: val })}
+                      placeholderUrl="https://ejemplo.com/infografia.png o .jpg"
+                      helperText="Se muestra como infografía visual destacada en la cabecera del trámite."
+                      idPrefix="admin-panel-service"
+                    />
+
+                    {/* 3. VIDEO TUTORIAL */}
+                    <MediaUploadField
+                      type="video"
+                      label="Video Tutorial Explicativo"
+                      value={editingService.videoUrl || ''}
+                      onChange={(val) => setEditingService({ ...editingService, videoUrl: val })}
+                      placeholderUrl="https://www.youtube.com/watch?v=... o video directo .mp4"
+                      helperText="Soporta videos locales .MP4, enlaces de YouTube o Vimeo."
+                      idPrefix="admin-panel-service"
+                    />
+
+                    {/* 4. DOCUMENTO / FORMATO PDF */}
+                    <MediaUploadField
+                      type="pdf"
+                      label="Formato o Documento Descargable (PDF / Word)"
+                      value={editingService.pdfUrl || ''}
+                      onChange={(val) => setEditingService({ ...editingService, pdfUrl: val })}
+                      titleValue={editingService.pdfTitle || ''}
+                      onTitleChange={(title) => setEditingService({ ...editingService, pdfTitle: title })}
+                      placeholderUrl="https://ejemplo.com/formato_oficial.pdf"
+                      helperText="Los colaboradores podrán abrir o descargar directamente este archivo oficial."
+                      idPrefix="admin-panel-service"
+                    />
+                  </div>
+                )}
+
+                {/* TAB 5: PREGUNTAS FRECUENTES (FAQs) */}
+                {serviceModalTab === 'faqs' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs sm:text-sm font-bold text-slate-700">
+                        Preguntas Frecuentes ({editingService.faqs?.length || 0})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleAddFAQ}
+                        className="px-3.5 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 border border-blue-200/80 cursor-pointer min-h-[36px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 active:scale-[0.98]"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Agregar Pregunta</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-3.5">
+                      {editingService.faqs && editingService.faqs.length > 0 ? (
+                        editingService.faqs.map((faq, idx) => (
+                          <div key={idx} className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/90 space-y-3 relative shadow-2xs">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-md">
+                                FAQ #{idx + 1}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFAQ(idx)}
+                                className="text-rose-500 hover:text-rose-700 p-2 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-rose-500/20"
+                                title="Eliminar pregunta"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+
+                            <input
+                              type="text"
+                              value={faq.question}
+                              onChange={(e) => handleUpdateFAQ(idx, 'question', e.target.value)}
+                              placeholder="Pregunta frecuente (ej. ¿Qué pasa si no cobro a tiempo?)"
+                              className="w-full px-4 py-2 text-sm font-bold border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[42px]"
+                            />
+
+                            <textarea
+                              rows={2}
+                              value={faq.answer}
+                              onChange={(e) => handleUpdateFAQ(idx, 'answer', e.target.value)}
+                              placeholder="Respuesta detallada..."
+                              className="w-full px-4 py-2.5 text-sm font-normal border border-slate-300 rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 leading-relaxed"
+                            />
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs sm:text-sm text-slate-500 italic text-center py-6 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                          No hay preguntas registradas. Haz clic en "Agregar Pregunta".
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* Modal Footer Controls */}
+              <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 shrink-0">
+                <div className="text-xs text-slate-500 font-medium hidden sm:block">
+                  Los cambios se actualizarán inmediatamente en el portal.
+                </div>
+                <div className="flex items-center gap-2.5 ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => setIsServiceModalOpen(false)}
+                    className="px-5 py-2.5 text-xs sm:text-sm font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-100 cursor-pointer min-h-[42px] focus:outline-none focus:ring-2 focus:ring-slate-400/20"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl flex items-center gap-2 shadow-xs active:scale-[0.98] transition-all cursor-pointer min-h-[42px] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Guardar Cambios</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Flowchart Canvas Editor */}
+      {isFlowEditorOpen && editingService && (
+        <React.Suspense fallback={<div className="fixed inset-0 z-[60] flex items-center justify-center bg-white text-sm text-slate-500">Cargando editor de diagrama…</div>}>
+          <DecisionTreeCanvasEditor
+            tree={editingService.decisionTree || []}
+            serviceTitle={editingService.title}
+            onSave={(newTree) => {
+              setEditingService(prev => prev ? ({ ...prev, decisionTree: newTree }) : prev);
+              setIsFlowEditorOpen(false);
+            }}
+            onClose={() => setIsFlowEditorOpen(false)}
+          />
+        </React.Suspense>
+      )}
+
+      {/* --- MODAL FOR ADDING / EDITING NEWS --- */}
+      {isNewsModalOpen && editingNews && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200/90 shadow-xl overflow-hidden">
+            <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between">
+              <h3 className="text-base font-bold">
+                {isNewNews ? 'Publicar Nueva Noticia' : 'Editar Noticia'}
+              </h3>
+              <button 
+                onClick={() => setIsNewsModalOpen(false)} 
+                className="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 active:scale-95 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveNews} className="p-5 sm:p-6 space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-xs sm:text-sm font-bold text-slate-800">
+                  Título del Comunicado *
+                </label>
+                <input
+                  type="text"
+                  value={editingNews.title}
+                  onChange={(e) => setEditingNews({ ...editingNews, title: e.target.value })}
+                  placeholder="Ej. Jornada de Evaluación en Planta"
+                  className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[44px]"
+                  required
+                />
+              </div>
+
+<div className="space-y-1.5">
+                <label className="block text-xs sm:text-sm font-bold text-slate-800">
+                  Resumen Corto *
+                </label>
+                <input
+                  type="text"
+                  value={editingNews.summary}
+                  onChange={(e) => setEditingNews({ ...editingNews, summary: e.target.value })}
+                  placeholder="Texto visible en la vista previa..."
+                  className="w-full px-4 py-2.5 text-sm font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 min-h-[44px]"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="block text-xs sm:text-sm font-bold text-slate-800">
                   Contenido Completo *
                 </label>
@@ -1704,7 +2243,7 @@ const handleOpenNewNewsModal = () => {
                 />
               </div>
 
-              <div className="space-y-1.5">
+                <div className="space-y-1.5">
                 <label className="block text-xs sm:text-sm font-bold text-slate-800">Fecha de publicación</label>
                 <input type="text" value={editingNews.date || ''} onChange={(e) => setEditingNews({ ...editingNews, date: e.target.value })} placeholder="Ej. 29 de octubre de 2026" className="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl min-h-[44px]" />
               </div>
@@ -1723,7 +2262,7 @@ const handleOpenNewNewsModal = () => {
                 <label className="flex items-center gap-2"><input type="checkbox" checked={editingNews.featured === true} onChange={(e) => setEditingNews({ ...editingNews, featured: e.target.checked })} /> Destacar comunicado</label>
                 <label className="flex items-center gap-2"><input type="checkbox" checked={editingNews.showOnHome !== false} onChange={(e) => setEditingNews({ ...editingNews, showOnHome: e.target.checked })} /> Mostrar en inicio</label>
               </div>
-              <div className="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
+            <div className="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsNewsModalOpen(false)}
