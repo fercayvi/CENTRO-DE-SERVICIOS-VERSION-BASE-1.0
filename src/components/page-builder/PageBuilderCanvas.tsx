@@ -286,6 +286,22 @@ const NestedColumnDroppable: React.FC<{
                   );
                 })()}
 
+                {childBlock.type === 'table' && (() => {
+                  const table = childBlock as TableLayoutBlock;
+                  const count = Math.max(1, table.headers?.length || 1);
+                  return (
+                    <div className="space-y-2">
+                      {table.title && <h5 className="text-xs font-bold text-slate-800">{table.title}</h5>}
+                      <div className="overflow-x-auto rounded-lg border border-slate-200">
+                        <table className="w-full min-w-[360px] border-collapse text-[11px] text-left">
+                          {table.showHeader && <thead className="bg-slate-100"><tr>{Array.from({length:count},(_,col)=><th key={col} className="border-b px-2 py-1.5 font-bold">{table.headers?.[col] || ''}</th>)}</tr></thead>}
+                          <tbody>{(table.rows || []).map((row,rowIndex)=><tr key={rowIndex} className={rowIndex%2?'bg-slate-50':'bg-white'}>{Array.from({length:count},(_,col)=><td key={col} className="border-b border-slate-100 px-2 py-1.5">{row?.[col] || ''}</td>)}</tr>)}</tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Divider inside column */}
                 {childBlock.type === 'divider' && (() => {
                   const div = childBlock as DividerLayoutBlock;
