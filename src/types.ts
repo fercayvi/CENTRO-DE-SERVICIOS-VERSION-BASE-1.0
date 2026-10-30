@@ -126,6 +126,15 @@ export interface DividerLayoutBlock {
   spacing: 'small' | 'medium' | 'large';
 }
 
+export interface TableLayoutBlock {
+  id: string;
+  type: 'table';
+  title?: string;
+  headers: string[];
+  rows: string[][];
+  showHeader: boolean;
+}
+
 export interface ColumnSlot {
   id: string;
   blocks: LayoutBlock[];
@@ -148,7 +157,8 @@ export type LayoutBlock =
   | MediaLayoutBlock
   | ColumnsLayoutBlock
   | ButtonLayoutBlock
-  | DividerLayoutBlock;
+  | DividerLayoutBlock
+  | TableLayoutBlock;
 
 export interface Service {
   id: ServiceId | string;
