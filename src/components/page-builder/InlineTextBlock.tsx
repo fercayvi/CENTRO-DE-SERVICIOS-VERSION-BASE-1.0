@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { 
   Bold, 
   Italic, 
+  Underline,
   List, 
   ListOrdered,
   AlignLeft, 
@@ -73,6 +74,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isBoldActive, setIsBoldActive] = useState<boolean>(false);
   const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
+  const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState('https://');
   const [linkError, setLinkError] = useState<string | null>(null);
@@ -110,6 +112,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
     try {
       setIsBoldActive(document.queryCommandState('bold'));
       setIsItalicActive(document.queryCommandState('italic'));
+      setIsUnderlineActive(document.queryCommandState('underline'));
     } catch {
       // Non-critical format query error
     }
@@ -197,7 +200,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
   };
 
   // Helper formatting buttons using document.execCommand with immediate state sync
-  const applyFormat = (command: 'bold' | 'italic' | 'insertUnorderedList' | 'insertOrderedList') => {
+  const applyFormat = (command: 'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList') => {
     if (readOnly) return;
     if (contentRef.current) {
       contentRef.current.focus();
@@ -350,7 +353,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
           }}
-          className={`whitespace-pre-wrap break-words ${styleClass} ${alignClass} [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>p]:my-1.5 [&_strong]:font-bold [&_b]:font-bold`}
+          className={`rich-text-content whitespace-pre-wrap break-words ${styleClass} ${alignClass}`}
           dangerouslySetInnerHTML={{ __html: sanitizedHtml || '<p class="text-slate-300 italic">Sin contenido</p>' }}
         />
       </div>
@@ -390,6 +393,17 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
             title="Cursiva (Ctrl+I)"
           >
             <Italic className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => applyFormat('underline')}
+            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+              isUnderlineActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300 hover:text-white'
+            }`}
+            title="Subrayado (Ctrl+U)"
+          >
+            <Underline className="w-3.5 h-3.5" />
           </button>
 
           <button
@@ -502,7 +516,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
           }}
-          className={`min-h-[85px] p-2 -m-2 rounded-xl focus:outline-none transition-colors outline-none whitespace-pre-wrap break-words ${styleClass} ${alignClass}`}
+          className={`rich-text-content min-h-[85px] p-2 -m-2 rounded-xl focus:outline-none transition-colors outline-none whitespace-pre-wrap break-words ${styleClass} ${alignClass}`}
         />
       </div>
 
