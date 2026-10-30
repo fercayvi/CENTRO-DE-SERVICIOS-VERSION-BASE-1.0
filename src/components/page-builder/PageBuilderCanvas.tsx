@@ -123,9 +123,9 @@ const TableBlockEditor: React.FC<{
   };
   const pasteRange = (event: React.ClipboardEvent<HTMLTextAreaElement>, startRow: number, startCol: number) => {
     const raw = event.clipboardData.getData('text/plain');
-    if (!raw.includes('\\t') && !raw.includes('\\n')) return;
+    if (!raw.includes('\t') && !raw.includes('\n')) return;
     event.preventDefault();
-    const matrix = raw.replace(/\\r/g, '').split('\\n').filter((line, i, all) => line !== '' || i < all.length - 1).map(line => line.split('\\t'));
+    const matrix = raw.replace(/\r/g, '').split('\n').filter((line, i, all) => line !== '' || i < all.length - 1).map(line => line.split('\t'));
     const neededRows = Math.min(30, Math.max(rows.length, startRow + matrix.length));
     const nextRows = Array.from({ length: neededRows }, (_, r) => [...(rows[r] || Array(columnCount).fill(''))]);
     matrix.forEach((line, r) => line.forEach((value, c) => {
