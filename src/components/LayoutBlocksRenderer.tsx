@@ -366,6 +366,22 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
           );
         }
 
+        // ==================== TABLE BLOCK ====================
+        if (block.type === 'table') {
+          const columnCount = Math.max(1, block.headers?.length || 1);
+          return (
+            <section key={block.id || `table-${index}`} className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs">
+              {block.title && <h3 className="text-base font-bold text-slate-900">{block.title}</h3>}
+              <div className="overflow-x-auto rounded-xl border border-slate-200">
+                <table className="w-full min-w-[480px] border-collapse text-sm text-left">
+                  {block.showHeader && <thead className="bg-slate-100"><tr>{Array.from({length:columnCount},(_,col)=><th key={col} scope="col" className="border-b border-slate-200 px-4 py-3 font-bold text-slate-800">{block.headers?.[col] || ''}</th>)}</tr></thead>}
+                  <tbody>{(block.rows || []).map((row,rowIndex)=><tr key={rowIndex} className={rowIndex%2===0?'bg-white':'bg-slate-50'}>{Array.from({length:columnCount},(_,col)=><td key={col} className="border-b border-slate-100 px-4 py-3 align-top text-slate-700">{row?.[col] || ''}</td>)}</tr>)}</tbody>
+                </table>
+              </div>
+            </section>
+          );
+        }
+
         // ==================== 3. FAQ BLOCK ====================
         if (block.type === 'faq') {
           return (
