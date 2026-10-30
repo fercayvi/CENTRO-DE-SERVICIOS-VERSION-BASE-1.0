@@ -126,14 +126,19 @@ const TableBlockEditor: React.FC<{
     if (!raw.includes('\t') && !raw.includes('\n')) return;
     event.preventDefault();
     const matrix = raw.replace(/\r/g, '').split('\n').filter((line, i, all) => line !== '' || i < all.length - 1).map(line => line.split('\t'));
+    const pastedColumnCount = Math.min(6, Math.max(columnCount, startCol + Math.max(...matrix.map(line => line.length))));
+    const nextHeaders = [...headers];
+    while (nextHeaders.length < pastedColumnCount) nextHeaders.push(`Columna ${nextHeaders.length + 1}`);
     const neededRows = Math.min(30, Math.max(rows.length, startRow + matrix.length));
-    const nextRows = Array.from({ length: neededRows }, (_, r) => [...(rows[r] || Array(columnCount).fill(''))]);
+    const nextRows = Array.from({ length: neededRows }, (_, r) =>
+      Array.from({ length: pastedColumnCount }, (_, c) => rows[r]?.[c] || '')
+    );
     matrix.forEach((line, r) => line.forEach((value, c) => {
       const targetRow = startRow + r;
       const targetCol = startCol + c;
-      if (targetRow < 30 && targetCol < columnCount) nextRows[targetRow][targetCol] = value;
+      if (targetRow < 30 && targetCol < pastedColumnCount) nextRows[targetRow][targetCol] = value;
     }));
-    update(headers, nextRows);
+    update(nextHeaders, nextRows);
   };
 
   return (
