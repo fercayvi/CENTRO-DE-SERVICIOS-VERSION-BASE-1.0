@@ -24,6 +24,7 @@ import {
   Sparkles,
   ExternalLink,
   Minus,
+  Table,
   Palette
 } from 'lucide-react';
 import { 
@@ -34,7 +35,8 @@ import {
   FAQLayoutBlock, 
   ColumnsLayoutBlock,
   ButtonLayoutBlock,
-  DividerLayoutBlock
+  DividerLayoutBlock,
+  TableLayoutBlock
 } from '../../types';
 import { MediaUploadField } from '../MediaUploadField';
 
@@ -176,6 +178,7 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
             {blockType === 'faq' && <HelpCircle className="w-4 h-4" />}
             {blockType === 'button' && <ExternalLink className="w-4 h-4" />}
             {blockType === 'divider' && <Minus className="w-4 h-4" />}
+            {blockType === 'table' && <Table className="w-4 h-4" />}
           </div>
           <div className="min-w-0">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block leading-none">
@@ -189,6 +192,7 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
               {blockType === 'faq' && 'Preguntas Frecuentes'}
               {blockType === 'button' && 'Botón de Acción'}
               {blockType === 'divider' && 'Línea Divisoria'}
+              {blockType === 'table' && 'Tabla Informativa'}
             </h3>
           </div>
         </div>
@@ -786,6 +790,34 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
                   </button>
                 </div>
               </div>
+            </div>
+          );
+        })()}
+
+        {blockType === 'table' && (() => {
+          const tableBlock = selectedBlock as TableLayoutBlock;
+          const columnCount = Math.max(1, tableBlock.headers?.length || 1);
+          const updateTable = (headers: string[], rows: string[][]) => onUpdateBlock({ ...tableBlock, headers, rows });
+          return (
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Título de la tabla</label>
+                <input value={tableBlock.title || ''} onChange={e => onUpdateBlock({ ...tableBlock, title: e.target.value })} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs" placeholder="Título opcional" />
+              </div>
+              <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <input type="checkbox" checked={tableBlock.showHeader} onChange={e => onUpdateBlock({ ...tableBlock, showHeader: e.target.checked })} />
+                Mostrar encabezados
+              </label>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-700">Columnas ({columnCount})</span>
+                <button type="button" disabled={columnCount >= 6} onClick={() => updateTable([...tableBlock.headers, 'Nueva columna'], (tableBlock.rows || []).map(row => [...row, '']))} className="rounded-lg border px-2 py-1 text-xs disabled:opacity-40">+ Columna</button>
+              </div>
+              {tableBlock.headers.map((header, col) => <div key={col} className="flex gap-2"><input value={header} onChange={e => { const next=[...tableBlock.headers]; next[col]=e.target.value; updateTable(next, tableBlock.rows); }} className="min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1.5 text-xs" placeholder={`Encabezado ${col+1}`} />{columnCount>1 && <button type="button" onClick={() => updateTable(tableBlock.headers.filter((_,i)=>i!==col), (tableBlock.rows||[]).map(row=>row.filter((_,i)=>i!==col)))} className="text-rose-600 text-xs">Quitar</button>}</div>)}
+              <div className="flex items-center justify-between pt-2 border-t">
+                <span className="text-xs font-bold text-slate-700">Filas ({tableBlock.rows?.length || 0})</span>
+                <button type="button" disabled={(tableBlock.rows?.length || 0)>=30} onClick={() => onUpdateBlock({ ...tableBlock, rows: [...(tableBlock.rows || []), Array(columnCount).fill('')] })} className="rounded-lg border px-2 py-1 text-xs disabled:opacity-40">+ Fila</button>
+              </div>
+              {(tableBlock.rows || []).map((row, rowIndex) => <div key={rowIndex} className="rounded-lg border border-slate-200 bg-white p-2 space-y-2"><div className="flex justify-between"><span className="text-[10px] font-bold text-slate-500">Fila {rowIndex+1}</span><button type="button" disabled={tableBlock.rows.length<=1} onClick={() => onUpdateBlock({ ...tableBlock, rows: tableBlock.rows.filter((_,i)=>i!==rowIndex) })} className="text-[10px] text-rose-600 disabled:opacity-40">Eliminar fila</button></div>{Array.from({length:columnCount},(_,col)=><input key={col} value={row?.[col] || ''} onChange={e=>{const next=tableBlock.rows.map(r=>[...r]); next[rowIndex][col]=e.target.value; onUpdateBlock({...tableBlock,rows:next});}} className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs" placeholder={tableBlock.headers[col] || `Columna ${col+1}`} />)}</div>)}
             </div>
           );
         })()}
