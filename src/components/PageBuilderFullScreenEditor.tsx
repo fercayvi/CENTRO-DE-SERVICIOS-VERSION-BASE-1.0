@@ -33,7 +33,8 @@ import {
   MediaLayoutBlock, 
   ColumnsLayoutBlock,
   ButtonLayoutBlock,
-  DividerLayoutBlock
+  DividerLayoutBlock,
+  TableLayoutBlock
 } from '../types';
 import { 
   createNewTextBlock, 
@@ -44,7 +45,8 @@ import {
   createNewPdfBlock,
   createNewColumnsBlock,
   createNewButtonBlock,
-  createNewDividerBlock
+  createNewDividerBlock,
+  createNewTableBlock
 } from '../utils/layoutBlocks';
 import { PageBuilderToolbar, BlockTemplateItem, AVAILABLE_BLOCKS } from './page-builder/PageBuilderToolbar';
 import { PageBuilderInspector } from './page-builder/PageBuilderInspector';
@@ -254,6 +256,8 @@ export const PageBuilderFullScreenEditor: React.FC<PageBuilderFullScreenEditorPr
         return createNewButtonBlock();
       case 'divider':
         return createNewDividerBlock();
+      case 'table':
+        return createNewTableBlock();
       case 'alert':
         return createNewAlertBlock();
       case 'faq':
