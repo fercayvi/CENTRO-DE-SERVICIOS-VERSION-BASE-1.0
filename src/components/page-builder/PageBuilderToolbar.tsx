@@ -13,12 +13,13 @@ import {
   Plus,
   Sparkles,
   MousePointerClick,
-  Minus
+  Minus,
+  Table
 } from 'lucide-react';
 
 export interface BlockTemplateItem {
   id: string;
-  type: 'text' | 'image' | 'video' | 'columns-2' | 'columns-3' | 'alert' | 'faq' | 'pdf' | 'button' | 'divider';
+  type: 'text' | 'image' | 'video' | 'columns-2' | 'columns-3' | 'alert' | 'faq' | 'pdf' | 'button' | 'divider' | 'table';
   label: string;
   category: 'básicos' | 'multimedia' | 'estructuras' | 'componentes';
   description: string;
@@ -44,6 +45,15 @@ export const AVAILABLE_BLOCKS: BlockTemplateItem[] = [
     description: 'Separador visual horizontal con estilo y espaciado',
     icon: Minus,
     color: 'text-slate-600 bg-slate-100 border-slate-200'
+  },
+  {
+    id: 'tpl-table',
+    type: 'table',
+    category: 'básicos',
+    label: 'Tabla',
+    description: 'Tabla editable con encabezados, filas y columnas',
+    icon: Table,
+    color: 'text-cyan-700 bg-cyan-50 border-cyan-100'
   },
   {
     id: 'tpl-columns-2',
