@@ -272,6 +272,60 @@ export const initialServices: Service[] = [
             }
           ]
         }
+      },
+      {
+        "id": "node_1793382698597_9ai8",
+        "title": "¿Qué es el Bono Volumen y cuánto se paga?",
+        "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793382878095_kufsz",
+            "type": "text",
+            "title": "¿Qué es el Bono Volumen y cuánto se paga?",
+            "content": "<p>El Bono Volumen es un pago adicional semanal que se suma a tu <strong>Premio por Producción de $120</strong>. Depende de qué tanto se cumple el plan de volumen de producción de la semana.</p><p><br></p><p>Se paga a partir de <strong>80 % de cumplimiento</strong>:</p><p><br></p><ul><li>80 % → <strong>$176</strong></li><li>90 % → <strong>$198</strong></li><li>100 % → <strong>$220</strong></li><li>120 % → <strong>$264</strong></li></ul><p>\n</p><p>Con menos de 80 % el bono es $0, pero conservas tus $120 si tuviste asistencia perfecta.<br></p>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1793383021812_pr1k6",
+            "type": "alert",
+            "level": "info",
+            "title": "Aviso Importante",
+            "message": "Si trabajaste en más de una línea durante la semana, se toma el resultado de la línea con mejor cumplimiento."
+          }
+        ],
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793382878095_kufsz",
+              "type": "text",
+              "title": "¿Qué es el Bono Volumen y cuánto se paga?",
+              "content": "<p>El Bono Volumen es un pago adicional semanal que se suma a tu <strong>Premio por Producción de $120</strong>. Depende de qué tanto se cumple el plan de volumen de producción de la semana.</p><p><br></p><p>Se paga a partir de <strong>80 % de cumplimiento</strong>:</p><p><br></p><ul><li>80 % → <strong>$176</strong></li><li>90 % → <strong>$198</strong></li><li>100 % → <strong>$220</strong></li><li>120 % → <strong>$264</strong></li></ul><p>\n</p><p>Con menos de 80 % el bono es $0, pero conservas tus $120 si tuviste asistencia perfecta.<br></p>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1793383021812_pr1k6",
+              "type": "alert",
+              "level": "info",
+              "title": "Aviso Importante",
+              "message": "Si trabajaste en más de una línea durante la semana, se toma el resultado de la línea con mejor cumplimiento."
+            }
+          ]
+        }
+      },
+      {
+        "id": "node_1793382703664_9bh5",
+        "title": "¿Cuándo aplica y cuándo no el Bono Volumen?",
+        "nodeType": "content",
+        "contentData": {
+          "text": "",
+          "imageUrl": "",
+          "videoUrl": ""
+        }
       }
     ],
     "location": "",
