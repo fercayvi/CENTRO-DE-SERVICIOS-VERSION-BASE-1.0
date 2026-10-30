@@ -7,6 +7,7 @@ import {
   ColumnsLayoutBlock, 
   ButtonLayoutBlock,
   DividerLayoutBlock,
+  TableLayoutBlock,
   ColumnSlot, 
   Service,
   ServiceNodeContentData 
@@ -73,6 +74,17 @@ export function createNewDividerBlock(): DividerLayoutBlock {
     type: 'divider',
     lineStyle: 'solid',
     spacing: 'medium'
+  };
+}
+
+export function createNewTableBlock(): TableLayoutBlock {
+  return {
+    id: generateBlockId('tbl'),
+    type: 'table',
+    title: 'Tabla informativa',
+    headers: ['Concepto', 'Descripción'],
+    rows: [['Elemento 1', 'Información'], ['Elemento 2', 'Información']],
+    showHeader: true
   };
 }
 
