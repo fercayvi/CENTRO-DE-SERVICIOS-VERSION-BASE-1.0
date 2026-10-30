@@ -113,7 +113,7 @@ const TableBlockEditor: React.FC<{
 
       <div className="overflow-x-auto rounded-xl border border-slate-200">
         <table className="w-full min-w-[440px] border-collapse text-left text-xs">
-          {block.showHeader && (
+          {(block.showHeader || !previewMode) && (
             <thead className="bg-slate-100">
               <tr>
                 {Array.from({ length: columnCount }, (_, col) => (
