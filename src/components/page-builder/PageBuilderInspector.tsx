@@ -798,10 +798,21 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
           const tableBlock = selectedBlock as TableLayoutBlock;
           return (
             <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Título de la tabla</label>
+                <input
+                  type="text"
+                  value={tableBlock.title || ''}
+                  onChange={event => onUpdateBlock({ ...tableBlock, title: event.target.value })}
+                  placeholder="Ej. Horarios de pago"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+                <p className="text-[10px] text-slate-500">Este título se muestra encima de la tabla. Puedes dejarlo vacío.</p>
+              </div>
               <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3 space-y-1.5">
-                <p className="text-xs font-bold text-blue-900">Edición directa en el lienzo</p>
+                <p className="text-xs font-bold text-blue-900">Edición de la tabla</p>
                 <p className="text-[11px] leading-relaxed text-blue-800">
-                  Escribe directamente en las celdas. Usa los controles debajo de la tabla para agregar filas o columnas y las flechas para cambiar el orden de las filas.
+                  Edita los encabezados y las celdas en el lienzo. Inserta filas y columnas desde sus controles, cambia su orden y pega rangos copiados desde Excel o Google Sheets.
                 </p>
               </div>
               <label className="flex items-center gap-2 text-xs font-semibold text-slate-700">
@@ -813,7 +824,6 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
                 />
                 Mostrar encabezados
               </label>
-              <p className="text-[10px] text-slate-500">Puedes modificar el título y el contenido desde la vista previa central.</p>
             </div>
           );
         })()}
