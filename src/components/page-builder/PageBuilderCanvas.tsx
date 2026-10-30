@@ -53,6 +53,140 @@ interface PageBuilderCanvasProps {
   previewMode?: boolean;
 }
 
+
+const TableBlockEditor: React.FC<{
+  block: TableLayoutBlock;
+  onChange: (updated: TableLayoutBlock) => void;
+  previewMode?: boolean;
+}> = ({ block, onChange, previewMode = false }) => {
+  const columnCount = Math.max(1, block.headers?.length || 1);
+  const rows = block.rows || [];
+  const updateHeader = (index: number, value: string) => {
+    const headers = [...(block.headers || [])];
+    headers[index] = value;
+    onChange({ ...block, headers });
+  };
+  const updateCell = (rowIndex: number, colIndex: number, value: string) => {
+    const nextRows = rows.map(row => [...row]);
+    while (nextRows[rowIndex].length < columnCount) nextRows[rowIndex].push('');
+    nextRows[rowIndex][colIndex] = value;
+    onChange({ ...block, rows: nextRows });
+  };
+  const addColumn = () => {
+    if (columnCount >= 6) return;
+    onChange({
+      ...block,
+      headers: [...(block.headers || []), `Columna ${columnCount + 1}`],
+      rows: rows.map(row => [...row, ''])
+    });
+  };
+  const removeColumn = (index: number) => {
+    if (columnCount <= 1) return;
+    onChange({
+      ...block,
+      headers: (block.headers || []).filter((_, i) => i !== index),
+      rows: rows.map(row => row.filter((_, i) => i !== index))
+    });
+  };
+  const moveRow = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= rows.length) return;
+    const nextRows = rows.map(row => [...row]);
+    [nextRows[index], nextRows[target]] = [nextRows[target], nextRows[index]];
+    onChange({ ...block, rows: nextRows });
+  };
+
+  return (
+    <div className="space-y-3">
+      {!previewMode ? (
+        <input
+          aria-label="Título de la tabla"
+          value={block.title || ''}
+          onChange={event => onChange({ ...block, title: event.target.value })}
+          onClick={event => event.stopPropagation()}
+          placeholder="Escribe el título de la tabla..."
+          className="w-full bg-transparent text-sm font-bold text-slate-800 placeholder:text-slate-400 border-b border-dashed border-slate-300 focus:border-blue-500 focus:outline-none py-1"
+        />
+      ) : (
+        block.title && <h4 className="text-sm font-bold text-slate-800">{block.title}</h4>
+      )}
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200">
+        <table className="w-full min-w-[440px] border-collapse text-left text-xs">
+          {block.showHeader && (
+            <thead className="bg-slate-100">
+              <tr>
+                {Array.from({ length: columnCount }, (_, col) => (
+                  <th key={col} className="border-b border-slate-200 px-2 py-2 align-top">
+                    {previewMode ? (
+                      <span className="font-bold text-slate-800">{block.headers?.[col] || ''}</span>
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <input
+                          aria-label={`Encabezado de columna ${col + 1}`}
+                          value={block.headers?.[col] || ''}
+                          onChange={event => updateHeader(col, event.target.value)}
+                          onClick={event => event.stopPropagation()}
+                          placeholder={`Columna ${col + 1}`}
+                          className="w-full min-w-0 bg-transparent font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white rounded px-1 py-1"
+                        />
+                        {columnCount > 1 && (
+                          <button type="button" onClick={event => { event.stopPropagation(); removeColumn(col); }} className="shrink-0 rounded px-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600" title="Eliminar columna" aria-label={`Eliminar columna ${col + 1}`}>×</button>
+                        )}
+                      </div>
+                    )}
+                  </th>
+                ))}
+                {!previewMode && <th className="w-8 border-b border-slate-200 px-1" aria-label="Acciones de columna" />}
+              </tr>
+            </thead>
+          )}
+          <tbody>
+            {rows.map((row, rowIndex) => (
+              <tr key={rowIndex} className={rowIndex % 2 ? 'bg-slate-50' : 'bg-white'}>
+                {Array.from({ length: columnCount }, (_, col) => (
+                  <td key={col} className="border-b border-slate-100 px-2 py-1.5 align-top">
+                    {previewMode ? (
+                      <span className="text-slate-700 whitespace-pre-wrap">{row?.[col] || ''}</span>
+                    ) : (
+                      <textarea
+                        aria-label={`Fila ${rowIndex + 1}, columna ${col + 1}`}
+                        rows={2}
+                        value={row?.[col] || ''}
+                        onChange={event => updateCell(rowIndex, col, event.target.value)}
+                        onClick={event => event.stopPropagation()}
+                        placeholder="Escribe aquí..."
+                        className="w-full min-w-[100px] resize-y rounded-md border border-transparent bg-transparent px-1.5 py-1 text-slate-700 placeholder:text-slate-400 hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none"
+                      />
+                    )}
+                  </td>
+                ))}
+                {!previewMode && (
+                  <td className="border-b border-slate-100 px-1 py-1 align-top">
+                    <div className="flex flex-col items-center gap-1">
+                      <button type="button" disabled={rowIndex === 0} onClick={event => { event.stopPropagation(); moveRow(rowIndex, -1); }} className="text-[10px] text-slate-400 hover:text-blue-600 disabled:opacity-20" title="Subir fila">↑</button>
+                      <button type="button" disabled={rowIndex === rows.length - 1} onClick={event => { event.stopPropagation(); moveRow(rowIndex, 1); }} className="text-[10px] text-slate-400 hover:text-blue-600 disabled:opacity-20" title="Bajar fila">↓</button>
+                      <button type="button" disabled={rows.length <= 1} onClick={event => { event.stopPropagation(); onChange({ ...block, rows: rows.filter((_, i) => i !== rowIndex) }); }} className="text-[10px] text-slate-400 hover:text-rose-600 disabled:opacity-20" title="Eliminar fila">×</button>
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {!previewMode && (
+        <div className="flex flex-wrap items-center gap-2">
+          <button type="button" disabled={rows.length >= 30} onClick={event => { event.stopPropagation(); onChange({ ...block, rows: [...rows, Array(columnCount).fill('')] }); }} className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-semibold text-blue-700 hover:bg-blue-100 disabled:opacity-40">＋ Agregar fila</button>
+          <button type="button" disabled={columnCount >= 6} onClick={event => { event.stopPropagation(); addColumn(); }} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40">＋ Agregar columna</button>
+          <span className="ml-auto text-[10px] text-slate-400">{rows.length} filas · {columnCount} columnas</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Drop slot line indicator between blocks
 const DropZoneIndicator: React.FC<{
   id: string;
@@ -286,21 +420,13 @@ const NestedColumnDroppable: React.FC<{
                   );
                 })()}
 
-                {childBlock.type === 'table' && (() => {
-                  const table = childBlock as TableLayoutBlock;
-                  const count = Math.max(1, table.headers?.length || 1);
-                  return (
-                    <div className="space-y-2">
-                      {table.title && <h5 className="text-xs font-bold text-slate-800">{table.title}</h5>}
-                      <div className="overflow-x-auto rounded-lg border border-slate-200">
-                        <table className="w-full min-w-[360px] border-collapse text-[11px] text-left">
-                          {table.showHeader && <thead className="bg-slate-100"><tr>{Array.from({length:count},(_,col)=><th key={col} className="border-b px-2 py-1.5 font-bold">{table.headers?.[col] || ''}</th>)}</tr></thead>}
-                          <tbody>{(table.rows || []).map((row,rowIndex)=><tr key={rowIndex} className={rowIndex%2?'bg-slate-50':'bg-white'}>{Array.from({length:count},(_,col)=><td key={col} className="border-b border-slate-100 px-2 py-1.5">{row?.[col] || ''}</td>)}</tr>)}</tbody>
-                        </table>
-                      </div>
-                    </div>
-                  );
-                })()}
+                {childBlock.type === 'table' && (
+                  <TableBlockEditor
+                    block={childBlock as TableLayoutBlock}
+                    onChange={updated => onUpdateBlock(updated)}
+                    previewMode={previewMode}
+                  />
+                )}
 
                 {/* Divider inside column */}
                 {childBlock.type === 'divider' && (() => {
@@ -743,21 +869,13 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
                   );
                 })()}
 
-                {block.type === 'table' && (() => {
-                  const table = block as TableLayoutBlock;
-                  const columnCount = Math.max(1, table.headers?.length || 1);
-                  return (
-                    <div className="space-y-2">
-                      {table.title && <h4 className="text-sm font-bold text-slate-800">{table.title}</h4>}
-                      <div className="overflow-x-auto rounded-xl border border-slate-200">
-                        <table className="w-full min-w-[420px] border-collapse text-left text-xs">
-                          {table.showHeader && <thead className="bg-slate-100"><tr>{Array.from({length: columnCount}, (_, col) => <th key={col} className="border-b border-slate-200 px-3 py-2 font-bold text-slate-800">{table.headers?.[col] || ''}</th>)}</tr></thead>}
-                          <tbody>{(table.rows || []).map((row, rowIndex) => <tr key={rowIndex} className={rowIndex % 2 ? 'bg-slate-50' : 'bg-white'}>{Array.from({length: columnCount}, (_, col) => <td key={col} className="border-b border-slate-100 px-3 py-2 text-slate-700">{row?.[col] || ''}</td>)}</tr>)}</tbody>
-                        </table>
-                      </div>
-                    </div>
-                  );
-                })()}
+                {block.type === 'table' && (
+                  <TableBlockEditor
+                    block={block as TableLayoutBlock}
+                    onChange={updated => onUpdateBlock(updated)}
+                    previewMode={previewMode}
+                  />
+                )}
 
                 {/* ==================== 7. DIVIDER BLOCK ==================== */}
                 {block.type === 'divider' && (() => {
