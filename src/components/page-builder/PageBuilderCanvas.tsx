@@ -33,6 +33,7 @@ import {
   ColumnsLayoutBlock,
   ButtonLayoutBlock,
   DividerLayoutBlock,
+  TableLayoutBlock,
   ColumnSlot
 } from '../../types';
 import { InlineTextBlock } from './InlineTextBlock';
@@ -722,6 +723,22 @@ export const PageBuilderCanvas: React.FC<PageBuilderCanvasProps> = ({
                         <span>{btn.label || 'Botón de Acción'}</span>
                         <ExternalLink className="w-4 h-4" />
                       </a>
+                    </div>
+                  );
+                })()}
+
+                {block.type === 'table' && (() => {
+                  const table = block as TableLayoutBlock;
+                  const columnCount = Math.max(1, table.headers?.length || 1);
+                  return (
+                    <div className="space-y-2">
+                      {table.title && <h4 className="text-sm font-bold text-slate-800">{table.title}</h4>}
+                      <div className="overflow-x-auto rounded-xl border border-slate-200">
+                        <table className="w-full min-w-[420px] border-collapse text-left text-xs">
+                          {table.showHeader && <thead className="bg-slate-100"><tr>{Array.from({length: columnCount}, (_, col) => <th key={col} className="border-b border-slate-200 px-3 py-2 font-bold text-slate-800">{table.headers?.[col] || ''}</th>)}</tr></thead>}
+                          <tbody>{(table.rows || []).map((row, rowIndex) => <tr key={rowIndex} className={rowIndex % 2 ? 'bg-slate-50' : 'bg-white'}>{Array.from({length: columnCount}, (_, col) => <td key={col} className="border-b border-slate-100 px-3 py-2 text-slate-700">{row?.[col] || ''}</td>)}</tr>)}</tbody>
+                        </table>
+                      </div>
                     </div>
                   );
                 })()}
