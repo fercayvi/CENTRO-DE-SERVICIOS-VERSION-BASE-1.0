@@ -59,56 +59,96 @@ const TableBlockEditor: React.FC<{
   onChange: (updated: TableLayoutBlock) => void;
   previewMode?: boolean;
 }> = ({ block, onChange, previewMode = false }) => {
-  const columnCount = Math.max(1, block.headers?.length || 1);
-  const rows = block.rows || [];
+  const columnCount = Math.max(1, Math.min(6, block.headers?.length || 1));
+  const headers = Array.from({ length: columnCount }, (_, i) => block.headers?.[i] || `Columna ${i + 1}`);
+  const rows = (block.rows || []).slice(0, 30).map(row =>
+    Array.from({ length: columnCount }, (_, i) => row?.[i] || '')
+  );
+  const update = (nextHeaders: string[], nextRows: string[][]) =>
+    onChange({ ...block, headers: nextHeaders, rows: nextRows });
   const updateHeader = (index: number, value: string) => {
-    const headers = [...(block.headers || [])];
-    headers[index] = value;
-    onChange({ ...block, headers });
+    const next = [...headers];
+    next[index] = value;
+    update(next, rows);
   };
   const updateCell = (rowIndex: number, colIndex: number, value: string) => {
-    const nextRows = rows.map(row => [...row]);
-    while (nextRows[rowIndex].length < columnCount) nextRows[rowIndex].push('');
-    nextRows[rowIndex][colIndex] = value;
-    onChange({ ...block, rows: nextRows });
+    const next = rows.map(row => [...row]);
+    if (!next[rowIndex]) return;
+    next[rowIndex][colIndex] = value;
+    update(headers, next);
   };
-  const addColumn = () => {
-    if (columnCount >= 6) return;
-    onChange({
-      ...block,
-      headers: [...(block.headers || []), `Columna ${columnCount + 1}`],
-      rows: rows.map(row => [...row, ''])
-    });
+  const addRow = (afterIndex = rows.length - 1) => {
+    if (rows.length >= 30) return;
+    const next = rows.map(row => [...row]);
+    next.splice(afterIndex + 1, 0, Array(columnCount).fill(''));
+    update(headers, next);
   };
-  const removeColumn = (index: number) => {
-    if (columnCount <= 1) return;
-    onChange({
-      ...block,
-      headers: (block.headers || []).filter((_, i) => i !== index),
-      rows: rows.map(row => row.filter((_, i) => i !== index))
-    });
+  const removeRow = (index: number) => {
+    if (rows.length <= 1) return;
+    update(headers, rows.filter((_, i) => i !== index));
   };
   const moveRow = (index: number, direction: -1 | 1) => {
     const target = index + direction;
     if (target < 0 || target >= rows.length) return;
-    const nextRows = rows.map(row => [...row]);
-    [nextRows[index], nextRows[target]] = [nextRows[target], nextRows[index]];
-    onChange({ ...block, rows: nextRows });
+    const next = rows.map(row => [...row]);
+    [next[index], next[target]] = [next[target], next[index]];
+    update(headers, next);
+  };
+  const addColumn = (afterIndex = columnCount - 1) => {
+    if (columnCount >= 6) return;
+    const nextHeaders = [...headers];
+    nextHeaders.splice(afterIndex + 1, 0, `Columna ${columnCount + 1}`);
+    const nextRows = rows.map(row => {
+      const next = [...row];
+      next.splice(afterIndex + 1, 0, '');
+      return next;
+    });
+    update(nextHeaders, nextRows);
+  };
+  const removeColumn = (index: number) => {
+    if (columnCount <= 1) return;
+    update(headers.filter((_, i) => i !== index), rows.map(row => row.filter((_, i) => i !== index)));
+  };
+  const moveColumn = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= columnCount) return;
+    const nextHeaders = [...headers];
+    [nextHeaders[index], nextHeaders[target]] = [nextHeaders[target], nextHeaders[index]];
+    const nextRows = rows.map(row => {
+      const next = [...row];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    update(nextHeaders, nextRows);
+  };
+  const pasteRange = (event: React.ClipboardEvent<HTMLTextAreaElement>, startRow: number, startCol: number) => {
+    const raw = event.clipboardData.getData('text/plain');
+    if (!raw.includes('\\t') && !raw.includes('\\n')) return;
+    event.preventDefault();
+    const matrix = raw.replace(/\\r/g, '').split('\\n').filter((line, i, all) => line !== '' || i < all.length - 1).map(line => line.split('\\t'));
+    const neededRows = Math.min(30, Math.max(rows.length, startRow + matrix.length));
+    const nextRows = Array.from({ length: neededRows }, (_, r) => [...(rows[r] || Array(columnCount).fill(''))]);
+    matrix.forEach((line, r) => line.forEach((value, c) => {
+      const targetRow = startRow + r;
+      const targetCol = startCol + c;
+      if (targetRow < 30 && targetCol < columnCount) nextRows[targetRow][targetCol] = value;
+    }));
+    update(headers, nextRows);
   };
 
   return (
     <div className="space-y-3">
-      {!previewMode ? (
-        <input
-          aria-label="Título de la tabla"
-          value={block.title || ''}
-          onChange={event => onChange({ ...block, title: event.target.value })}
-          onClick={event => event.stopPropagation()}
-          placeholder="Escribe el título de la tabla..."
-          className="w-full bg-transparent text-sm font-bold text-slate-800 placeholder:text-slate-400 border-b border-dashed border-slate-300 focus:border-blue-500 focus:outline-none py-1"
-        />
-      ) : (
-        block.title && <h4 className="text-sm font-bold text-slate-800">{block.title}</h4>
+      {block.title?.trim() && (
+        <h4 className="text-sm font-bold text-slate-800">{block.title}</h4>
+      )}
+      {!previewMode && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 p-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button type="button" onClick={event => { event.stopPropagation(); addRow(); }} disabled={rows.length >= 30} className="rounded-lg bg-blue-600 px-2.5 py-1.5 text-[11px] font-semibold text-white hover:bg-blue-700 disabled:opacity-40">＋ Fila</button>
+            <button type="button" onClick={event => { event.stopPropagation(); addColumn(); }} disabled={columnCount >= 6} className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-40">＋ Columna</button>
+          </div>
+          <span className="text-[10px] text-slate-500">{rows.length} filas · {columnCount} columnas</span>
+        </div>
       )}
 
       <div className="overflow-x-auto rounded-xl border border-slate-200">
@@ -116,57 +156,48 @@ const TableBlockEditor: React.FC<{
           {(block.showHeader || !previewMode) && (
             <thead className="bg-slate-100">
               <tr>
-                {Array.from({ length: columnCount }, (_, col) => (
-                  <th key={col} className="border-b border-slate-200 px-2 py-2 align-top">
+                {headers.map((header, col) => (
+                  <th key={col} className="min-w-[130px] border-b border-slate-200 px-2 py-2 align-top">
                     {previewMode ? (
-                      <span className="font-bold text-slate-800">{block.headers?.[col] || ''}</span>
+                      <span className="font-bold text-slate-800">{header}</span>
                     ) : (
-                      <div className="flex items-center gap-1">
-                        <input
-                          aria-label={`Encabezado de columna ${col + 1}`}
-                          value={block.headers?.[col] || ''}
-                          onChange={event => updateHeader(col, event.target.value)}
-                          onClick={event => event.stopPropagation()}
-                          placeholder={`Columna ${col + 1}`}
-                          className="w-full min-w-0 bg-transparent font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white rounded px-1 py-1"
-                        />
-                        {columnCount > 1 && (
-                          <button type="button" onClick={event => { event.stopPropagation(); removeColumn(col); }} className="shrink-0 rounded px-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600" title="Eliminar columna" aria-label={`Eliminar columna ${col + 1}`}>×</button>
-                        )}
+                      <div className="space-y-1.5">
+                        <input aria-label={`Encabezado de columna ${col + 1}`} value={header} onChange={event => updateHeader(col, event.target.value)} onClick={event => event.stopPropagation()} placeholder={`Columna ${col + 1}`} className="w-full min-w-0 rounded-md border border-transparent bg-transparent px-1.5 py-1 font-bold text-slate-800 placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:outline-none" />
+                        <div className="flex items-center justify-between gap-1">
+                          <div className="flex gap-1">
+                            <button type="button" disabled={col === 0} onClick={event => { event.stopPropagation(); moveColumn(col, -1); }} className="rounded px-1 text-[10px] text-slate-500 hover:bg-white disabled:opacity-25" title="Mover columna a la izquierda">←</button>
+                            <button type="button" disabled={col === columnCount - 1} onClick={event => { event.stopPropagation(); moveColumn(col, 1); }} className="rounded px-1 text-[10px] text-slate-500 hover:bg-white disabled:opacity-25" title="Mover columna a la derecha">→</button>
+                            <button type="button" disabled={columnCount >= 6} onClick={event => { event.stopPropagation(); addColumn(col); }} className="rounded px-1 text-[10px] text-blue-700 hover:bg-white disabled:opacity-25" title="Insertar columna a la derecha">＋</button>
+                          </div>
+                          <button type="button" disabled={columnCount <= 1} onClick={event => { event.stopPropagation(); removeColumn(col); }} className="rounded px-1 text-[10px] text-rose-600 hover:bg-rose-50 disabled:opacity-25" title="Eliminar columna">Eliminar</button>
+                        </div>
                       </div>
                     )}
                   </th>
                 ))}
-                {!previewMode && <th className="w-8 border-b border-slate-200 px-1" aria-label="Acciones de columna" />}
+                {!previewMode && <th className="w-8 border-b border-slate-200 px-1" />}
               </tr>
             </thead>
           )}
           <tbody>
             {rows.map((row, rowIndex) => (
               <tr key={rowIndex} className={rowIndex % 2 ? 'bg-slate-50' : 'bg-white'}>
-                {Array.from({ length: columnCount }, (_, col) => (
-                  <td key={col} className="border-b border-slate-100 px-2 py-1.5 align-top">
+                {row.map((cell, col) => (
+                  <td key={col} className="min-w-[130px] border-b border-slate-100 px-2 py-1.5 align-top">
                     {previewMode ? (
-                      <span className="text-slate-700 whitespace-pre-wrap">{row?.[col] || ''}</span>
+                      <span className="whitespace-pre-wrap text-slate-700">{cell}</span>
                     ) : (
-                      <textarea
-                        aria-label={`Fila ${rowIndex + 1}, columna ${col + 1}`}
-                        rows={2}
-                        value={row?.[col] || ''}
-                        onChange={event => updateCell(rowIndex, col, event.target.value)}
-                        onClick={event => event.stopPropagation()}
-                        placeholder="Escribe aquí..."
-                        className="w-full min-w-[100px] resize-y rounded-md border border-transparent bg-transparent px-1.5 py-1 text-slate-700 placeholder:text-slate-400 hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none"
-                      />
+                      <textarea aria-label={`Fila ${rowIndex + 1}, columna ${col + 1}`} rows={2} value={cell} onChange={event => updateCell(rowIndex, col, event.target.value)} onPaste={event => pasteRange(event, rowIndex, col)} onClick={event => event.stopPropagation()} placeholder="Escribe aquí..." className="w-full min-w-[110px] resize-y rounded-md border border-transparent bg-transparent px-1.5 py-1 text-slate-700 placeholder:text-slate-400 hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none" />
                     )}
                   </td>
                 ))}
                 {!previewMode && (
                   <td className="border-b border-slate-100 px-1 py-1 align-top">
                     <div className="flex flex-col items-center gap-1">
-                      <button type="button" disabled={rowIndex === 0} onClick={event => { event.stopPropagation(); moveRow(rowIndex, -1); }} className="text-[10px] text-slate-400 hover:text-blue-600 disabled:opacity-20" title="Subir fila">↑</button>
-                      <button type="button" disabled={rowIndex === rows.length - 1} onClick={event => { event.stopPropagation(); moveRow(rowIndex, 1); }} className="text-[10px] text-slate-400 hover:text-blue-600 disabled:opacity-20" title="Bajar fila">↓</button>
-                      <button type="button" disabled={rows.length <= 1} onClick={event => { event.stopPropagation(); onChange({ ...block, rows: rows.filter((_, i) => i !== rowIndex) }); }} className="text-[10px] text-slate-400 hover:text-rose-600 disabled:opacity-20" title="Eliminar fila">×</button>
+                      <button type="button" disabled={rowIndex === 0} onClick={event => { event.stopPropagation(); moveRow(rowIndex, -1); }} className="rounded px-1 text-[10px] text-slate-500 hover:bg-white disabled:opacity-25" title="Subir fila">↑</button>
+                      <button type="button" disabled={rowIndex === rows.length - 1} onClick={event => { event.stopPropagation(); moveRow(rowIndex, 1); }} className="rounded px-1 text-[10px] text-slate-500 hover:bg-white disabled:opacity-25" title="Bajar fila">↓</button>
+                      <button type="button" onClick={event => { event.stopPropagation(); addRow(rowIndex); }} disabled={rows.length >= 30} className="rounded px-1 text-[10px] text-blue-700 hover:bg-white disabled:opacity-25" title="Insertar fila debajo">＋</button>
+                      <button type="button" disabled={rows.length <= 1} onClick={event => { event.stopPropagation(); removeRow(rowIndex); }} className="rounded px-1 text-[10px] text-rose-600 hover:bg-rose-50 disabled:opacity-25" title="Eliminar fila">×</button>
                     </div>
                   </td>
                 )}
@@ -175,13 +206,8 @@ const TableBlockEditor: React.FC<{
           </tbody>
         </table>
       </div>
-
       {!previewMode && (
-        <div className="flex flex-wrap items-center gap-2">
-          <button type="button" disabled={rows.length >= 30} onClick={event => { event.stopPropagation(); onChange({ ...block, rows: [...rows, Array(columnCount).fill('')] }); }} className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-semibold text-blue-700 hover:bg-blue-100 disabled:opacity-40">＋ Agregar fila</button>
-          <button type="button" disabled={columnCount >= 6} onClick={event => { event.stopPropagation(); addColumn(); }} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40">＋ Agregar columna</button>
-          <span className="ml-auto text-[10px] text-slate-400">{rows.length} filas · {columnCount} columnas</span>
-        </div>
+        <p className="text-[10px] leading-relaxed text-slate-500">Puedes pegar celdas copiadas desde Excel o Google Sheets. Selecciona una celda y pega el rango; se distribuirá en la tabla.</p>
       )}
     </div>
   );
