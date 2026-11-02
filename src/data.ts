@@ -5,7 +5,7 @@ export const siteSettings: SiteSettings = {
   "showNewsOnHome": true,
   "decisionTreeButtonFontSize": 16,
   "decisionTreeBreadcrumbFontSize": 16,
-  "serviceTitleFontSize": 20,
+  "serviceTitleFontSize": 18,
   "decisionTreeContentFontSize": 16
 };
 
