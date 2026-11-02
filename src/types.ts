@@ -259,4 +259,5 @@ export interface SiteSettings {
   defaultHomeView: 'categories' | 'all_services';
   showNewsOnHome?: boolean;
   serviceContentFontSize?: number;
+  decisionTreeFontSize?: number;
 }
