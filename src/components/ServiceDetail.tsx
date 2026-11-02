@@ -225,7 +225,7 @@ function LivePreviewPanel({
                   })}
                 </div>
               )}
-              <h3 style={{ fontSize: serviceTitleFontSize }} className="font-bold text-slate-900 font-display line-clamp-2">{draft.title || 'Título sin definir'}</h3>
+              <h3 className="text-sm font-bold text-slate-900 font-display line-clamp-2">{draft.title || 'Título sin definir'}</h3>
             </div>
 
             <p className="text-xs text-slate-600 font-medium leading-relaxed line-clamp-3 pt-1 border-t border-slate-100 mt-1">
