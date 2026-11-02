@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Cropper from 'react-easy-crop';
 import { 
   LogOut, 
   Layers, 
@@ -337,9 +338,36 @@ export default function AdminPanel({
 
   // News Edit / Create Modal state
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
-  const cropDragRef = useRef<{ pointerId: number; startX: number; startY: number; imageX: number; imageY: number } | null>(null);
+  const [newsCrop, setNewsCrop] = useState({ x: 0, y: 0 });
+  const [newsCropZoom, setNewsCropZoom] = useState(1);
+  const [newsImageAspect, setNewsImageAspect] = useState<number | null>(null);
   const [isNewsModalOpen, setIsNewsModalOpen] = useState<boolean>(false);
   const [isNewNews, setIsNewNews] = useState<boolean>(false);
+
+  // Cargar las dimensiones reales para restaurar encuadres guardados con el editor anterior.
+  useEffect(() => {
+    if (!editingNews?.imageUrl) {
+      setNewsImageAspect(null);
+      setNewsCrop({ x: 0, y: 0 });
+      setNewsCropZoom(1);
+      return;
+    }
+
+    let cancelled = false;
+    const image = new Image();
+    image.onload = () => {
+      if (cancelled || !image.naturalWidth || !image.naturalHeight) return;
+      setNewsImageAspect(image.naturalWidth / image.naturalHeight);
+      setNewsCrop({ x: 0, y: 0 });
+      setNewsCropZoom(Math.max(1, Math.min(3, (editingNews.imageZoom ?? 100) / 100)));
+    };
+    image.onerror = () => {
+      if (!cancelled) setNewsImageAspect(null);
+    };
+    image.src = editingNews.imageUrl;
+
+    return () => { cancelled = true; };
+  }, [editingNews?.imageUrl]);
 
   // Delete Confirmation Modal state
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<{
@@ -2394,44 +2422,88 @@ const handleOpenNewNewsModal = () => {
                           <div>
                             <div className="flex items-center justify-between gap-3 mb-2">
                               <span className="text-xs font-bold text-slate-700">Ajusta el encuadre</span>
-                              <button type="button" onClick={() => setEditingNews({ ...editingNews, imagePositionX: 50, imagePositionY: 50, imageZoom: 100 })} className="text-xs font-semibold text-blue-600 hover:text-blue-800">Restablecer</button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setNewsCrop({ x: 0, y: 0 });
+                                  setNewsCropZoom(1);
+                                  setEditingNews(prev => prev ? { ...prev, imagePositionX: 50, imagePositionY: 50, imageZoom: 100 } : prev);
+                                }}
+                                className="text-xs font-semibold text-blue-600 hover:text-blue-800"
+                              >
+                                Restablecer
+                              </button>
                             </div>
-                            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-white border border-slate-200 cursor-grab active:cursor-grabbing touch-none select-none"
-                              onPointerDown={(e) => {
-                                cropDragRef.current = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, imageX: editingNews.imagePositionX ?? 50, imageY: editingNews.imagePositionY ?? 50 };
-                                e.currentTarget.setPointerCapture(e.pointerId);
-                              }}
-                              onPointerMove={(e) => {
-                                const drag = cropDragRef.current;
-                                if (!drag || drag.pointerId !== e.pointerId) return;
-                                const bounds = e.currentTarget.getBoundingClientRect();
-                                const image = e.currentTarget.querySelector('img');
-                                if (!image?.naturalWidth || !image?.naturalHeight) return;
-                                const coverScale = Math.max(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight);
-                                const zoom = (editingNews.imageZoom ?? 100) / 100;
-                                const overflowX = Math.max(0, image.naturalWidth * coverScale * zoom - bounds.width);
-                                const overflowY = Math.max(0, image.naturalHeight * coverScale * zoom - bounds.height);
-                                const deltaX = e.clientX - drag.startX;
-                                const deltaY = e.clientY - drag.startY;
-                                const nextX = overflowX > 0 ? Math.max(0, Math.min(100, drag.imageX - (deltaX / overflowX) * 100)) : 50;
-                                const nextY = overflowY > 0 ? Math.max(0, Math.min(100, drag.imageY - (deltaY / overflowY) * 100)) : 50;
-                                setEditingNews(prev => prev ? { ...prev, imagePositionX: nextX, imagePositionY: nextY } : prev);
-                              }}
-                              onPointerUp={(e) => {
-                                cropDragRef.current = null;
-                                if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
-                              }}
-                              onPointerCancel={() => { cropDragRef.current = null; }}
-                              aria-label="Arrastra la imagen para ajustar el encuadre"
-                            >
-                              <img src={editingNews.imageUrl} alt="Encuadre de la imagen" draggable={false} className="w-full h-full object-cover pointer-events-none"
-                                style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} />
-                              <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/70 text-white text-[11px] px-3 py-1 pointer-events-none">Arrastra para ajustar</span>
+                            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 border border-slate-200 touch-none select-none">
+                              {newsImageAspect ? (() => {
+                                const frameAspect = 16 / 9;
+                                const baseWidth = newsImageAspect >= frameAspect ? (frameAspect / newsImageAspect) * 100 : 100;
+                                const baseHeight = newsImageAspect >= frameAspect ? 100 : (newsImageAspect / frameAspect) * 100;
+                                const legacyZoom = Math.max(1, Math.min(3, (editingNews.imageZoom ?? 100) / 100));
+                                const cropWidth = baseWidth / legacyZoom;
+                                const cropHeight = baseHeight / legacyZoom;
+                                const initialArea = {
+                                  width: cropWidth,
+                                  height: cropHeight,
+                                  x: ((editingNews.imagePositionX ?? 50) / 100) * Math.max(0, baseWidth - cropWidth),
+                                  y: ((editingNews.imagePositionY ?? 50) / 100) * Math.max(0, baseHeight - cropHeight),
+                                };
+                                return (
+                                  <Cropper
+                                    image={editingNews.imageUrl}
+                                    crop={newsCrop}
+                                    zoom={newsCropZoom}
+                                    aspect={16 / 9}
+                                    objectFit="cover"
+                                    cropShape="rect"
+                                    showGrid
+                                    minZoom={1}
+                                    maxZoom={3}
+                                    zoomWithScroll
+                                    restrictPosition
+                                    initialCroppedAreaPercentages={initialArea}
+                                    onCropChange={setNewsCrop}
+                                    onZoomChange={(zoom) => {
+                                      setNewsCropZoom(zoom);
+                                      setEditingNews(prev => prev ? { ...prev, imageZoom: Math.round(zoom * 100) } : prev);
+                                    }}
+                                    onCropComplete={(area) => {
+                                      const x = baseWidth > area.width
+                                        ? Math.max(0, Math.min(100, (area.x / (baseWidth - area.width)) * 100))
+                                        : 50;
+                                      const y = baseHeight > area.height
+                                        ? Math.max(0, Math.min(100, (area.y / (baseHeight - area.height)) * 100))
+                                        : 50;
+                                      setEditingNews(prev => prev ? {
+                                        ...prev,
+                                        imagePositionX: x,
+                                        imagePositionY: y,
+                                        imageZoom: Math.round(Math.max(baseWidth / area.width, baseHeight / area.height) * 100),
+                                      } : prev);
+                                    }}
+                                    style={{
+                                      containerStyle: { background: '#0f172a' },
+                                      cropAreaStyle: { border: '1px solid rgba(255,255,255,0.95)' },
+                                    }}
+                                  />
+                                );
+                              })() : (
+                                <div className="absolute inset-0 flex items-center justify-center text-xs text-white/70">Cargando imagen…</div>
+                              )}
                             </div>
+                            <p className="text-xs text-slate-500 mt-2">Arrastra la imagen libremente dentro del marco horizontal. También puedes acercarla con la rueda del mouse o el control de zoom.</p>
                           </div>
                           <label className="block space-y-2">
-                            <span className="flex items-center justify-between text-xs font-bold text-slate-700"><span>Zoom</span><span className="tabular-nums text-slate-500">{editingNews.imageZoom ?? 100}%</span></span>
-                            <input type="range" min="50" max="200" step="1" value={editingNews.imageZoom ?? 100} onChange={(e) => setEditingNews({ ...editingNews, imageZoom: Number(e.target.value) })} className="w-full accent-blue-600" />
+                            <span className="flex items-center justify-between text-xs font-bold text-slate-700"><span>Zoom</span><span className="tabular-nums text-slate-500">{Math.round(newsCropZoom * 100)}%</span></span>
+                            <input
+                              type="range"
+                              min="100"
+                              max="300"
+                              step="1"
+                              value={Math.round(newsCropZoom * 100)}
+                              onChange={(e) => setNewsCropZoom(Number(e.target.value) / 100)}
+                              className="w-full accent-blue-600"
+                            />
                           </label>
                         </div>
                       )}
