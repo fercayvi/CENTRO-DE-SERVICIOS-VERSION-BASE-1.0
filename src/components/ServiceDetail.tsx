@@ -418,6 +418,12 @@ export default function ServiceDetail({
   onLightboxToggle
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
+  // 16 px conserva los tamaños originales; el valor escala proporcionalmente la jerarquía tipográfica.
+  const [fontSizePx, setFontSizePx] = useState<string>('16');
+  const parsedFontSize = Number(fontSizePx);
+  const fontScale = Number.isFinite(parsedFontSize) && parsedFontSize > 0
+    ? Math.min(48, Math.max(8, parsedFontSize)) / 16
+    : 1;
 
   // Precargar el editor pesado en segundo plano al entrar como administrador.
   // Así, abrir el árbol no depende de descargar el chunk justo al hacer clic.
@@ -1218,37 +1224,53 @@ export default function ServiceDetail({
                   {draft.title}
                 </h1>
               </div>
+              <input
+                type="number"
+                min={8}
+                max={48}
+                step={1}
+                value={fontSizePx}
+                onChange={(event) => setFontSizePx(event.target.value)}
+                aria-label="Tamaño de fuente en píxeles"
+                title="Tamaño de fuente (px)"
+                className="w-[72px] shrink-0 rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
             </div>
           </div>
 
-          {/* Árbol de Decisión Independiente */}
-          {draft.decisionTree && draft.decisionTree.length > 0 && (
-            <div className="space-y-3">
-              <DecisionTreeNavigator
-                tree={draft.decisionTree}
-                onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
-                serviceTitle={draft.title}
-              />
-            </div>
-          )}
-
-          {/* Dynamic Layout Blocks */}
-          <LayoutBlocksRenderer
-            blocks={draft.layoutBlocks || []}
-            onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
-          />
-
-          {(!draft.decisionTree || draft.decisionTree.length === 0) && (!draft.layoutBlocks || draft.layoutBlocks.length === 0) && (
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-6 text-center shadow-2xs space-y-2">
-              <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
-                <Info className="w-5 h-5" />
+          <div
+            className="service-font-scale space-y-4"
+            style={{ '--service-font-scale': fontScale } as React.CSSProperties}
+          >
+            {/* Árbol de Decisión Independiente */}
+            {draft.decisionTree && draft.decisionTree.length > 0 && (
+              <div className="space-y-3">
+                <DecisionTreeNavigator
+                  tree={draft.decisionTree}
+                  onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
+                  serviceTitle={draft.title}
+                />
               </div>
-              <h3 className="text-xs font-bold text-slate-800">Contenido en preparación</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                La información detallada, pasos y formatos para este trámite se están actualizando desde el Panel de Talento y Cultura.
-              </p>
-            </div>
-          )}
+            )}
+
+            {/* Dynamic Layout Blocks */}
+            <LayoutBlocksRenderer
+              blocks={draft.layoutBlocks || []}
+              onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
+            />
+
+            {(!draft.decisionTree || draft.decisionTree.length === 0) && (!draft.layoutBlocks || draft.layoutBlocks.length === 0) && (
+              <div className="bg-white border border-slate-200/90 rounded-2xl p-6 text-center shadow-2xs space-y-2">
+                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+                  <Info className="w-5 h-5" />
+                </div>
+                <h3 className="text-xs font-bold text-slate-800">Contenido en preparación</h3>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  La información detallada, pasos y formatos para este trámite se están actualizando desde el Panel de Talento y Cultura.
+                </p>
+              </div>
+            )}
+          </div>
 
         </div>
       )}
