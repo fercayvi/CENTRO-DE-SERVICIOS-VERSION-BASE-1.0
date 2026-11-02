@@ -16,6 +16,7 @@ interface DecisionTreeNavigatorProps {
   buttonFontSize?: number;
   breadcrumbFontSize?: number;
   optionTitleFontSize?: number;
+  onNavigationStateChange?: (isAnswerView: boolean, onBack: () => void) => void;
 }
 
 function getNodeBlocks(node: ServiceNode): LayoutBlock[] {
@@ -39,7 +40,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
   serviceTitle = 'Trámite',
   buttonFontSize = 16,
   breadcrumbFontSize = 16,
-  optionTitleFontSize = 16
+  optionTitleFontSize = 16,
+  onNavigationStateChange
 }) => {
   // Navigation stack: array of selected nodes from root to current
   const [navPath, setNavPath] = useState<ServiceNode[]>([]);
@@ -82,6 +84,10 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
       container.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
+
+  useEffect(() => {
+    onNavigationStateChange?.(currentNode?.nodeType === 'content', currentNode?.nodeType === 'content' ? handleGoBack : handleReset);
+  }, [navPath, currentNode, onNavigationStateChange]);
 
   // Scroll al tope superior automáticamente al cambiar de paso (siempre antes de returns tempranos)
   useEffect(() => {
@@ -126,18 +132,6 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
 
   // Reusable Step Navigation Bar (Top and Bottom)
   const renderStepNavigation = (isTop: boolean) => {
-    const backButton = navPath.length > 0 ? (
-      <button
-        type="button"
-        onClick={handleGoBack}
-        className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-        style={{ fontSize: buttonFontSize }}
-      >
-        <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
-        <span>Atrás</span>
-      </button>
-    ) : null;
-
     const forwardButton = currentNode?.children && currentNode.children.length > 0 ? (
       currentNode.children.length === 1 ? (
         <button
@@ -180,7 +174,6 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
     return (
       <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center justify-center gap-3`}>
         <div className="w-fit max-w-full mx-auto flex flex-wrap items-center justify-center gap-3" style={{ justifyContent: "center", marginLeft: "auto", marginRight: "auto" }}>
-          {backButton}
           {forwardButton}
         </div>
       </div>
@@ -302,17 +295,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               )}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={handleGoBack}
-                className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-                style={{ fontSize: buttonFontSize }}
-              >
-                <ArrowLeft className="w-5 h-5 text-slate-600" />
-                <span>Atrás</span>
-              </button>
-
+            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={handleReset}
@@ -357,20 +340,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               </div>
             )}
 
-            {/* Barra inferior de navegación: Botón Atrás cuando hay historial de navegación */}
-            {navPath.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
-                <button
-                  type="button"
-                  onClick={handleGoBack}
-                  className="min-h-[48px] px-4 py-2 sm:px-5 sm:py-2.5 font-medium text-slate-700 hover:text-slate-900 bg-transparent hover:bg-slate-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-                  style={{ fontSize: buttonFontSize }}
-                >
-                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
-                  <span>Atrás</span>
-                </button>
-              </div>
-            )}
+
           </div>
         )}
       </div>
