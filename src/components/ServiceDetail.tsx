@@ -253,6 +253,7 @@ function LivePreviewPanel({
                 tree={draft.decisionTree}
                 onOpenLightbox={onOpenLightbox}
                 serviceTitle={draft.title}
+                fontSize={decisionTreeFontSize}
               />
             </div>
           )}
@@ -408,6 +409,7 @@ interface ServiceDetailProps {
   initialEditMode?: boolean;
   onLightboxToggle?: (isOpen: boolean) => void;
   contentFontSize?: number;
+  decisionTreeFontSize?: number;
 }
 
 export default function ServiceDetail({ 
@@ -417,7 +419,8 @@ export default function ServiceDetail({
   onUpdateService,
   initialEditMode = false,
   onLightboxToggle,
-  contentFontSize = 16
+  contentFontSize = 16,
+  decisionTreeFontSize = 16
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
   const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
