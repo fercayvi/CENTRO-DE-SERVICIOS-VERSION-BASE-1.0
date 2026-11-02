@@ -393,7 +393,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
           <div className="w-px h-4 bg-slate-700 mx-1" />
           <button
             type="button"
-            onClick={() => applyFormat('bold')
+            onClick={() => applyFormat('bold')}
             className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
               isBoldActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300 hover:text-white'
             }`}
