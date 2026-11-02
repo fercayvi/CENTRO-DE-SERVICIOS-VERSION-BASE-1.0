@@ -126,7 +126,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
           <button
             type="button"
             onClick={handleGoBack}
-            className="min-h-[48px] px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base font-medium text-slate-700 hover:text-slate-900 bg-transparent hover:bg-slate-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+            className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
             <span>Atrás</span>
@@ -294,7 +294,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               <button
                 type="button"
                 onClick={handleGoBack}
-                className="min-h-[48px] px-4 py-2.5 sm:px-5 sm:py-3 text-base font-medium text-slate-700 hover:text-slate-900 bg-transparent hover:bg-slate-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 text-base font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
               >
                 <ArrowLeft className="w-5 h-5 text-slate-600" />
                 <span>Atrás</span>
