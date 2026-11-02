@@ -1396,12 +1396,12 @@ const handleOpenNewNewsModal = () => {
           <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h4 className="text-sm sm:text-base font-bold text-slate-900">Tamaño de letra del texto del árbol de decisiones</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Controla instrucciones, explicaciones y contenido dentro de cada opción.</p>
+                <h4 className="text-sm sm:text-base font-bold text-slate-900">Tamaño de letra del título de la opción / pregunta</h4>
+                <p className="text-xs text-slate-500 mt-0.5">Controla el título que aparece dentro de cada tarjeta de opción o pregunta del árbol.</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeContentFontSize ?? 16}
-                  onChange={(event) => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= 8 && value <= 48) setSettings?.({ ...currentSettings, decisionTreeContentFontSize: value }); }}
+                <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeOptionTitleFontSize ?? 16}
+                  onChange={(event) => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= 8 && value <= 48) setSettings?.({ ...currentSettings, decisionTreeOptionTitleFontSize: value }); }}
                   aria-label="Tamaño de letra del texto del árbol de decisiones en píxeles"
                   className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
                 <span className="text-sm text-slate-500">px</span>
