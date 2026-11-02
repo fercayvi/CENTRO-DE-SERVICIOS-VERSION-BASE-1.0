@@ -4,9 +4,9 @@ export const siteSettings: SiteSettings = {
   "defaultHomeView": "all_services",
   "showNewsOnHome": true,
   "decisionTreeButtonFontSize": 16,
-  "decisionTreeBreadcrumbFontSize": 16,
-  "serviceTitleFontSize": 18,
-  "decisionTreeOptionTitleFontSize": 16
+  "decisionTreeBreadcrumbFontSize": 25,
+  "serviceTitleFontSize": 25,
+  "decisionTreeOptionTitleFontSize": 20
 };
 
 export const defaultCategories: CategoryConfig[] = [
