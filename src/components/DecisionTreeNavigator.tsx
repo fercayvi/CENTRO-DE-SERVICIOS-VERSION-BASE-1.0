@@ -301,7 +301,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               )}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
+            <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={handleGoBack}
@@ -315,7 +315,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               <button
                 type="button"
                 onClick={handleReset}
-                className="min-h-[48px] px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
+                className="min-h-[48px] px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
                 style={{ fontSize: buttonFontSize }}
               >
                 <RotateCcw className="w-5 h-5" />
