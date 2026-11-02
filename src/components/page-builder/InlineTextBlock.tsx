@@ -381,10 +381,16 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
               min={8}
               max={96}
               step={1}
-              value={block.fontSizePx ?? (block.style === 'heading' ? 20 : block.style === 'lead' ? 18 : 16)}
-              onChange={(event) => {
-                const value = Number(event.target.value);
-                if (Number.isFinite(value) && value >= 8 && value <= 96) onChange({ ...block, fontSizePx: value });
+              key={`${block.id}-font-size-${block.fontSizePx ?? block.style ?? 'normal'}`}
+              defaultValue={block.fontSizePx ?? (block.style === 'heading' ? 20 : block.style === 'lead' ? 18 : 16)}
+              onBlur={(event) => {
+                const rawValue = event.currentTarget.value.trim();
+                const value = Number(rawValue);
+                if (rawValue !== '' && Number.isFinite(value) && value >= 8 && value <= 96) {
+                  onChange({ ...block, fontSizePx: value });
+                } else {
+                  event.currentTarget.value = String(block.fontSizePx ?? (block.style === 'heading' ? 20 : block.style === 'lead' ? 18 : 16));
+                }
               }}
               aria-label="Tamaño de fuente en píxeles"
               className="w-12 rounded-md border border-slate-600 bg-slate-800 px-1.5 py-1 text-center text-xs text-white outline-none focus:border-blue-400"
