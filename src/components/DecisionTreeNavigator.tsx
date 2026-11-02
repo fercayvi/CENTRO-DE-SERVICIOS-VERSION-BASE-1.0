@@ -147,14 +147,14 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
             <button
               type="button"
               onClick={() => handleSelectNode(currentNode.children![0])}
-              className="min-h-[48px] px-6 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
+              className={`min-h-[48px] px-6 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ${isTop ? "ml-auto" : ""} cursor-pointer`}
               style={{ fontSize: buttonFontSize }}
             >
               <span>Siguiente</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           ) : (
-            <div className="flex flex-wrap items-center gap-2 ml-auto justify-end">
+            <div className={`flex flex-wrap items-center gap-2 ${isTop ? "ml-auto justify-end" : "justify-center"}`}>
               {currentNode.children.map((childNode) => {
                 return (
                   <button
@@ -175,7 +175,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
           <button
             type="button"
             onClick={handleReset}
-            className="min-h-[48px] px-5 py-2.5 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 ml-auto cursor-pointer"
+            className={`min-h-[48px] px-5 py-2.5 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 ${isTop ? "ml-auto" : ""} cursor-pointer`}
             style={{ fontSize: buttonFontSize }}
           >
             <RotateCcw className="w-4 h-4" />
