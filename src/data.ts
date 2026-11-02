@@ -384,12 +384,28 @@ export const initialServices: Service[] = [
     "decisionTree": [],
     "layoutBlocks": [
       {
-        "id": "btn_1790096656856_vqz6h",
-        "type": "button",
-        "label": "Solicita o consulta tus días de vacaciones",
-        "url": "https://",
-        "style": "primary",
-        "align": "center"
+        "id": "txt_1793659304230_f9all",
+        "type": "text",
+        "title": "",
+        "content": "<b>¿Cómo solicito mis vacaciones?</b>",
+        "align": "left",
+        "style": "normal",
+        "fontSizePx": 25
+      },
+      {
+        "id": "txt_1793659503632_fn424",
+        "type": "text",
+        "title": "",
+        "content": "<p>Sigue estos pasos, <strong>en orden</strong>:</p><ol><li><strong>Solicita tu saldo.</strong> Acude con tu generalista y dale tu <strong>número de nómina y nombre completo</strong>.</li><li><strong>Espera la confirmación.</strong> Puede tardar hasta <strong>2 días hábiles</strong>.</li><li><strong>Llena el formato de vacaciones</strong> (el único válido) y <strong>fírmalo</strong>.</li><li><strong>Entrégalo a tu jefe inmediato.</strong> Él revisa tu saldo y autoriza o rechaza la solicitud.</li><li><strong>Entrega el formato autorizado a tu generalista.</strong></li><li><strong>Talento y Cultura registra tus días</strong> en el sistema.</li></ol>\n\n",
+        "align": "left",
+        "style": "normal"
+      },
+      {
+        "id": "alt_1793659369128_28uxx",
+        "type": "alert",
+        "level": "warning",
+        "title": "Aviso Importante",
+        "message": "Entrega tu formato autorizado con una semana de anticipación a los días que vas a tomar, sin excepción. Las respuestas de saldo y autorización pueden tardar hasta 2 días hábiles cada una, así que haz tu solicitud con tiempo. Cualquier duda, acude con tu generalista o al Módulo de Servicio al Personal."
       }
     ],
     "tags": [
@@ -2625,9 +2641,9 @@ export const initialNews: NewsItem[] = [
     "imageName": "welcome_team",
     "category": "comunicado",
     "imageUrl": "/1793657945150-Gemini_Generated_Image_a7g59ka7g59ka7g5.jpg",
-    "imageZoom": 123,
-    "imagePositionX": 49.20192760027477,
-    "imagePositionY": 0,
+    "imageZoom": 136,
+    "imagePositionX": 61.91263295111563,
+    "imagePositionY": 13.833308630996532,
     "featured": true
   }
 ];
