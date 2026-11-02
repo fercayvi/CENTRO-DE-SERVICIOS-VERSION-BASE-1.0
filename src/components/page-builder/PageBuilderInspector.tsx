@@ -271,10 +271,16 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
                   min={8}
                   max={96}
                   step={1}
-                  value={textBlock.fontSizePx ?? (textBlock.style === 'heading' ? 20 : textBlock.style === 'lead' ? 18 : 16)}
-                  onChange={(event) => {
-                    const value = Number(event.target.value);
-                    if (Number.isFinite(value) && value >= 8 && value <= 96) onUpdateBlock({ ...textBlock, fontSizePx: value });
+                  key={`${textBlock.id}-font-size-${textBlock.fontSizePx ?? textBlock.style ?? 'normal'}`}
+                  defaultValue={textBlock.fontSizePx ?? (textBlock.style === 'heading' ? 20 : textBlock.style === 'lead' ? 18 : 16)}
+                  onBlur={(event) => {
+                    const rawValue = event.currentTarget.value.trim();
+                    const value = Number(rawValue);
+                    if (rawValue !== '' && Number.isFinite(value) && value >= 8 && value <= 96) {
+                      onUpdateBlock({ ...textBlock, fontSizePx: value });
+                    } else {
+                      event.currentTarget.value = String(textBlock.fontSizePx ?? (textBlock.style === 'heading' ? 20 : textBlock.style === 'lead' ? 18 : 16));
+                    }
                   }}
                   aria-label="Tamaño de fuente del bloque en píxeles"
                   className="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
