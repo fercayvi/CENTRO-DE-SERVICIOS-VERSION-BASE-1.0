@@ -367,7 +367,8 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
         <div 
           className="absolute -top-12 sm:-top-13 left-0 z-30 flex items-center gap-1 bg-slate-900 text-white px-2.5 py-1.5 rounded-xl shadow-xl border border-slate-800 animate-fadeIn select-none"
           onMouseDown={(e) => {
-            // Prevent blur of editable content when clicking toolbar buttons
+            // Keep the editor selection for toolbar buttons, but allow the size input to receive focus.
+            if ((e.target as HTMLElement).closest('input')) return;
             e.preventDefault();
           }}
         >
