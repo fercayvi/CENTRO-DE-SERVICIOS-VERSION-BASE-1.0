@@ -203,23 +203,23 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="min-h-[40px] shrink-0 inline-flex items-center text-slate-500 font-normal hover:text-slate-800 cursor-pointer transition-colors"
+                  className="min-h-[40px] shrink-0 inline-flex items-center text-slate-400 font-normal hover:text-slate-700 cursor-pointer transition-colors"
                 >
                   Inicio
                 </button>
                 {visibleHistory.length > 2 && (
                   <>
-                    <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span className="text-slate-400 px-0.5 shrink-0" aria-label="Pasos anteriores omitidos">…</span>
+                    <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
+                    <span className="text-slate-300 px-0.5 shrink-0" aria-label="Pasos anteriores omitidos">…</span>
                   </>
                 )}
                 {(visibleHistory.length > 2 ? visibleHistory.slice(-2) : visibleHistory).map((stepNode, idx, displayedHistory) => {
                   const isLast = idx === displayedHistory.length - 1;
                   return (
                     <React.Fragment key={stepNode.id}>
-                      <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
                       {isLast ? (
-                        <span className="font-bold text-slate-900 truncate min-w-0" title={stepNode.title}>
+                        <span className="font-extrabold text-slate-950 truncate min-w-0" title={stepNode.title}>
                           {stepNode.title}
                         </span>
                       ) : (
@@ -229,7 +229,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                             const targetIdx = navPath.findIndex((n) => n.id === stepNode.id);
                             if (targetIdx !== -1) handleJumpToStep(targetIdx);
                           }}
-                          className="min-h-[40px] inline-flex items-center text-slate-500 font-normal hover:text-slate-800 truncate min-w-0 max-w-[140px] sm:max-w-[220px] cursor-pointer transition-colors"
+                          className="min-h-[40px] inline-flex items-center text-slate-400 font-normal hover:text-slate-700 truncate min-w-0 max-w-[140px] sm:max-w-[220px] cursor-pointer transition-colors"
                           title={stepNode.title}
                         >
                           {stepNode.title}
