@@ -130,7 +130,7 @@ function prepareHtmlContent(content: string): string {
 }
 
 // Safe rich text formatter supporting direct HTML, bold, italics, bullets, newlines, and strict spacing
-function FormattedTextBlock({ content, alignClass = '' }: { content: string; alignClass?: string }) {
+function FormattedTextBlock({ content, alignClass = '', publicView = false }: { content: string; alignClass?: string; publicView?: boolean }) {
   if (!content || typeof content !== 'string') return null;
 
   const rawHtml = prepareHtmlContent(content);
@@ -161,7 +161,7 @@ function FormattedTextBlock({ content, alignClass = '' }: { content: string; ali
         whiteSpace: 'pre-wrap',
         wordBreak: 'break-word',
       }}
-      className={`text-slate-700 leading-relaxed whitespace-pre-wrap break-words ${alignClass} [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>p]:my-1.5 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 [&_strong]:font-bold [&_strong]:text-slate-900 [&_b]:font-bold [&_b]:text-slate-900`}
+      className={`leading-relaxed whitespace-pre-wrap break-words ${publicView ? 'text-lg sm:text-xl text-slate-700' : 'text-slate-700'} ${alignClass} [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0 [&_strong]:font-bold [&_strong]:text-slate-900 [&_b]:font-bold [&_b]:text-slate-900`}
       dangerouslySetInnerHTML={{ __html: safeHtmlWithRel }}
     />
   );
@@ -209,7 +209,7 @@ function MediaImageBlock({
 }
 
 // Single Accordion for FAQs
-function SingleFAQBlock({ title, items }: { title?: string; items: { q: string; a: string }[]; key?: React.Key }) {
+function SingleFAQBlock({ title, items, publicView = false }: { title?: string; items: { q: string; a: string }[]; publicView?: boolean; key?: React.Key }) {
   const [openIndices, setOpenIndices] = useState<number[]>([0]);
 
   const toggleIndex = (idx: number) => {
@@ -221,8 +221,8 @@ function SingleFAQBlock({ title, items }: { title?: string; items: { q: string; 
   if (!items || items.length === 0) return null;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
-      <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+    <div className={`bg-white border border-slate-200 rounded-2xl ${publicView ? 'p-5 sm:p-7' : 'p-6 sm:p-8'} shadow-sm space-y-4`}>
+      <h3 className={`font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2 ${publicView ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'}`}>
         <HelpCircle className="w-5 h-5 text-blue-600 shrink-0" />
         <span>{title || 'Preguntas Frecuentes'}</span>
       </h3>
@@ -249,7 +249,7 @@ function SingleFAQBlock({ title, items }: { title?: string; items: { q: string; 
                   }`}>
                     {idx + 1}
                   </span>
-                  <span className="text-base sm:text-lg font-semibold text-slate-800 leading-snug">
+                  <span className={`font-semibold text-slate-800 leading-snug ${publicView ? 'text-lg sm:text-xl' : 'text-base sm:text-lg'}`}>
                     {item.q}
                   </span>
                 </div>
@@ -262,7 +262,7 @@ function SingleFAQBlock({ title, items }: { title?: string; items: { q: string; 
 
               {isOpen && (
                 <div className="px-5 pb-5 pt-3 border-t border-slate-100 bg-slate-50/60 animate-fadeIn">
-                  <FormattedTextBlock content={item.a} />
+                  <FormattedTextBlock content={item.a} publicView={publicView} />
                 </div>
               )}
             </div>
@@ -277,12 +277,14 @@ interface LayoutBlocksRendererProps {
   blocks?: LayoutBlock[];
   onOpenLightbox?: (url: string, title?: string) => void;
   serviceTitle?: string;
+  publicView?: boolean;
 }
 
 export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
   blocks,
   onOpenLightbox,
-  serviceTitle
+  serviceTitle,
+  publicView = false
 }) => {
   if (!blocks || blocks.length === 0) return null;
 
@@ -292,15 +294,19 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         // ==================== 1. TEXT BLOCK ====================
         if (block.type === 'text') {
           const alignClass = block.align === 'center' ? 'text-center' : block.align === 'right' ? 'text-right' : 'text-left';
-          const styleClass = block.style === 'lead' ? 'text-base sm:text-lg font-medium text-slate-800' : block.style === 'heading' ? 'text-lg sm:text-xl font-bold text-slate-900' : 'text-sm sm:text-base';
+          const styleClass = block.style === 'lead'
+            ? (publicView ? 'text-xl sm:text-2xl font-medium text-slate-800' : 'text-base sm:text-lg font-medium text-slate-800')
+            : block.style === 'heading'
+              ? (publicView ? 'text-2xl sm:text-3xl font-bold text-slate-900' : 'text-lg sm:text-xl font-bold text-slate-900')
+              : (publicView ? 'text-lg sm:text-xl' : 'text-sm sm:text-base');
 
           return (
             <div 
               key={block.id || `text-${index}`}
-              className={`bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-4 ${alignClass}`}
+              className={`bg-white border border-slate-200 rounded-2xl ${publicView ? 'p-5 sm:p-7' : 'p-6 sm:p-8'} shadow-xs space-y-4 ${alignClass}`}
             >
               {block.title && (
-                <h3 className={`text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2 ${block.align === 'center' ? 'justify-center' : block.align === 'right' ? 'justify-end' : ''}`}>
+                <h3 className={`font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2 ${publicView ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'} ${block.align === 'center' ? 'justify-center' : block.align === 'right' ? 'justify-end' : ''}`}>
                   <FileText className="w-5 h-5 text-blue-600 shrink-0" />
                   <span>{block.title}</span>
                 </h3>
@@ -312,7 +318,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
                 }}
                 className={`${styleClass} whitespace-pre-wrap break-words`}
               >
-                <FormattedTextBlock content={block.content} alignClass={alignClass} />
+                <FormattedTextBlock content={block.content} alignClass={alignClass} publicView={publicView} />
               </div>
             </div>
           );
@@ -349,16 +355,16 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
           return (
             <div 
               key={block.id || `alert-${index}`}
-              className={`${containerClass} rounded-2xl p-6 sm:p-8 shadow-sm flex items-start gap-4 sm:gap-5 transition-all`}
+              className={`${containerClass} rounded-2xl ${publicView ? 'p-5 sm:p-7' : 'p-6 sm:p-8'} shadow-sm flex items-start gap-4 sm:gap-5 transition-all`}
             >
               <IconComponent className={`w-7 h-7 sm:w-8 sm:h-8 shrink-0 mt-0.5 ${iconColor}`} />
               <div className="min-w-0 flex-1 space-y-1">
                 {block.title && (
-                  <h4 className={`text-base font-bold uppercase tracking-wider ${headerClass}`}>
+                  <h4 className={`font-bold uppercase tracking-wider ${publicView ? 'text-lg sm:text-xl' : 'text-base'} ${headerClass}`}>
                     {block.title}
                   </h4>
                 )}
-                <p className="text-base text-slate-800 font-medium leading-relaxed whitespace-pre-line">
+                <p className={`text-slate-800 font-medium leading-relaxed whitespace-pre-line ${publicView ? 'text-lg sm:text-xl' : 'text-base'}`}>
                   {block.message}
                 </p>
               </div>
@@ -373,6 +379,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
               key={block.id || `faq-${index}`} 
               title={block.title} 
               items={block.items || []} 
+              publicView={publicView} 
             />
           );
         }
@@ -557,6 +564,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
                         blocks={col.blocks}
                         onOpenLightbox={onOpenLightbox}
                         serviceTitle={serviceTitle}
+                        publicView={publicView}
                       />
                     </div>
                   );
