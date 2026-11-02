@@ -13,7 +13,9 @@ interface DecisionTreeNavigatorProps {
   tree: ServiceNode[];
   onOpenLightbox?: (url: string, title?: string) => void;
   serviceTitle?: string;
-  fontSize?: number;
+  buttonFontSize?: number;
+  breadcrumbFontSize?: number;
+  contentFontSize?: number;
 }
 
 function getNodeBlocks(node: ServiceNode): LayoutBlock[] {
@@ -35,7 +37,9 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
   tree,
   onOpenLightbox,
   serviceTitle = 'Trámite',
-  fontSize = 16
+  buttonFontSize = 16,
+  breadcrumbFontSize = 16,
+  contentFontSize = 16
 }) => {
   // Navigation stack: array of selected nodes from root to current
   const [navPath, setNavPath] = useState<ServiceNode[]>([]);
@@ -129,7 +133,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
             type="button"
             onClick={handleGoBack}
             className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-            style={{ fontSize }}
+            style={{ fontSize: buttonFontSize }}
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
             <span>Atrás</span>
@@ -144,7 +148,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               type="button"
               onClick={() => handleSelectNode(currentNode.children![0])}
               className="min-h-[48px] px-6 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
-              style={{ fontSize }}
+              style={{ fontSize: buttonFontSize }}
             >
               <span>Siguiente</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -158,7 +162,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                     type="button"
                     onClick={() => handleSelectNode(childNode)}
                     className="min-h-[48px] px-5 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
-                    style={{ fontSize }}
+                    style={{ fontSize: buttonFontSize }}
                   >
                     <span>Siguiente</span>
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -172,7 +176,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
             type="button"
             onClick={handleReset}
             className="min-h-[48px] px-5 py-2.5 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 ml-auto cursor-pointer"
-            style={{ fontSize }}
+            style={{ fontSize: buttonFontSize }}
           >
             <RotateCcw className="w-4 h-4" />
             <span>Comenzar de nuevo</span>
@@ -191,7 +195,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
         {/* Barra superior de navegación: Breadcrumbs a la izquierda y Controles a la derecha */}
         <div className="flex items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100 min-w-0">
           {/* Breadcrumbs limpios con mayor tamaño de fuente y peso */}
-          <nav aria-label="Ruta de navegación" className="flex items-center gap-1 min-w-0 flex-1 overflow-hidden whitespace-nowrap" style={{ fontSize }}>
+          <nav aria-label="Ruta de navegación" className="flex items-center gap-1 min-w-0 flex-1 overflow-hidden whitespace-nowrap" style={{ fontSize: breadcrumbFontSize }}>
             {visibleHistory.length === 0 ? (
               <span className="text-slate-900 font-bold shrink-0">Inicio</span>
             ) : (
@@ -245,7 +249,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                 type="button"
                 onClick={handleReset}
                 className="min-h-[48px] flex items-center gap-1.5 px-3 py-1 text-slate-500 hover:text-slate-800 font-normal transition-colors cursor-pointer bg-transparent border-0"
-                style={{ fontSize }}
+                style={{ fontSize: buttonFontSize }}
                 title="Reiniciar asistente"
               >
                 <RotateCcw className="w-4 h-4 text-slate-500" />
@@ -268,6 +272,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                   blocks={currentBlocks} 
                   onOpenLightbox={onOpenLightbox}
                   serviceTitle={serviceTitle}
+                  fontSizeOverride={contentFontSize}
                 />
               ) : (
                 <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 font-medium">
@@ -289,6 +294,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                   blocks={currentBlocks} 
                   onOpenLightbox={onOpenLightbox}
                   serviceTitle={serviceTitle}
+                  fontSizeOverride={contentFontSize}
                 />
               ) : (
                 <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 font-medium">
@@ -302,7 +308,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                 type="button"
                 onClick={handleGoBack}
                 className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-                style={{ fontSize }}
+                style={{ fontSize: buttonFontSize }}
               >
                 <ArrowLeft className="w-5 h-5 text-slate-600" />
                 <span>Atrás</span>
