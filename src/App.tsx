@@ -238,6 +238,7 @@ export default function App() {
                     isAdminLoggedIn={isAdminLoggedIn}
                     onUpdateService={handleUpdateService}
                     initialEditMode={serviceEditMode}
+                    contentFontSize={settings.serviceContentFontSize ?? 16}
                     onLightboxToggle={setIsImageZoomed}
                   />
                 </div>
