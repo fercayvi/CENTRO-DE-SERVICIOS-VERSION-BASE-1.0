@@ -6,7 +6,7 @@ export const siteSettings: SiteSettings = {
   "decisionTreeButtonFontSize": 16,
   "decisionTreeBreadcrumbFontSize": 16,
   "serviceTitleFontSize": 18,
-  "decisionTreeContentFontSize": 16
+  "decisionTreeOptionTitleFontSize": 16
 };
 
 export const defaultCategories: CategoryConfig[] = [
