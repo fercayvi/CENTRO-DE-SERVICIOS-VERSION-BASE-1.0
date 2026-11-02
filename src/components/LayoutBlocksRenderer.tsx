@@ -292,15 +292,15 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         // ==================== 1. TEXT BLOCK ====================
         if (block.type === 'text') {
           const alignClass = block.align === 'center' ? 'text-center' : block.align === 'right' ? 'text-right' : 'text-left';
-          const styleClass = block.style === 'lead' ? 'text-base sm:text-lg font-medium text-slate-800' : block.style === 'heading' ? 'text-lg sm:text-xl font-bold text-slate-900' : 'text-sm sm:text-base';
+          const fontSizePx = block.fontSizePx ?? 16;
 
           return (
             <div 
               key={block.id || `text-${index}`}
-              className={`bg-white border border-slate-200 rounded-2xl px-2 sm:px-3 py-6 sm:py-8 shadow-xs space-y-4 ${alignClass}`}
+              className={`bg-white border border-slate-200 rounded-2xl px-2 sm:px-3 py-6 sm:py-8 shadow-xs space-y-4 ${alignClass}`} style={{ fontSize: `${fontSizePx}px` }}
             >
               {block.title && (
-                <h3 className={`text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2 ${block.align === 'center' ? 'justify-center' : block.align === 'right' ? 'justify-end' : ''}`}>
+                <h3 style={{ fontSize: `${fontSizePx}px` }} className={`font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2 ${block.align === 'center' ? 'justify-center' : block.align === 'right' ? 'justify-end' : ''}`}>
                   <FileText className="w-5 h-5 text-blue-600 shrink-0" />
                   <span>{block.title}</span>
                 </h3>
@@ -309,8 +309,9 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
                 style={{
                   whiteSpace: 'pre-wrap',
                   wordBreak: 'break-word',
+                  fontSize: `${fontSizePx}px`,
                 }}
-                className={`${styleClass} whitespace-pre-wrap break-words`}
+                className="whitespace-pre-wrap break-words"
               >
                 <FormattedTextBlock content={block.content} alignClass={alignClass} />
               </div>
@@ -369,11 +370,12 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         // ==================== TABLE BLOCK ====================
         if (block.type === 'table') {
           const columnCount = Math.max(1, block.headers?.length || 1);
+          const fontSizePx = block.fontSizePx ?? 16;
           return (
-            <section key={block.id || `table-${index}`} className="space-y-3 rounded-2xl border border-slate-200 bg-white px-2 sm:px-3 py-5 sm:py-6 shadow-xs">
-              {block.title && <h3 className="text-base font-bold text-slate-900">{block.title}</h3>}
+            <section key={block.id || `table-${index}`} className="space-y-3 rounded-2xl border border-slate-200 bg-white px-2 sm:px-3 py-5 sm:py-6 shadow-xs" style={{ fontSize: `${fontSizePx}px` }}>
+              {block.title && <h3 style={{ fontSize: `${fontSizePx}px` }} className="font-bold text-slate-900">{block.title}</h3>}
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full min-w-[480px] border-collapse text-sm text-left">
+                <table style={{ fontSize: `${fontSizePx}px` }} className="w-full min-w-[480px] border-collapse text-left">
                   {block.showHeader && <thead className="bg-slate-100"><tr>{Array.from({length:columnCount},(_,col)=><th key={col} scope="col" className="border-b border-slate-200 px-2 sm:px-3 py-3 font-bold text-slate-800">{block.headers?.[col] || ''}</th>)}</tr></thead>}
                   <tbody>{(block.rows || []).map((row,rowIndex)=><tr key={rowIndex} className={rowIndex%2===0?'bg-white':'bg-slate-50'}>{Array.from({length:columnCount},(_,col)=><td key={col} className="border-b border-slate-100 px-2 sm:px-3 py-3 align-top text-slate-700">{row?.[col] || ''}</td>)}</tr>)}</tbody>
                 </table>
