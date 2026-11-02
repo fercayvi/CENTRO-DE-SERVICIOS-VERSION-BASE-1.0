@@ -213,7 +213,7 @@ export default function App() {
             {selectedNews ? (
               <div className="relative animate-fadeIn min-h-screen">
                 <div className="fixed inset-0 bg-slate-50 z-30 pointer-events-none" aria-hidden="true" />
-                <div className="relative z-40 w-full max-w-none mx-auto px-0 py-1 sm:py-3">
+                <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
                   <NewsDetail news={selectedNews} onBack={() => setSelectedNews(null)} />
                 </div>
               </div>
@@ -227,7 +227,7 @@ export default function App() {
                 />
 
                 {/* Service Detail Full-Width Kiosk Container */}
-                <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
+                <div className="relative z-40 w-full max-w-none mx-auto px-0 py-1 sm:py-3">
                   <ServiceDetail 
                     service={selectedService} 
                     onBack={() => {
