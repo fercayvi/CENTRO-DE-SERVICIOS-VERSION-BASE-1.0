@@ -93,14 +93,6 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
     scrollToTop();
   }, [navPath]);
 
-  if (!tree || tree.length === 0) {
-    return (
-      <div className="p-8 text-center bg-slate-50 border border-slate-100 rounded-2xl shadow-sm">
-        <p className="text-slate-500 font-medium">No hay opciones configuradas en este árbol de decisiones.</p>
-      </div>
-    );
-  }
-
   // Handlers for step-by-step navigation
   const handleSelectNode = (node: ServiceNode) => {
     setNavPath((prev) => [...prev, node]);
@@ -127,6 +119,14 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
   useEffect(() => {
     onNavigationStateChange?.(isAnswerView, isAnswerView ? handleGoBack : handleReset);
   }, [navPath, currentNode, onNavigationStateChange, isAnswerView]);
+
+  if (!tree || tree.length === 0) {
+    return (
+      <div className="p-8 text-center bg-slate-50 border border-slate-100 rounded-2xl shadow-sm">
+        <p className="text-slate-500 font-medium">No hay opciones configuradas en este árbol de decisiones.</p>
+      </div>
+    );
+  }
 
   // Current options to display if at root or category node
   const currentOptions = currentNode ? (currentNode.children || []) : tree;
