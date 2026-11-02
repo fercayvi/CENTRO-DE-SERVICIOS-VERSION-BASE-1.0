@@ -242,7 +242,7 @@ export const initialServices: Service[] = [
             "id": "txt_1793382878095_kufsz",
             "type": "text",
             "title": "¿Qué es el Bono Volumen y cuánto se paga?",
-            "content": "<p>El Bono Volumen es un pago adicional semanal que se suma a tu <strong>Premio por Producción de $120</strong>. Depende de qué tanto se cumple el plan de volumen de producción de la semana.</p><p><br></p><p>Se paga a partir de <strong>80 % de cumplimiento</strong>:</p><p><br></p><ul><li>80 % → <strong>$176</strong></li><li>90 % → <strong>$198</strong></li><li>100 % → <strong>$220</strong></li><li>120 % → <strong>$264</strong></li></ul><p>\n</p><p>Con menos de 80 % el bono es $0, pero conservas tus $120 si tuviste asistencia perfecta.<br></p>",
+            "content": "<p>El Bono Volumen es un pago adicional semanal que se suma a tu <strong>Premio por Producción de $120</strong>. Depende de qué tanto se cumple el plan de volumen de producción de la semana.</p><p><br></p><p>Se paga a partir de <strong>80 % de cumplimiento</strong>:</p><p><br></p><ul><li>80 % → <strong>$176</strong></li><li>90 % → <strong>$198</strong></li><li>100 % → <strong>$220</strong></li><li>120 % → <strong>$264</strong></li></ul><p>\n</p><p>Con menos de 80 % el bono es $0, pero conservas tus $120 de tu <b>Premio por Producción</b>.<br></p>",
             "align": "left",
             "style": "normal"
           },
@@ -270,7 +270,7 @@ export const initialServices: Service[] = [
               "id": "txt_1793382878095_kufsz",
               "type": "text",
               "title": "¿Qué es el Bono Volumen y cuánto se paga?",
-              "content": "<p>El Bono Volumen es un pago adicional semanal que se suma a tu <strong>Premio por Producción de $120</strong>. Depende de qué tanto se cumple el plan de volumen de producción de la semana.</p><p><br></p><p>Se paga a partir de <strong>80 % de cumplimiento</strong>:</p><p><br></p><ul><li>80 % → <strong>$176</strong></li><li>90 % → <strong>$198</strong></li><li>100 % → <strong>$220</strong></li><li>120 % → <strong>$264</strong></li></ul><p>\n</p><p>Con menos de 80 % el bono es $0, pero conservas tus $120 si tuviste asistencia perfecta.<br></p>",
+              "content": "<p>El Bono Volumen es un pago adicional semanal que se suma a tu <strong>Premio por Producción de $120</strong>. Depende de qué tanto se cumple el plan de volumen de producción de la semana.</p><p><br></p><p>Se paga a partir de <strong>80 % de cumplimiento</strong>:</p><p><br></p><ul><li>80 % → <strong>$176</strong></li><li>90 % → <strong>$198</strong></li><li>100 % → <strong>$220</strong></li><li>120 % → <strong>$264</strong></li></ul><p>\n</p><p>Con menos de 80 % el bono es $0, pero conservas tus $120 de tu <b>Premio por Producción</b>.<br></p>",
               "align": "left",
               "style": "normal"
             },
@@ -396,7 +396,7 @@ export const initialServices: Service[] = [
         "id": "txt_1793659503632_fn424",
         "type": "text",
         "title": "",
-        "content": "<p>Sigue estos pasos, <strong>en orden</strong>:</p><ol><li><strong>Solicita tu saldo.</strong> Acude con tu generalista y dale tu <strong>número de nómina y nombre completo</strong>.</li><li><strong>Espera la confirmación.</strong> Puede tardar hasta <strong>2 días hábiles</strong>.</li><li><strong>Llena el formato de vacaciones</strong> (el único válido) y <strong>fírmalo</strong>.</li><li><strong>Entrégalo a tu jefe inmediato.</strong> Él revisa tu saldo y autoriza o rechaza la solicitud.</li><li><strong>Entrega el formato autorizado a tu generalista.</strong></li><li><strong>Talento y Cultura registra tus días</strong> en el sistema.<br></li></ol>",
+        "content": "<p>Sigue estos pasos, <strong>en orden</strong>:</p><ol><li><strong>Solicita tu saldo.</strong> Acude con tu generalista y dale tu <strong>número de nómina y nombre completo</strong>.</li><li><strong>Espera la confirmación.</strong> Puede tardar hasta <strong>2 días hábiles</strong>.</li><li><strong>Llena el formato de vacaciones</strong> (el único válido) y <strong>fírmalo</strong>.</li><li><strong>Entrégalo a tu jefe inmediato.</strong> Él revisa tu saldo y autoriza o rechaza la solicitud.</li><li><strong>Entrega el formato autorizado a tu generalista.</strong></li><li><strong>Talento y Cultura registra tus días</strong> en el sistema.</li></ol>\n\n",
         "align": "left",
         "style": "normal"
       },
