@@ -1236,7 +1236,7 @@ export default function ServiceDetail({
           <LayoutBlocksRenderer
             blocks={draft.layoutBlocks || []}
             onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
-            publicView={!isAdminLoggedIn}
+            publicView={isAdminLoggedIn}
           />
 
           {(!draft.decisionTree || draft.decisionTree.length === 0) && (!draft.layoutBlocks || draft.layoutBlocks.length === 0) && (
