@@ -396,7 +396,7 @@ export const initialServices: Service[] = [
         "id": "txt_1793659503632_fn424",
         "type": "text",
         "title": "",
-        "content": "<p>Sigue estos pasos, <strong>en orden</strong>:</p><ol><li><strong>Solicita tu saldo.</strong> Acude con tu generalista y dale tu <strong>número de nómina y nombre completo</strong>.</li><li><strong>Espera la confirmación.</strong> Puede tardar hasta <strong>2 días hábiles</strong>.</li><li><strong>Llena el formato de vacaciones</strong> (el único válido) y <strong>fírmalo</strong>.</li><li><strong>Entrégalo a tu jefe inmediato.</strong> Él revisa tu saldo y autoriza o rechaza la solicitud.</li><li><strong>Entrega el formato autorizado a tu generalista.</strong></li><li><strong>Talento y Cultura registra tus días</strong> en el sistema.</li></ol>\n\n",
+        "content": "<p>Sigue estos pasos, <strong>en orden</strong>:</p><ol><li><strong>Solicita tu saldo.</strong> Acude con tu generalista y dale tu <strong>número de nómina y nombre completo</strong>.</li><li><strong>Espera la confirmación.</strong> Puede tardar hasta <strong>2 días hábiles</strong>.</li><li><strong>Llena el formato de vacaciones</strong> (el único válido) y <strong>fírmalo</strong>.</li><li><strong>Entrégalo a tu jefe inmediato.</strong> Él revisa tu saldo y autoriza o rechaza la solicitud.</li><li><strong>Entrega el formato autorizado a tu generalista.</strong></li><li><strong>Talento y Cultura registra tus días</strong> en el sistema.<br></li></ol>",
         "align": "left",
         "style": "normal"
       },
