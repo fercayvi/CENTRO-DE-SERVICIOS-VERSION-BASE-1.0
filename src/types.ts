@@ -75,7 +75,7 @@ export interface TextLayoutBlock {
   title?: string;
   content: string;
   align?: 'left' | 'center' | 'right';
-  style?: 'normal' | 'lead' | 'heading';
+  fontSizePx?: number;
 }
 
 export interface AlertLayoutBlock {
@@ -133,6 +133,7 @@ export interface TableLayoutBlock {
   headers: string[];
   rows: string[][];
   showHeader: boolean;
+  fontSizePx?: number;
 }
 
 export interface ColumnSlot {
