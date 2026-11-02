@@ -440,7 +440,6 @@ export default function ServiceDetail({
   decisionTreeOptionTitleFontSize = 16
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
-  const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
   // Precargar el editor pesado en segundo plano al entrar como administrador.
   // Así, abrir el árbol no depende de descargar el chunk justo al hacer clic.
   useEffect(() => {
@@ -718,12 +717,6 @@ export default function ServiceDetail({
       setDraft(getPreparedDraft(service));
       setIsEditing(false);
     }
-    if (isEditing) { onBack(); return; }
-    setIsExitConfirmationOpen(true);
-  };
-
-  const handleConfirmExit = () => {
-    setIsExitConfirmationOpen(false);
     onBack();
   };
 
@@ -1291,23 +1284,6 @@ export default function ServiceDetail({
         </div>
       )}
 
-      {isExitConfirmationOpen && (
-        <div className="fixed inset-0 z-[70] bg-slate-950/45 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsExitConfirmationOpen(false); }}>
-          <div role="dialog" aria-modal="true" aria-labelledby="service-exit-title" aria-describedby="service-exit-description" className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-5 sm:p-6 space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0"><AlertTriangle className="w-5 h-5" /></div>
-              <div className="min-w-0">
-                <h2 id="service-exit-title" className="text-base font-bold text-slate-900">¿Salir al menú principal?</h2>
-                <p id="service-exit-description" className="mt-1.5 text-sm leading-relaxed text-slate-600">Regresarás al menú principal y perderás tu avance en este trámite.</p>
-              </div>
-            </div>
-            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-              <button type="button" onClick={() => setIsExitConfirmationOpen(false)} className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors cursor-pointer">Continuar aquí</button>
-              <button type="button" onClick={handleConfirmExit} className="min-h-[44px] px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors cursor-pointer">Salir al menú</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* LIGHTBOX MODAL FOR HIGH RESOLUTION INFOGRAPHICS & IMAGES */}
       <ImageLightboxModal
