@@ -354,7 +354,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
             wordBreak: 'break-word',
             ...(block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : {}),
           }}
-          className={`rich-text-content whitespace-pre-wrap break-words ${styleClass} ${alignClass}`
+          className={`rich-text-content whitespace-pre-wrap break-words ${styleClass} ${alignClass}`}
           dangerouslySetInnerHTML={{ __html: sanitizedHtml || '<p class="text-slate-300 italic">Sin contenido</p>' }}
         />
       </div>
@@ -514,6 +514,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
                 contentRef.current.focus();
               }
             }}
+            style={block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : undefined}
             className={`absolute inset-0 pt-2 pointer-events-none text-slate-300 italic select-none ${styleClass} ${alignClass}`}
           >
             Haz clic aquí y escribe directamente tu texto... Puedes dar Enters, espacios, viñetas o listas.
