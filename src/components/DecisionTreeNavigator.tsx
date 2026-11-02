@@ -126,61 +126,69 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
 
   // Reusable Step Navigation Bar (Top and Bottom)
   const renderStepNavigation = (isTop: boolean) => {
-    return (
-      <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center ${isTop ? 'justify-between' : 'justify-center'} gap-3`}>
-        {navPath.length > 0 ? (
-          <button
-            type="button"
-            onClick={handleGoBack}
-            className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-            style={{ fontSize: buttonFontSize }}
-          >
-            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
-            <span>Atrás</span>
-          </button>
-        ) : (
-          <div />
-        )}
+    const backButton = navPath.length > 0 ? (
+      <button
+        type="button"
+        onClick={handleGoBack}
+        className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+        style={{ fontSize: buttonFontSize }}
+      >
+        <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
+        <span>Atrás</span>
+      </button>
+    ) : null;
 
-        {currentNode?.children && currentNode.children.length > 0 ? (
-          currentNode.children.length === 1 ? (
+    const forwardButton = currentNode?.children && currentNode.children.length > 0 ? (
+      currentNode.children.length === 1 ? (
+        <button
+          type="button"
+          onClick={() => handleSelectNode(currentNode.children![0])}
+          className="min-h-[48px] px-6 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+          style={{ fontSize: buttonFontSize }}
+        >
+          <span>Siguiente</span>
+          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
+      ) : (
+        <>
+          {currentNode.children.map((childNode) => (
             <button
+              key={childNode.id}
               type="button"
-              onClick={() => handleSelectNode(currentNode.children![0])}
-              className={`min-h-[48px] px-6 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ${isTop ? "ml-auto" : ""} cursor-pointer`}
+              onClick={() => handleSelectNode(childNode)}
+              className="min-h-[48px] px-5 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
               style={{ fontSize: buttonFontSize }}
             >
               <span>Siguiente</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-          ) : (
-            <div className={`flex flex-wrap items-center gap-2 ${isTop ? "ml-auto justify-end" : "justify-center"}`}>
-              {currentNode.children.map((childNode) => {
-                return (
-                  <button
-                    key={childNode.id}
-                    type="button"
-                    onClick={() => handleSelectNode(childNode)}
-                    className="min-h-[48px] px-5 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
-                    style={{ fontSize: buttonFontSize }}
-                  >
-                    <span>Siguiente</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-                );
-              })}
-            </div>
-          )
+          ))}
+        </>
+      )
+    ) : (
+      <button
+        type="button"
+        onClick={handleReset}
+        className="min-h-[48px] px-5 py-2.5 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+        style={{ fontSize: buttonFontSize }}
+      >
+        <RotateCcw className="w-4 h-4" />
+        <span>Comenzar de nuevo</span>
+      </button>
+    );
+
+    return (
+      <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center ${isTop ? 'justify-between' : 'justify-center'} gap-3`}>
+        {isTop ? (
+          <>
+            {backButton || <div />}
+            {forwardButton}
+          </>
         ) : (
-          <button
-            type="button"
-            onClick={handleReset}
-            className={`min-h-[48px] px-5 py-2.5 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 ${isTop ? "ml-auto" : ""} cursor-pointer`}
-            style={{ fontSize: buttonFontSize }}
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>Comenzar de nuevo</span>
-          </button>
+          <div className="w-full flex flex-wrap items-center justify-center gap-3">
+            {backButton}
+            {forwardButton}
+          </div>
         )}
       </div>
     );
