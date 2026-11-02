@@ -238,8 +238,10 @@ export default function App() {
                     isAdminLoggedIn={isAdminLoggedIn}
                     onUpdateService={handleUpdateService}
                     initialEditMode={serviceEditMode}
-                    contentFontSize={settings.serviceContentFontSize ?? 16}
-                    decisionTreeFontSize={settings.decisionTreeFontSize ?? 16}
+                    decisionTreeButtonFontSize={settings.decisionTreeButtonFontSize ?? 16}
+                    decisionTreeBreadcrumbFontSize={settings.decisionTreeBreadcrumbFontSize ?? 16}
+                    serviceTitleFontSize={settings.serviceTitleFontSize ?? 20}
+                    decisionTreeContentFontSize={settings.decisionTreeContentFontSize ?? 16}
                     onLightboxToggle={setIsImageZoomed}
                   />
                 </div>
