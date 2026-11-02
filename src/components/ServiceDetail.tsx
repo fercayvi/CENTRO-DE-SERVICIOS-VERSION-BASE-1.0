@@ -255,7 +255,7 @@ function LivePreviewPanel({
                 serviceTitle={draft.title}
                 buttonFontSize={decisionTreeButtonFontSize}
                     breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
-                    contentFontSize={decisionTreeContentFontSize}
+                    optionTitleFontSize={decisionTreeOptionTitleFontSize}
               />
             </div>
           )}
@@ -373,7 +373,7 @@ function LivePreviewPanel({
                     serviceTitle={draft.title}
                     buttonFontSize={decisionTreeButtonFontSize}
                     breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
-                    contentFontSize={decisionTreeContentFontSize}
+                    optionTitleFontSize={decisionTreeOptionTitleFontSize}
                   />
                 </div>
               )}
@@ -416,7 +416,7 @@ interface ServiceDetailProps {
   decisionTreeButtonFontSize?: number;
   decisionTreeBreadcrumbFontSize?: number;
   serviceTitleFontSize?: number;
-  decisionTreeContentFontSize?: number;
+  decisionTreeOptionTitleFontSize?: number;
 }
 
 export default function ServiceDetail({ 
@@ -429,7 +429,7 @@ export default function ServiceDetail({
   decisionTreeButtonFontSize = 16,
   decisionTreeBreadcrumbFontSize = 16,
   serviceTitleFontSize = 20,
-  decisionTreeContentFontSize = 16
+  decisionTreeOptionTitleFontSize = 16
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
   const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
@@ -1006,7 +1006,7 @@ export default function ServiceDetail({
                           onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
                           buttonFontSize={decisionTreeButtonFontSize}
                     breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
-                    contentFontSize={decisionTreeContentFontSize}
+                    optionTitleFontSize={decisionTreeOptionTitleFontSize}
                         />
                       </div>
                     </div>
@@ -1255,7 +1255,7 @@ export default function ServiceDetail({
                   serviceTitle={draft.title}
                   buttonFontSize={decisionTreeButtonFontSize}
                     breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
-                    contentFontSize={decisionTreeContentFontSize}
+                    optionTitleFontSize={decisionTreeOptionTitleFontSize}
                 />
               </div>
             )}
