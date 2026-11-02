@@ -318,7 +318,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                 type="button"
                 onClick={handleReset}
                 className="min-h-[48px] px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
-                style={{ fontSize }}
+                style={{ fontSize: buttonFontSize }}
               >
                 <RotateCcw className="w-5 h-5" />
                 <span>Finalizar y Reiniciar</span>
@@ -340,7 +340,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                     className="min-h-[48px] bg-white border border-blue-300 text-blue-700 hover:bg-blue-50 hover:shadow-md hover:-translate-y-0.5 p-4 sm:p-5 rounded-2xl flex items-center justify-between transition-all group cursor-pointer text-left shadow-2xs"
                   >
                     <div className="pr-3 flex-1 min-w-0">
-                      <span className="font-bold text-blue-700 leading-snug" style={{ fontSize }}>
+                      <span className="font-bold text-blue-700 leading-snug" style={{ fontSize: buttonFontSize }}>
                         {buttonText}
                       </span>
                     </div>
@@ -365,7 +365,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                   type="button"
                   onClick={handleGoBack}
                   className="min-h-[48px] px-4 py-2 sm:px-5 sm:py-2.5 font-medium text-slate-700 hover:text-slate-900 bg-transparent hover:bg-slate-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-                  style={{ fontSize }}
+                  style={{ fontSize: buttonFontSize }}
                 >
                   <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
                   <span>Atrás</span>
