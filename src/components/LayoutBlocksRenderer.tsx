@@ -209,7 +209,7 @@ function MediaImageBlock({
 }
 
 // Single Accordion for FAQs
-function SingleFAQBlock({ title, items, fontSizeOverride }: { title?: string; items: { q: string; a: string }[]; fontSizeOverride?: number; key?: React.Key }) {
+function SingleFAQBlock({ title, items }: { title?: string; items: { q: string; a: string }[]; key?: React.Key }) {
   const [openIndices, setOpenIndices] = useState<number[]>([0]);
 
   const toggleIndex = (idx: number) => {
@@ -249,7 +249,7 @@ function SingleFAQBlock({ title, items, fontSizeOverride }: { title?: string; it
                   }`}>
                     {idx + 1}
                   </span>
-                  <span style={fontSizeOverride ? { fontSize: fontSizeOverride } : undefined} className="text-base sm:text-lg font-semibold text-slate-800 leading-snug">
+                  <span className="text-base sm:text-lg font-semibold text-slate-800 leading-snug">
                     {item.q}
                   </span>
                 </div>
@@ -262,7 +262,7 @@ function SingleFAQBlock({ title, items, fontSizeOverride }: { title?: string; it
 
               {isOpen && (
                 <div className="px-3 sm:px-4 pb-5 pt-3 border-t border-slate-100 bg-slate-50/60 animate-fadeIn">
-                  <div style={fontSizeOverride ? { fontSize: fontSizeOverride } : undefined}><FormattedTextBlock content={item.a} /></div>
+                  <FormattedTextBlock content={item.a} />
                 </div>
               )}
             </div>
@@ -277,14 +277,12 @@ interface LayoutBlocksRendererProps {
   blocks?: LayoutBlock[];
   onOpenLightbox?: (url: string, title?: string) => void;
   serviceTitle?: string;
-  fontSizeOverride?: number;
 }
 
 export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
   blocks,
   onOpenLightbox,
-  serviceTitle,
-  fontSizeOverride
+  serviceTitle
 }) => {
   if (!blocks || blocks.length === 0) return null;
 
@@ -294,7 +292,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         // ==================== 1. TEXT BLOCK ====================
         if (block.type === 'text') {
           const alignClass = block.align === 'center' ? 'text-center' : block.align === 'right' ? 'text-right' : 'text-left';
-          const fontSizePx = fontSizeOverride ?? block.fontSizePx ?? 16;
+          const fontSizePx = block.fontSizePx ?? 16;
 
           return (
             <div 
@@ -352,7 +350,6 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
           return (
             <div 
               key={block.id || `alert-${index}`}
-              style={fontSizeOverride ? { fontSize: fontSizeOverride } : undefined}
               className={`${containerClass} rounded-2xl px-2 sm:px-3 py-6 sm:py-8 shadow-sm flex items-start gap-4 sm:gap-5 transition-all`}
             >
               <IconComponent className={`w-7 h-7 sm:w-8 sm:h-8 shrink-0 mt-0.5 ${iconColor}`} />
@@ -362,7 +359,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
                     {block.title}
                   </h4>
                 )}
-                <p style={fontSizeOverride ? { fontSize: fontSizeOverride } : undefined} className="text-base text-slate-800 font-medium leading-relaxed whitespace-pre-line">
+                <p className="text-base text-slate-800 font-medium leading-relaxed whitespace-pre-line">
                   {block.message}
                 </p>
               </div>
@@ -373,7 +370,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         // ==================== TABLE BLOCK ====================
         if (block.type === 'table') {
           const columnCount = Math.max(1, block.headers?.length || 1);
-          const fontSizePx = fontSizeOverride ?? block.fontSizePx ?? 16;
+          const fontSizePx = block.fontSizePx ?? 16;
           return (
             <section key={block.id || `table-${index}`} className="space-y-3 rounded-2xl border border-slate-200 bg-white px-2 sm:px-3 py-5 sm:py-6 shadow-xs" style={{ fontSize: `${fontSizePx}px` }}>
               {block.title && <h3 style={{ fontSize: `${fontSizePx}px` }} className="font-bold text-slate-900">{block.title}</h3>}
@@ -394,7 +391,6 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
               key={block.id || `faq-${index}`} 
               title={block.title} 
               items={block.items || []}
-              fontSizeOverride={fontSizeOverride}
             />
           );
         }
@@ -579,7 +575,6 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
                         blocks={col.blocks}
                         onOpenLightbox={onOpenLightbox}
                         serviceTitle={serviceTitle}
-                        fontSizeOverride={fontSizeOverride}
                       />
                     </div>
                   );
