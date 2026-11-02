@@ -422,8 +422,12 @@ export default function ServiceDetail({
   const [fontSizePx, setFontSizePx] = useState<string>('16');
   const parsedFontSize = Number(fontSizePx);
   const fontScale = Number.isFinite(parsedFontSize) && parsedFontSize > 0
-    ? Math.min(48, Math.max(8, parsedFontSize)) / 16
+    ? Math.max(8, parsedFontSize) / 16
     : 1;
+
+  useEffect(() => {
+    setFontSizePx('16');
+  }, [service?.id]);
 
   // Precargar el editor pesado en segundo plano al entrar como administrador.
   // Así, abrir el árbol no depende de descargar el chunk justo al hacer clic.
@@ -1227,7 +1231,6 @@ export default function ServiceDetail({
               <input
                 type="number"
                 min={8}
-                max={48}
                 step={1}
                 value={fontSizePx}
                 onChange={(event) => setFontSizePx(event.target.value)}
