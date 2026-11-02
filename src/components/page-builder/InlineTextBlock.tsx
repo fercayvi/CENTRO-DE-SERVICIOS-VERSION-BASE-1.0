@@ -325,10 +325,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
     block.align === 'right' ? 'text-right' : 
     'text-left';
 
-  const styleClass = 
-    block.style === 'lead' ? 'text-base sm:text-lg leading-relaxed text-slate-800' : 
-    block.style === 'heading' ? 'text-lg sm:text-xl font-bold text-slate-900' : 
-    'text-sm sm:text-base leading-relaxed text-slate-700';
+  const styleClass = 'leading-relaxed text-slate-700';
 
   const shouldShowToolbar = !readOnly && (isSelected || isFocused);
 
@@ -382,14 +379,14 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
               max={96}
               step={1}
               key={`${block.id}-font-size-${block.fontSizePx ?? block.style ?? 'normal'}`}
-              defaultValue={block.fontSizePx ?? (block.style === 'heading' ? 20 : block.style === 'lead' ? 18 : 16)}
+              defaultValue={block.fontSizePx ?? 16}
               onBlur={(event) => {
                 const rawValue = event.currentTarget.value.trim();
                 const value = Number(rawValue);
                 if (rawValue !== '' && Number.isFinite(value) && value >= 8 && value <= 96) {
                   onChange({ ...block, fontSizePx: value });
                 } else {
-                  event.currentTarget.value = String(block.fontSizePx ?? (block.style === 'heading' ? 20 : block.style === 'lead' ? 18 : 16));
+                  event.currentTarget.value = String(block.fontSizePx ?? 16);
                 }
               }}
               aria-label="Tamaño de fuente en píxeles"
