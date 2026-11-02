@@ -63,6 +63,46 @@ import { DecisionTreeBuilder } from './DecisionTreeBuilder';
 import { DecisionTreeNavigator } from './DecisionTreeNavigator';
 const DecisionTreeCanvasEditor = React.lazy(() => import('./DecisionTreeCanvasEditor').then(module => ({ default: module.DecisionTreeCanvasEditor })));
 
+type FontSizeInputProps = {
+  value?: number;
+  defaultValue?: number;
+  ariaLabel: string;
+  onCommit: (value: number) => void;
+};
+
+function FontSizeInput({ value, defaultValue = 16, ariaLabel, onCommit }: FontSizeInputProps) {
+  const [draft, setDraft] = useState(String(value ?? defaultValue));
+
+  useEffect(() => {
+    setDraft(String(value ?? defaultValue));
+  }, [value, defaultValue]);
+
+  const commit = () => {
+    const parsed = Number(draft);
+    const safeValue = draft.trim() === '' || !Number.isFinite(parsed)
+      ? defaultValue
+      : Math.min(48, Math.max(8, Math.round(parsed)));
+    setDraft(String(safeValue));
+    onCommit(safeValue);
+  };
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      value={draft}
+      onChange={(event) => setDraft(event.target.value.replace(/[^0-9]/g, ''))}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') event.currentTarget.blur();
+      }}
+      aria-label={ariaLabel}
+      className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+    />
+  );
+}
+
 interface SortableServiceItemProps {
   key?: React.Key;
   service: Service & { hidden?: boolean };
@@ -1349,11 +1389,12 @@ const handleOpenNewNewsModal = () => {
                 <p className="text-xs text-slate-500 mt-0.5">Controla los textos de las opciones y los botones de navegación.</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeButtonFontSize ?? 16}
-                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, decisionTreeButtonFontSize: value }); }}
-                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, decisionTreeButtonFontSize: safeValue }); }}
-                  aria-label="Tamaño de letra de botones en píxeles"
-                  className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <FontSizeInput
+                  value={currentSettings.decisionTreeButtonFontSize}
+                  defaultValue={16}
+                  onCommit={(value) => setSettings?.({ ...currentSettings, decisionTreeButtonFontSize: value })}
+                  ariaLabel="Tamaño de letra de botones en píxeles"
+                />
                 <span className="text-sm text-slate-500">px</span>
               </div>
             </div>
@@ -1367,11 +1408,12 @@ const handleOpenNewNewsModal = () => {
                 <p className="text-xs text-slate-500 mt-0.5">Controla Inicio y los nombres de los pasos.</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeBreadcrumbFontSize ?? 16}
-                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, decisionTreeBreadcrumbFontSize: value }); }}
-                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, decisionTreeBreadcrumbFontSize: safeValue }); }}
-                  aria-label="Tamaño de letra de migas de navegación en píxeles"
-                  className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <FontSizeInput
+                  value={currentSettings.decisionTreeBreadcrumbFontSize}
+                  defaultValue={16}
+                  onCommit={(value) => setSettings?.({ ...currentSettings, decisionTreeBreadcrumbFontSize: value })}
+                  ariaLabel="Tamaño de letra de migas de navegación en píxeles"
+                />
                 <span className="text-sm text-slate-500">px</span>
               </div>
             </div>
@@ -1385,11 +1427,12 @@ const handleOpenNewNewsModal = () => {
                 <p className="text-xs text-slate-500 mt-0.5">Controla el nombre del trámite que aparece al abrirlo.</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <input type="number" min={8} max={48} step={1} value={currentSettings.serviceTitleFontSize ?? 18}
-                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, serviceTitleFontSize: value }); }}
-                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, serviceTitleFontSize: safeValue }); }}
-                  aria-label="Tamaño de letra del título del trámite en píxeles"
-                  className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <FontSizeInput
+                  value={currentSettings.serviceTitleFontSize}
+                  defaultValue={18}
+                  onCommit={(value) => setSettings?.({ ...currentSettings, serviceTitleFontSize: value })}
+                  ariaLabel="Tamaño de letra del título del trámite en píxeles"
+                />
                 <span className="text-sm text-slate-500">px</span>
               </div>
             </div>
@@ -1403,11 +1446,12 @@ const handleOpenNewNewsModal = () => {
                 <p className="text-xs text-slate-500 mt-0.5">Controla el título que aparece dentro de cada tarjeta de opción o pregunta del árbol.</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeOptionTitleFontSize ?? 16}
-                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, decisionTreeOptionTitleFontSize: value }); }}
-                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, decisionTreeOptionTitleFontSize: safeValue }); }}
-                  aria-label="Tamaño de letra del texto del árbol de decisiones en píxeles"
-                  className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+                <FontSizeInput
+                  value={currentSettings.decisionTreeOptionTitleFontSize}
+                  defaultValue={16}
+                  onCommit={(value) => setSettings?.({ ...currentSettings, decisionTreeOptionTitleFontSize: value })}
+                  ariaLabel="Tamaño de letra del texto del árbol de decisiones en píxeles"
+                />
                 <span className="text-sm text-slate-500">px</span>
               </div>
             </div>
