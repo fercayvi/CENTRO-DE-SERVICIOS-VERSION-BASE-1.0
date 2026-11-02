@@ -261,5 +261,5 @@ export interface SiteSettings {
   decisionTreeButtonFontSize?: number;
   decisionTreeBreadcrumbFontSize?: number;
   serviceTitleFontSize?: number;
-  decisionTreeContentFontSize?: number;
+  decisionTreeOptionTitleFontSize?: number;
 }
