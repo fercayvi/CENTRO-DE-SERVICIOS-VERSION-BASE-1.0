@@ -15,7 +15,7 @@ interface DecisionTreeNavigatorProps {
   serviceTitle?: string;
   buttonFontSize?: number;
   breadcrumbFontSize?: number;
-  contentFontSize?: number;
+  optionTitleFontSize?: number;
 }
 
 function getNodeBlocks(node: ServiceNode): LayoutBlock[] {
@@ -39,7 +39,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
   serviceTitle = 'Trámite',
   buttonFontSize = 16,
   breadcrumbFontSize = 16,
-  contentFontSize = 16
+  optionTitleFontSize = 16
 }) => {
   // Navigation stack: array of selected nodes from root to current
   const [navPath, setNavPath] = useState<ServiceNode[]>([]);
@@ -272,7 +272,6 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                   blocks={currentBlocks} 
                   onOpenLightbox={onOpenLightbox}
                   serviceTitle={serviceTitle}
-                  fontSizeOverride={contentFontSize}
                 />
               ) : (
                 <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 font-medium">
@@ -294,7 +293,6 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                   blocks={currentBlocks} 
                   onOpenLightbox={onOpenLightbox}
                   serviceTitle={serviceTitle}
-                  fontSizeOverride={contentFontSize}
                 />
               ) : (
                 <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-2xl text-slate-500 font-medium">
@@ -340,7 +338,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                     className="min-h-[48px] bg-white border border-blue-300 text-blue-700 hover:bg-blue-50 hover:shadow-md hover:-translate-y-0.5 p-4 sm:p-5 rounded-2xl flex items-center justify-between transition-all group cursor-pointer text-left shadow-2xs"
                   >
                     <div className="pr-3 flex-1 min-w-0">
-                      <span className="font-bold text-blue-700 leading-snug" style={{ fontSize: buttonFontSize }}>
+                      <span className="font-bold text-blue-700 leading-snug" style={{ fontSize: optionTitleFontSize }}>
                         {buttonText}
                       </span>
                     </div>
