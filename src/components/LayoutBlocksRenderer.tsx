@@ -240,7 +240,7 @@ function SingleFAQBlock({ title, items }: { title?: string; items: { q: string; 
               <button
                 type="button"
                 onClick={() => toggleIndex(idx)}
-                className="w-full text-left px-4 sm:px-5 py-6 sm:py-8 flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors focus:outline-none cursor-pointer select-none"
+                className="w-full text-left p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors focus:outline-none cursor-pointer select-none"
                 aria-expanded={isOpen}
               >
                 <div className="flex items-center gap-3.5 min-w-0 pr-2">
@@ -407,7 +407,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
               <div 
                 key={block.id || `media-${index}`}
                 style={widthStyle}
-                className={`bg-white border border-slate-200 rounded-2xl shadow-xs px-4 sm:px-5 py-6 sm:py-8 space-y-3 ${sizeClass} ${alignClass}`}
+                className={`bg-white border border-slate-200 rounded-2xl shadow-xs p-4 sm:p-5 space-y-3 ${sizeClass} ${alignClass}`}
               >
                 {block.title && (
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
@@ -444,7 +444,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
             return (
               <div 
                 key={block.id || `media-${index}`}
-                className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm px-4 sm:px-5 py-6 sm:py-8 space-y-3"
+                className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm p-4 sm:p-5 space-y-3"
               >
                 {block.title && (
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
@@ -510,7 +510,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
                   download={block.url?.startsWith('data:') ? `${block.title || 'formato_oficial'}.pdf` : undefined}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 sm:px-5 py-6 sm:py-8 rounded-2xl border-2 border-blue-100 hover:border-blue-400 bg-blue-50/70 hover:bg-blue-100/80 transition-all flex items-center justify-between gap-4 group cursor-pointer active:scale-98"
+                  className="p-4 sm:p-5 rounded-2xl border-2 border-blue-100 hover:border-blue-400 bg-blue-50/70 hover:bg-blue-100/80 transition-all flex items-center justify-between gap-4 group cursor-pointer active:scale-98"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
@@ -554,7 +554,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
             <div 
               key={block.id || `cols-${index}`}
               style={containerStyle}
-              className={`space-y-3 ${hasBg ? 'px-4 sm:px-5 py-6 sm:py-8 rounded-2xl border border-slate-200/80 shadow-2xs' : ''}`}
+              className={`space-y-3 ${hasBg ? 'p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs' : ''}`}
             >
               {block.title && (
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
