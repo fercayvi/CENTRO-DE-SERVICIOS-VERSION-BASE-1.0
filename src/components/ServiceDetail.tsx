@@ -1242,10 +1242,7 @@ export default function ServiceDetail({
             </div>
           </div>
 
-          <div
-            className="service-font-scale space-y-4"
-            style={{ '--service-font-scale': Math.max(8, Math.min(48, contentFontSize || 16)) / 16 } as React.CSSProperties}
-          >
+          <div className="space-y-4">
             {/* Árbol de Decisión Independiente */}
             {draft.decisionTree && draft.decisionTree.length > 0 && (
               <div className="space-y-3">
