@@ -732,7 +732,7 @@ export default function ServiceDetail({
   return (
     <div 
       id={`service-detail-${service.id}`} 
-      className={`space-y-4 animate-fadeIn cursor-default select-text ${isEditing ? 'pb-28' : 'pb-16'}`}
+      className={`space-y-4 animate-fadeIn cursor-default select-text ${isEditing ? 'pb-28' : 'pb-0'}`}
       onClick={(e) => e.stopPropagation()}
     >
       
