@@ -207,13 +207,13 @@ export default function App() {
 
           {/* TAB CONTENT SCROLLABLE CANVAS */}
           <div id="phone-main-scrollable-content" ref={scrollRef} className={`flex-1 overflow-y-auto pt-2 sm:pt-3 relative ${isAdminLoggedIn ? 'pb-8' : 'pb-28'}`}>
-            <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
+            <div className={`w-full mx-auto ${selectedService ? "max-w-[1700px] px-2 sm:px-4 lg:px-6" : "max-w-[1400px] px-4 sm:px-6 lg:px-10"}`}>
             
             {/* RENDER SELECTED SERVICE DETAIL (Public or Admin) WITH LIGHT FULLSCREEN BACKDROP */}
             {selectedNews ? (
               <div className="relative animate-fadeIn min-h-screen">
                 <div className="fixed inset-0 bg-slate-50 z-30 pointer-events-none" aria-hidden="true" />
-                <div className="relative z-40 w-full max-w-5xl mx-auto px-1 sm:px-3 py-1 sm:py-3">
+                <div className="relative z-40 w-full max-w-none mx-auto px-0 py-1 sm:py-3">
                   <NewsDetail news={selectedNews} onBack={() => setSelectedNews(null)} />
                 </div>
               </div>
