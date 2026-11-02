@@ -3,8 +3,10 @@ import { ServiceId, Service, FAQ, NewsItem, Aviso, MonthlyRecognition, ContactIn
 export const siteSettings: SiteSettings = {
   "defaultHomeView": "all_services",
   "showNewsOnHome": true,
-  "serviceContentFontSize": 16,
-  "decisionTreeFontSize": 16
+  "decisionTreeButtonFontSize": 16,
+  "decisionTreeBreadcrumbFontSize": 16,
+  "serviceTitleFontSize": 20,
+  "decisionTreeContentFontSize": 16
 };
 
 export const defaultCategories: CategoryConfig[] = [
