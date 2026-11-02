@@ -407,6 +407,7 @@ interface ServiceDetailProps {
   onUpdateService?: (updatedService: Service & { hidden?: boolean }) => void;
   initialEditMode?: boolean;
   onLightboxToggle?: (isOpen: boolean) => void;
+  contentFontSize?: number;
 }
 
 export default function ServiceDetail({ 
@@ -415,21 +416,11 @@ export default function ServiceDetail({
   isAdminLoggedIn = false,
   onUpdateService,
   initialEditMode = false,
-  onLightboxToggle
+  onLightboxToggle,
+  contentFontSize = 16
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
   const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
-  // 16 px conserva los tamaños originales; el valor escala proporcionalmente la jerarquía tipográfica.
-  const [fontSizePx, setFontSizePx] = useState<string>('16');
-  const parsedFontSize = Number(fontSizePx);
-  const fontScale = Number.isFinite(parsedFontSize) && parsedFontSize > 0
-    ? Math.max(8, parsedFontSize) / 16
-    : 1;
-
-  useEffect(() => {
-    setFontSizePx('16');
-  }, [service?.id]);
-
   // Precargar el editor pesado en segundo plano al entrar como administrador.
   // Así, abrir el árbol no depende de descargar el chunk justo al hacer clic.
   useEffect(() => {
@@ -1233,22 +1224,12 @@ export default function ServiceDetail({
                   {draft.title}
                 </h1>
               </div>
-              <input
-                type="number"
-                min={8}
-                step={1}
-                value={fontSizePx}
-                onChange={(event) => setFontSizePx(event.target.value)}
-                aria-label="Tamaño de fuente en píxeles"
-                title="Tamaño de fuente (px)"
-                className="w-[72px] shrink-0 rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
             </div>
           </div>
 
           <div
             className="service-font-scale space-y-4"
-            style={{ '--service-font-scale': fontScale } as React.CSSProperties}
+            style={{ '--service-font-scale': Math.max(8, Math.min(48, contentFontSize || 16)) / 16 } as React.CSSProperties}
           >
             {/* Árbol de Decisión Independiente */}
             {draft.decisionTree && draft.decisionTree.length > 0 && (
