@@ -235,21 +235,6 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
             )}
           </nav>
 
-          {/* Controles discretos fantasma alineados a la derecha */}
-          {navPath.length > 0 && (
-            <div className="flex items-center shrink-0">
-              <button
-                type="button"
-                onClick={handleReset}
-                className="min-h-[48px] flex items-center gap-1.5 px-3 py-1 text-slate-500 hover:text-slate-800 font-normal transition-colors cursor-pointer bg-transparent border-0"
-                style={{ fontSize: buttonFontSize }}
-                title="Reiniciar asistente"
-              >
-                <RotateCcw className="w-4 h-4 text-slate-500" />
-                <span>Reiniciar</span>
-              </button>
-            </div>
-          )}
         </div>
 
         {/* ==================== VISTA 1: PASO DE TUTORIAL ==================== */}
