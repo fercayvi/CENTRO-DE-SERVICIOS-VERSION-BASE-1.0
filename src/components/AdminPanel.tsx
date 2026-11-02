@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Cropper from 'react-easy-crop';
+import { NewsCoverImage } from './NewsCoverImage';
 import { 
   LogOut, 
   Layers, 
@@ -2554,7 +2555,7 @@ const handleOpenNewNewsModal = () => {
                       </div>
                       <div className="rounded-xl border border-slate-200 overflow-hidden bg-white">
                         {editingNews.imageUrl ? (
-                          <div className="w-full h-36 overflow-hidden bg-white"><img src={editingNews.imageUrl} alt="" className="w-full h-full object-cover" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} /></div>
+                          <NewsCoverImage news={editingNews} />
                         ) : (
                           <div className="h-24 bg-slate-100 flex items-center justify-center text-slate-400"><ImageIcon className="w-7 h-7" /></div>
                         )}
