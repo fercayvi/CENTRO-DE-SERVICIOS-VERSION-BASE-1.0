@@ -17,8 +17,8 @@ export function NewsCoverImage({ news, alt = '', className = '' }: NewsCoverImag
   const cropHeight = baseHeight / zoom;
   const cropX = ((news.imagePositionX ?? 50) / 100) * Math.max(0, baseWidth - cropWidth);
   const cropY = ((news.imagePositionY ?? 50) / 100) * Math.max(0, baseHeight - cropHeight);
-  const translateX = (0.5 - cropX / baseWidth - cropWidth / (2 * baseWidth)) * zoom * 100;
-  const translateY = (0.5 - cropY / baseHeight - cropHeight / (2 * baseHeight)) * zoom * 100;
+  const translateX = (baseWidth / 2 - cropX - cropWidth / 2) * zoom;
+  const translateY = (baseHeight / 2 - cropY - cropHeight / 2) * zoom;
 
   return (
     <div className={`relative w-full aspect-video overflow-hidden bg-slate-100 ${className}`}>
