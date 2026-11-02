@@ -145,7 +145,7 @@ const TableBlockEditor: React.FC<{
   return (
     <div className="space-y-3" style={{ fontSize: `${fontSizePx}px` }}>
       {previewMode ? (
-        block.title?.trim() && <h4 className="text-sm font-bold text-slate-800">{block.title}</h4>
+        block.title?.trim() && <h4 style={{ fontSize: `${fontSizePx}px` }} className="font-bold text-slate-800">{block.title}</h4>
       ) : (
         <input
           aria-label="Título de la tabla"
@@ -153,6 +153,7 @@ const TableBlockEditor: React.FC<{
           onChange={event => onChange({ ...block, title: event.target.value })}
           onClick={event => event.stopPropagation()}
           placeholder="Título de la tabla (opcional)..."
+          style={{ fontSize: `${fontSizePx}px` }}
           className="w-full rounded-md border border-dashed border-slate-300 bg-white px-2.5 py-2 text-sm font-bold text-slate-800 placeholder:font-normal placeholder:text-slate-400 focus:border-blue-400 focus:outline-none"
         />
       )}
