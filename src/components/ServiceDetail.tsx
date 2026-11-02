@@ -1219,7 +1219,13 @@ export default function ServiceDetail({
             <button 
               id="btn-service-back"
               type="button"
-              onClick={() => decisionTreeBackHandler.current?.()}
+              onClick={() => {
+                if (isDecisionAnswerView) {
+                  decisionTreeBackHandler.current?.();
+                } else {
+                  handleRequestExit();
+                }
+              }}
               className="min-h-[44px] shrink-0 inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-slate-50 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:border-slate-400 transition-colors cursor-pointer"
               title={isDecisionAnswerView ? "Volver a Preguntas" : "Volver al Menú"}
             >
