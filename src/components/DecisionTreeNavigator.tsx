@@ -178,18 +178,11 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
     );
 
     return (
-      <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center ${isTop ? 'justify-between' : 'justify-center'} gap-3`}>
-        {isTop ? (
-          <>
-            {backButton || <div />}
-            {forwardButton}
-          </>
-        ) : (
-          <div className="w-full flex flex-wrap items-center justify-center gap-3">
-            {backButton}
-            {forwardButton}
-          </div>
-        )}
+      <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center justify-center gap-3`}>
+        <div className="w-full flex flex-wrap items-center justify-center gap-3">
+          {backButton}
+          {forwardButton}
+        </div>
       </div>
     );
   };
