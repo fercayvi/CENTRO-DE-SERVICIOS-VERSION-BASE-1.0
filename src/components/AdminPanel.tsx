@@ -2405,8 +2405,16 @@ const handleOpenNewNewsModal = () => {
                                 const drag = cropDragRef.current;
                                 if (!drag || drag.pointerId !== e.pointerId) return;
                                 const bounds = e.currentTarget.getBoundingClientRect();
-                                const nextX = Math.max(0, Math.min(100, drag.imageX - ((e.clientX - drag.startX) / bounds.width) * 100));
-                                const nextY = Math.max(0, Math.min(100, drag.imageY - ((e.clientY - drag.startY) / bounds.height) * 100));
+                                const image = e.currentTarget.querySelector('img');
+                                if (!image?.naturalWidth || !image?.naturalHeight) return;
+                                const coverScale = Math.max(bounds.width / image.naturalWidth, bounds.height / image.naturalHeight);
+                                const zoom = (editingNews.imageZoom ?? 100) / 100;
+                                const overflowX = Math.max(0, image.naturalWidth * coverScale * zoom - bounds.width);
+                                const overflowY = Math.max(0, image.naturalHeight * coverScale * zoom - bounds.height);
+                                const deltaX = e.clientX - drag.startX;
+                                const deltaY = e.clientY - drag.startY;
+                                const nextX = overflowX > 0 ? Math.max(0, Math.min(100, drag.imageX - (deltaX / overflowX) * 100)) : 50;
+                                const nextY = overflowY > 0 ? Math.max(0, Math.min(100, drag.imageY - (deltaY / overflowY) * 100)) : 50;
                                 setEditingNews(prev => prev ? { ...prev, imagePositionX: nextX, imagePositionY: nextY } : prev);
                               }}
                               onPointerUp={(e) => {
@@ -2416,7 +2424,7 @@ const handleOpenNewNewsModal = () => {
                               onPointerCancel={() => { cropDragRef.current = null; }}
                               aria-label="Arrastra la imagen para ajustar el encuadre"
                             >
-                              <img src={editingNews.imageUrl} alt="Encuadre de la imagen" draggable={false} className="w-full h-full object-contain pointer-events-none"
+                              <img src={editingNews.imageUrl} alt="Encuadre de la imagen" draggable={false} className="w-full h-full object-cover pointer-events-none"
                                 style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} />
                               <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-slate-950/70 text-white text-[11px] px-3 py-1 pointer-events-none">Arrastra para ajustar</span>
                             </div>
@@ -2474,7 +2482,7 @@ const handleOpenNewNewsModal = () => {
                       </div>
                       <div className="rounded-xl border border-slate-200 overflow-hidden bg-white">
                         {editingNews.imageUrl ? (
-                          <div className="w-full h-36 overflow-hidden bg-white"><img src={editingNews.imageUrl} alt="" className="w-full h-full object-contain" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} /></div>
+                          <div className="w-full h-36 overflow-hidden bg-white"><img src={editingNews.imageUrl} alt="" className="w-full h-full object-cover" style={{ objectPosition: `${editingNews.imagePositionX ?? 50}% ${editingNews.imagePositionY ?? 50}%`, transform: `scale(${(editingNews.imageZoom ?? 100) / 100})`, transformOrigin: 'center' }} /></div>
                         ) : (
                           <div className="h-24 bg-slate-100 flex items-center justify-center text-slate-400"><ImageIcon className="w-7 h-7" /></div>
                         )}
