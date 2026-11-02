@@ -12,6 +12,7 @@ import {
 import { Service, CategoryConfig, SiteSettings, NewsItem } from '../types';
 import { defaultCategories } from '../data';
 import ServiceCard from './ServiceCard';
+import { NewsCoverImage } from './NewsCoverImage';
 
 const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutGrid,
