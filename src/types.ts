@@ -258,6 +258,8 @@ export interface ContactInfo {
 export interface SiteSettings {
   defaultHomeView: 'categories' | 'all_services';
   showNewsOnHome?: boolean;
-  serviceContentFontSize?: number;
-  decisionTreeFontSize?: number;
+  decisionTreeButtonFontSize?: number;
+  decisionTreeBreadcrumbFontSize?: number;
+  serviceTitleFontSize?: number;
+  decisionTreeContentFontSize?: number;
 }
