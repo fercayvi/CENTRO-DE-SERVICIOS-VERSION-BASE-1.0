@@ -2,7 +2,8 @@ import { ServiceId, Service, FAQ, NewsItem, Aviso, MonthlyRecognition, ContactIn
 
 export const siteSettings: SiteSettings = {
   "defaultHomeView": "all_services",
-  "showNewsOnHome": true
+  "showNewsOnHome": true,
+  "serviceContentFontSize": 16
 };
 
 export const defaultCategories: CategoryConfig[] = [
