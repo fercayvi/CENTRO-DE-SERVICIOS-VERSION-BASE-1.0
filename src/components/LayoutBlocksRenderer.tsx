@@ -370,7 +370,7 @@ export const LayoutBlocksRenderer: React.FC<LayoutBlocksRendererProps> = ({
         if (block.type === 'table') {
           const columnCount = Math.max(1, block.headers?.length || 1);
           return (
-            <section key={block.id || `table-${index}`} className="space-y-3 rounded-2xl border border-slate-200 bg-white px-4 sm:px-5 py-6 sm:py-8 shadow-xs">
+            <section key={block.id || `table-${index}`} className="space-y-3 rounded-2xl border border-slate-200 bg-white px-4 sm:px-5 py-5 sm:py-6 shadow-xs">
               {block.title && <h3 className="text-base font-bold text-slate-900">{block.title}</h3>}
               <div className="overflow-x-auto rounded-xl border border-slate-200">
                 <table className="w-full min-w-[480px] border-collapse text-sm text-left">
