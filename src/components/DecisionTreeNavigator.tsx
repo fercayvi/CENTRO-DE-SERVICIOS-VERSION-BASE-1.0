@@ -85,10 +85,6 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
     });
   };
 
-  useEffect(() => {
-    onNavigationStateChange?.(currentNode?.nodeType === 'content', currentNode?.nodeType === 'content' ? handleGoBack : handleReset);
-  }, [navPath, currentNode, onNavigationStateChange]);
-
   // Scroll al tope superior automáticamente al cambiar de paso (siempre antes de returns tempranos)
   useEffect(() => {
     if (isInitialMount.current) {
@@ -126,6 +122,10 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
     setNavPath([]);
     scrollToTop();
   };
+
+  useEffect(() => {
+    onNavigationStateChange?.(currentNode?.nodeType === 'content', currentNode?.nodeType === 'content' ? handleGoBack : handleReset);
+  }, [navPath, currentNode, onNavigationStateChange]);
 
   // Current options to display if at root or category node
   const currentOptions = currentNode ? (currentNode.children || []) : tree;
