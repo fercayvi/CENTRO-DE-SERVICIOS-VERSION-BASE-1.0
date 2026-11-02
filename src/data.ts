@@ -45,9 +45,9 @@ export const defaultCategories: CategoryConfig[] = [
 export const activeCategories: CategoryConfig[] = defaultCategories;
 
 export const initialContact: ContactInfo = {
-  "whatsapp": "https://wa.me/525512345678",
+  "whatsapp": "Próximamente",
   "telefono": "Ext. 202 (5512345678)",
-  "ubicacion": "Módulo de Servicios al Personal, ubicado a un lado de Ropería.",
+  "ubicacion": "Módulo de Servicios al Personal",
   "horario": "Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm\nSábados: 9:30 am a 12:30 pm",
   "croquisUrl": ""
 };
@@ -990,12 +990,12 @@ export const initialServices: Service[] = [
             "id": "node_1788456194021_kelg",
             "title": "Necesito una reposición",
             "nodeType": "content",
-            "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposición por un costo de $49 MXN.\n\n",
+            "text": " Acude al Módulo de Servicio al Personal para realizar el trámite.\n\nSolicita tu reposici��n por un costo de $49 MXN.\n\n",
             "blocks": [
               {
                 "id": "txt_b_block_node_1788456194021_kelg_1",
                 "type": "text",
-                "content": "Solicita tu reposición por un<b> costo de $49 MXN</b>.<p><br></p><p>Acude al <b>Módulo de Servicio al Personal  </b>ubicado a un lado de ropería para realizar el trámite.</p><p><br></p><p></p><p><b>Horario de atención: </b>Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm - Sábados: 9:30 am a 12:30 pm</p><p></p><p></p><p></p>",
+                "content": "Solicita tu reposición por un<b> costo de $49 MXN</b>.<p><br></p><p>Acude al <b>Módulo de Servicio al Personal  </b>para realizar el trámite.</p><p><br></p><p></p><p><b>Horario de atención: </b>Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm - Sábados: 9:30 am a 12:30 pm</p><p></p><p></p><p></p>",
                 "align": "left",
                 "style": "normal",
                 "title": "¿Necesitas reponer tu tarjeta de vales de despensa?"
@@ -1009,7 +1009,7 @@ export const initialServices: Service[] = [
                 {
                   "id": "txt_b_block_node_1788456194021_kelg_1",
                   "type": "text",
-                  "content": "Solicita tu reposición por un<b> costo de $49 MXN</b>.<p><br></p><p>Acude al <b>Módulo de Servicio al Personal  </b>ubicado a un lado de ropería para realizar el trámite.</p><p><br></p><p></p><p><b>Horario de atención: </b>Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm - Sábados: 9:30 am a 12:30 pm</p><p></p><p></p><p></p>",
+                  "content": "Solicita tu reposición por un<b> costo de $49 MXN</b>.<p><br></p><p>Acude al <b>Módulo de Servicio al Personal  </b>para realizar el trámite.</p><p><br></p><p></p><p><b>Horario de atención: </b>Lunes - Viernes: 7:00 am a 8:00 am | 9:00 am a 12:00 pm | 2:30 pm a 3:30 pm - Sábados: 9:30 am a 12:30 pm</p><p></p><p></p><p></p>",
                   "align": "left",
                   "style": "normal",
                   "title": "¿Necesitas reponer tu tarjeta de vales de despensa?"
@@ -2479,7 +2479,7 @@ export const initialServices: Service[] = [
             "id": "txt_1792691012666_qfmod",
             "type": "text",
             "title": "¿El reloj checador no reconoce tu huella en tu área de trabajo o en el comedor?",
-            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><br><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, para recibir apoyo con tu registro de asistencia.</li></ul><br><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
             "align": "left",
             "style": "normal"
           },
@@ -2508,7 +2508,7 @@ export const initialServices: Service[] = [
               "id": "txt_1792691012666_qfmod",
               "type": "text",
               "title": "¿El reloj checador no reconoce tu huella en tu área de trabajo o en el comedor?",
-              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para recibir apoyo con tu registro de asistencia.</li></ul><br><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p></p><ul><li><b>Acude al Módulo de Servicio al Personal</b>, para recibir apoyo con tu registro de asistencia.</li></ul><br><p><b>¿Qué información necesitas?</b></p><ul><li>Nombre completo.</li><li>Número de nómina.<br></li></ul>",
               "align": "left",
               "style": "normal"
             },
@@ -2539,7 +2539,7 @@ export const initialServices: Service[] = [
             "id": "txt_1792694613901_lk8y2",
             "type": "text",
             "title": "¿El reloj checador está apagado, muestra un error o no responde cuando intentas registrar tu asistencia?",
-            "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</p><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, para reportar la falla y recibir orientación.</p><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
             "align": "left",
             "style": "normal"
           },
@@ -2560,7 +2560,7 @@ export const initialServices: Service[] = [
               "id": "txt_1792694613901_lk8y2",
               "type": "text",
               "title": "¿El reloj checador está apagado, muestra un error o no responde cuando intentas registrar tu asistencia?",
-              "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para reportar la falla y recibir orientación.</p><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, para reportar la falla y recibir orientación.</p><p></p><p><br></p><p><b>¿Qué información conviene proporcionar?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Área donde se encuentra el reloj.</p></li><li><p>Qué sucede cuando intentas utilizarlo.<br></p></li></ul>",
               "align": "left",
               "style": "normal"
             },
@@ -2583,7 +2583,7 @@ export const initialServices: Service[] = [
             "id": "txt_1792694677433_qlrhj",
             "type": "text",
             "title": "¿Registraste tu entrada o salida en el reloj checador, pero no aparece en tu registro de asistencia?",
-            "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</p><p><br></p><p></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
+            "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, para solicitar una revisión de tu registro.</p><p><br></p><p></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
             "align": "left",
             "style": "normal"
           },
@@ -2604,7 +2604,7 @@ export const initialServices: Service[] = [
               "id": "txt_1792694677433_qlrhj",
               "type": "text",
               "title": "¿Registraste tu entrada o salida en el reloj checador, pero no aparece en tu registro de asistencia?",
-              "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, ubicado a un costado de Ropería, para solicitar una revisión de tu registro.</p><p><br></p><p></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
+              "content": "<p><b>¿Qué debes hacer?</b></p><p><b>Acude al Módulo de Servicio al Personal</b>, para solicitar una revisión de tu registro.</p><p><br></p><p></p><p><b>¿Qué información conviene tener a la mano?</b></p><ul><li><p>Nombre completo.</p></li><li><p>Número de nómina.</p></li><li><p>Fecha en la que realizaste la marcación.</p></li><li><p>Hora aproximada y ubicación del reloj.</p></li><li><p>Si se trató de una entrada o una salida.<br></p></li></ul>",
               "align": "left",
               "style": "normal"
             },
