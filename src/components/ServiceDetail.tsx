@@ -4,7 +4,7 @@ import {
   HelpCircle, Edit3, Save, Plus, Trash2, X, AlertCircle, Check,
   Image as ImageIcon, Video, FileDown, Eye, EyeOff, AlertTriangle,
   ExternalLink, Download, Layers, Sparkles, GripVertical, ChevronUp, ChevronDown, Sliders, Info, ListOrdered,
-  Maximize2, Minimize2, ZoomIn, LayoutGrid, Type, Columns
+  Maximize2, Minimize2, ZoomIn, LayoutGrid, Type, Columns, House
 } from 'lucide-react';
 import { Service, FAQ, StepItem, ServiceFAQ, ServiceAttachment, CategoryConfig } from '../types';
 import { getDefaultServiceDetails, defaultCategories } from '../data';
@@ -418,6 +418,7 @@ export default function ServiceDetail({
   onLightboxToggle
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
+  const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
   // 16 px conserva los tamaños originales; el valor escala proporcionalmente la jerarquía tipográfica.
   const [fontSizePx, setFontSizePx] = useState<string>('16');
   const parsedFontSize = Number(fontSizePx);
@@ -701,13 +702,17 @@ export default function ServiceDetail({
   };
 
   const handleRequestExit = () => {
-    if (isEditing && isModified && !window.confirm('Tienes cambios sin guardar. ¿Quieres salir sin guardar?')) {
-      return;
-    }
+    if (isEditing && isModified && !window.confirm('Tienes cambios sin guardar. ¿Quieres salir sin guardar?')) return;
     if (isEditing && isModified) {
       setDraft(getPreparedDraft(service));
       setIsEditing(false);
     }
+    if (isEditing) { onBack(); return; }
+    setIsExitConfirmationOpen(true);
+  };
+
+  const handleConfirmExit = () => {
+    setIsExitConfirmationOpen(false);
     onBack();
   };
 
@@ -1203,11 +1208,11 @@ export default function ServiceDetail({
                 id="btn-service-back"
                 type="button"
                 onClick={handleRequestExit}
-                className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center gap-1 active:scale-95 transition-all shrink-0 border border-slate-300 shadow-2xs cursor-pointer min-h-[38px]"
-                title="Volver al menú"
+                className="min-h-[40px] shrink-0 inline-flex items-center gap-1.5 px-2 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-500 hover:text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer"
+                title="Ir al menú principal"
               >
-                <ChevronLeft className="w-4 h-4 text-slate-700" />
-                <span>Volver al menú</span>
+                <House className="w-4 h-4" />
+                <span>Menú principal</span>
               </button>
 
               <div className="flex items-center gap-2.5 min-w-0">
@@ -1275,6 +1280,24 @@ export default function ServiceDetail({
             )}
           </div>
 
+        </div>
+      )}
+
+      {isExitConfirmationOpen && (
+        <div className="fixed inset-0 z-[70] bg-slate-950/45 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsExitConfirmationOpen(false); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="service-exit-title" aria-describedby="service-exit-description" className="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-2xl p-5 sm:p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0"><AlertTriangle className="w-5 h-5" /></div>
+              <div className="min-w-0">
+                <h2 id="service-exit-title" className="text-base font-bold text-slate-900">¿Salir al menú principal?</h2>
+                <p id="service-exit-description" className="mt-1.5 text-sm leading-relaxed text-slate-600">Regresarás al menú principal y perderás tu avance en este trámite.</p>
+              </div>
+            </div>
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+              <button type="button" onClick={() => setIsExitConfirmationOpen(false)} className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-sm font-semibold transition-colors cursor-pointer">Continuar aquí</button>
+              <button type="button" onClick={handleConfirmExit} className="min-h-[44px] px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors cursor-pointer">Salir al menú</button>
+            </div>
+          </div>
         </div>
       )}
 
