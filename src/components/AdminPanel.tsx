@@ -1350,7 +1350,8 @@ const handleOpenNewNewsModal = () => {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeButtonFontSize ?? 16}
-                  onChange={(event) => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= 8 && value <= 48) setSettings?.({ ...currentSettings, decisionTreeButtonFontSize: value }); }}
+                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, decisionTreeButtonFontSize: value }); }}
+                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, decisionTreeButtonFontSize: safeValue }); }}
                   aria-label="Tamaño de letra de botones en píxeles"
                   className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
                 <span className="text-sm text-slate-500">px</span>
@@ -1367,7 +1368,8 @@ const handleOpenNewNewsModal = () => {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeBreadcrumbFontSize ?? 16}
-                  onChange={(event) => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= 8 && value <= 48) setSettings?.({ ...currentSettings, decisionTreeBreadcrumbFontSize: value }); }}
+                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, decisionTreeBreadcrumbFontSize: value }); }}
+                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, decisionTreeBreadcrumbFontSize: safeValue }); }}
                   aria-label="Tamaño de letra de migas de navegación en píxeles"
                   className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
                 <span className="text-sm text-slate-500">px</span>
@@ -1384,7 +1386,8 @@ const handleOpenNewNewsModal = () => {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <input type="number" min={8} max={48} step={1} value={currentSettings.serviceTitleFontSize ?? 18}
-                  onChange={(event) => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= 8 && value <= 48) setSettings?.({ ...currentSettings, serviceTitleFontSize: value }); }}
+                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, serviceTitleFontSize: value }); }}
+                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, serviceTitleFontSize: safeValue }); }}
                   aria-label="Tamaño de letra del título del trámite en píxeles"
                   className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
                 <span className="text-sm text-slate-500">px</span>
@@ -1401,7 +1404,8 @@ const handleOpenNewNewsModal = () => {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <input type="number" min={8} max={48} step={1} value={currentSettings.decisionTreeOptionTitleFontSize ?? 16}
-                  onChange={(event) => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= 8 && value <= 48) setSettings?.({ ...currentSettings, decisionTreeOptionTitleFontSize: value }); }}
+                  onChange={(event) => { const value = event.target.value === '' ? 0 : Number(event.target.value); if (Number.isFinite(value)) setSettings?.({ ...currentSettings, decisionTreeOptionTitleFontSize: value }); }}
+                  onBlur={(event) => { const value = Number(event.target.value); const safeValue = Number.isFinite(value) ? Math.min(48, Math.max(8, value)) : 16; setSettings?.({ ...currentSettings, decisionTreeOptionTitleFontSize: safeValue }); }}
                   aria-label="Tamaño de letra del texto del árbol de decisiones en píxeles"
                   className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
                 <span className="text-sm text-slate-500">px</span>
