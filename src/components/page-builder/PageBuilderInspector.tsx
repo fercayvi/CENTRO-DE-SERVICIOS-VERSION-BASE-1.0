@@ -252,19 +252,6 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Estilo Tipográfico</label>
-                <select
-                  value={textBlock.style || 'normal'}
-                  onChange={(e) => onUpdateBlock({ ...textBlock, style: e.target.value as any })}
-                  className="w-full px-3 py-2 text-xs font-medium border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                >
-                  <option value="normal">Párrafo Estándar (14-16px)</option>
-                  <option value="lead">Texto Destacado / Subtítulo (18px)</option>
-                  <option value="heading">Encabezado de Sección (20px)</option>
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700">Tamaño de fuente (px)</label>
                 <input
                   type="number"
@@ -831,6 +818,28 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
                   className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
                 <p className="text-[10px] text-slate-500">Este título se muestra encima de la tabla. Puedes dejarlo vacío.</p>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Tamaño de fuente (px)</label>
+                <input
+                  type="number"
+                  min={8}
+                  max={96}
+                  step={1}
+                  key={`${tableBlock.id}-font-size-${tableBlock.fontSizePx ?? 16}`}
+                  defaultValue={tableBlock.fontSizePx ?? 16}
+                  onBlur={event => {
+                    const rawValue = event.currentTarget.value.trim();
+                    const value = Number(rawValue);
+                    if (rawValue !== '' && Number.isFinite(value) && value >= 8 && value <= 96) {
+                      onUpdateBlock({ ...tableBlock, fontSizePx: value });
+                    } else {
+                      event.currentTarget.value = String(tableBlock.fontSizePx ?? 16);
+                    }
+                  }}
+                  aria-label="Tamaño de fuente de la tabla en píxeles"
+                  className="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
               </div>
               <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3 space-y-1.5">
                 <p className="text-xs font-bold text-blue-900">Edición de la tabla</p>
