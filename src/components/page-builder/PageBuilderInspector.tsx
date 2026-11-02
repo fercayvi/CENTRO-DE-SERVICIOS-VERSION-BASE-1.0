@@ -258,15 +258,15 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
                   min={8}
                   max={96}
                   step={1}
-                  key={`${textBlock.id}-font-size-${textBlock.fontSizePx ?? textBlock.style ?? 'normal'}`}
-                  defaultValue={textBlock.fontSizePx ?? (textBlock.style === 'heading' ? 20 : textBlock.style === 'lead' ? 18 : 16)}
+                  key={`${textBlock.id}-font-size-${textBlock.fontSizePx ?? 16}`}
+                  defaultValue={textBlock.fontSizePx ?? 16}
                   onBlur={(event) => {
                     const rawValue = event.currentTarget.value.trim();
                     const value = Number(rawValue);
                     if (rawValue !== '' && Number.isFinite(value) && value >= 8 && value <= 96) {
                       onUpdateBlock({ ...textBlock, fontSizePx: value });
                     } else {
-                      event.currentTarget.value = String(textBlock.fontSizePx ?? (textBlock.style === 'heading' ? 20 : textBlock.style === 'lead' ? 18 : 16));
+                      event.currentTarget.value = String(textBlock.fontSizePx ?? 16);
                     }
                   }}
                   aria-label="Tamaño de fuente del bloque en píxeles"
