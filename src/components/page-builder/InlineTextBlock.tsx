@@ -378,7 +378,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
               min={8}
               max={96}
               step={1}
-              key={`${block.id}-font-size-${block.fontSizePx ?? block.style ?? 'normal'}`}
+              key={`${block.id}-font-size-${block.fontSizePx ?? 16}`}
               defaultValue={block.fontSizePx ?? 16}
               onBlur={(event) => {
                 const rawValue = event.currentTarget.value.trim();
