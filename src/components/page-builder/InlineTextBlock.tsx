@@ -343,7 +343,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
             block.align === 'center' ? 'justify-center' : block.align === 'right' ? 'justify-end' : ''
           }`}>
             <FileText className="w-4 h-4 text-blue-600 shrink-0 opacity-75" />
-            <h3 className={`text-base sm:text-lg font-bold text-slate-900 ${alignClass}`}>
+            <h3 style={block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : undefined} className={`text-base sm:text-lg font-bold text-slate-900 ${alignClass}`}>
               {block.title}
             </h3>
           </div>
@@ -352,8 +352,9 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
           style={{
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
+            ...(block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : {}),
           }}
-          className={`rich-text-content whitespace-pre-wrap break-words ${styleClass} ${alignClass}`}
+          className={`rich-text-content whitespace-pre-wrap break-words ${styleClass} ${alignClass}`
           dangerouslySetInnerHTML={{ __html: sanitizedHtml || '<p class="text-slate-300 italic">Sin contenido</p>' }}
         />
       </div>
@@ -495,6 +496,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
         <input
           ref={titleRef}
           type="text"
+          style={block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : undefined}
           value={block.title || ''}
           onChange={handleTitleChange}
           placeholder="Escribe un título para esta sección (opcional)..."
@@ -532,6 +534,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
           style={{
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word',
+            ...(block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : {}),
           }}
           className={`rich-text-content min-h-[85px] p-2 -m-2 rounded-xl focus:outline-none transition-colors outline-none whitespace-pre-wrap break-words ${styleClass} ${alignClass}`}
         />
