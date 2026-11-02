@@ -264,6 +264,23 @@ export const PageBuilderInspector: React.FC<PageBuilderInspectorProps> = ({
                 </select>
               </div>
 
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700">Tamaño de fuente (px)</label>
+                <input
+                  type="number"
+                  min={8}
+                  max={96}
+                  step={1}
+                  value={textBlock.fontSizePx ?? (textBlock.style === 'heading' ? 20 : textBlock.style === 'lead' ? 18 : 16)}
+                  onChange={(event) => {
+                    const value = Number(event.target.value);
+                    if (Number.isFinite(value) && value >= 8 && value <= 96) onUpdateBlock({ ...textBlock, fontSizePx: value });
+                  }}
+                  aria-label="Tamaño de fuente del bloque en píxeles"
+                  className="w-full px-3 py-2 text-sm font-semibold border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
+              </div>
+
               <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl space-y-1">
                 <p className="text-[11px] font-bold text-blue-900">✍️ Edición directa en el lienzo:</p>
                 <p className="text-[11px] text-blue-700/80 leading-relaxed">
