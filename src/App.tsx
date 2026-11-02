@@ -241,7 +241,7 @@ export default function App() {
                     decisionTreeButtonFontSize={settings.decisionTreeButtonFontSize ?? 16}
                     decisionTreeBreadcrumbFontSize={settings.decisionTreeBreadcrumbFontSize ?? 16}
                     serviceTitleFontSize={settings.serviceTitleFontSize ?? 20}
-                    decisionTreeContentFontSize={settings.decisionTreeContentFontSize ?? 16}
+                    decisionTreeOptionTitleFontSize={settings.decisionTreeOptionTitleFontSize ?? 16}
                     onLightboxToggle={setIsImageZoomed}
                   />
                 </div>
