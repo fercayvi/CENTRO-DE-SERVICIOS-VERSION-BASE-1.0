@@ -13,6 +13,7 @@ interface DecisionTreeNavigatorProps {
   tree: ServiceNode[];
   onOpenLightbox?: (url: string, title?: string) => void;
   serviceTitle?: string;
+  fontSize?: number;
 }
 
 function getNodeBlocks(node: ServiceNode): LayoutBlock[] {
@@ -33,7 +34,8 @@ function getCleanButtonTitle(title?: string): string {
 export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
   tree,
   onOpenLightbox,
-  serviceTitle = 'Trámite'
+  serviceTitle = 'Trámite',
+  fontSize = 16
 }) => {
   // Navigation stack: array of selected nodes from root to current
   const [navPath, setNavPath] = useState<ServiceNode[]>([]);
@@ -126,7 +128,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
           <button
             type="button"
             onClick={handleGoBack}
-            className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+            className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+            style={{ fontSize }}
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
             <span>Atrás</span>
@@ -140,7 +143,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
             <button
               type="button"
               onClick={() => handleSelectNode(currentNode.children![0])}
-              className="min-h-[48px] px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
+              className="min-h-[48px] px-6 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
+              style={{ fontSize }}
             >
               <span>Siguiente</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -153,7 +157,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                     key={childNode.id}
                     type="button"
                     onClick={() => handleSelectNode(childNode)}
-                    className="min-h-[48px] px-5 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+                    className="min-h-[48px] px-5 py-2.5 sm:py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+                    style={{ fontSize }}
                   >
                     <span>Siguiente</span>
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -166,7 +171,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
           <button
             type="button"
             onClick={handleReset}
-            className="min-h-[48px] px-5 py-2.5 text-sm sm:text-base font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 ml-auto cursor-pointer"
+            className="min-h-[48px] px-5 py-2.5 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 ml-auto cursor-pointer"
+            style={{ fontSize }}
           >
             <RotateCcw className="w-4 h-4" />
             <span>Comenzar de nuevo</span>
@@ -185,7 +191,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
         {/* Barra superior de navegación: Breadcrumbs a la izquierda y Controles a la derecha */}
         <div className="flex items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-100 min-w-0">
           {/* Breadcrumbs limpios con mayor tamaño de fuente y peso */}
-          <nav aria-label="Ruta de navegación" className="flex items-center gap-1 text-sm sm:text-base min-w-0 flex-1 overflow-hidden whitespace-nowrap">
+          <nav aria-label="Ruta de navegación" className="flex items-center gap-1 min-w-0 flex-1 overflow-hidden whitespace-nowrap" style={{ fontSize }}>
             {visibleHistory.length === 0 ? (
               <span className="text-slate-900 font-bold shrink-0">Inicio</span>
             ) : (
@@ -238,7 +244,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               <button
                 type="button"
                 onClick={handleReset}
-                className="min-h-[48px] flex items-center gap-1.5 px-3 py-1 text-slate-500 hover:text-slate-800 text-xs sm:text-sm font-normal transition-colors cursor-pointer bg-transparent border-0"
+                className="min-h-[48px] flex items-center gap-1.5 px-3 py-1 text-slate-500 hover:text-slate-800 font-normal transition-colors cursor-pointer bg-transparent border-0"
+                style={{ fontSize }}
                 title="Reiniciar asistente"
               >
                 <RotateCcw className="w-4 h-4 text-slate-500" />
@@ -294,7 +301,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               <button
                 type="button"
                 onClick={handleGoBack}
-                className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 text-base font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                className="min-h-[48px] px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 hover:border-slate-400 shadow-sm active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                style={{ fontSize }}
               >
                 <ArrowLeft className="w-5 h-5 text-slate-600" />
                 <span>Atrás</span>
@@ -303,7 +311,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
               <button
                 type="button"
                 onClick={handleReset}
-                className="min-h-[48px] px-6 py-3 text-base font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
+                className="min-h-[48px] px-6 py-3 font-bold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-xl shadow-xs transition-all flex items-center gap-2 ml-auto cursor-pointer"
+                style={{ fontSize }}
               >
                 <RotateCcw className="w-5 h-5" />
                 <span>Finalizar y Reiniciar</span>
@@ -325,7 +334,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                     className="min-h-[48px] bg-white border border-blue-300 text-blue-700 hover:bg-blue-50 hover:shadow-md hover:-translate-y-0.5 p-4 sm:p-5 rounded-2xl flex items-center justify-between transition-all group cursor-pointer text-left shadow-2xs"
                   >
                     <div className="pr-3 flex-1 min-w-0">
-                      <span className="text-sm sm:text-base font-bold text-blue-700 leading-snug">
+                      <span className="font-bold text-blue-700 leading-snug" style={{ fontSize }}>
                         {buttonText}
                       </span>
                     </div>
@@ -349,7 +358,8 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
                 <button
                   type="button"
                   onClick={handleGoBack}
-                  className="min-h-[48px] px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base font-medium text-slate-700 hover:text-slate-900 bg-transparent hover:bg-slate-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                  className="min-h-[48px] px-4 py-2 sm:px-5 sm:py-2.5 font-medium text-slate-700 hover:text-slate-900 bg-transparent hover:bg-slate-100 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+                  style={{ fontSize }}
                 >
                   <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600" />
                   <span>Atrás</span>
