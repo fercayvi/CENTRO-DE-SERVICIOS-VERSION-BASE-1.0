@@ -127,7 +127,7 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
   // Reusable Step Navigation Bar (Top and Bottom)
   const renderStepNavigation = (isTop: boolean) => {
     return (
-      <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center justify-between gap-3`}>
+      <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center ${isTop ? 'justify-between' : 'justify-center'} gap-3`}>
         {navPath.length > 0 ? (
           <button
             type="button"
