@@ -206,7 +206,7 @@ export default function App() {
         <div id="phone-screen-container" className="w-full flex-1 overflow-hidden flex flex-col relative">
 
           {/* TAB CONTENT SCROLLABLE CANVAS */}
-          <div id="phone-main-scrollable-content" ref={scrollRef} className={`flex-1 overflow-y-auto pt-2 sm:pt-3 relative ${isAdminLoggedIn ? 'pb-8' : 'pb-20'}`}>
+          <div id="phone-main-scrollable-content" ref={scrollRef} className={`flex-1 overflow-y-auto pt-2 sm:pt-3 relative ${isAdminLoggedIn ? 'pb-8' : 'pb-16'}`}>
             <div className={`w-full mx-auto ${selectedService ? "max-w-[1700px] px-2 sm:px-4 lg:px-6" : "max-w-[1400px] px-4 sm:px-6 lg:px-10"}`}>
             
             {/* RENDER SELECTED SERVICE DETAIL (Public or Admin) WITH LIGHT FULLSCREEN BACKDROP */}
