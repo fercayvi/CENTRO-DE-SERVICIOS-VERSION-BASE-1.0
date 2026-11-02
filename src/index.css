@@ -13,6 +13,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Escala solo la tipografía del contenido del servicio; 16 px mantiene el diseño original. */
+.service-font-scale {
+  --text-xs: calc(0.75rem * var(--service-font-scale, 1));
+  --text-sm: calc(0.875rem * var(--service-font-scale, 1));
+  --text-base: calc(1rem * var(--service-font-scale, 1));
+  --text-lg: calc(1.125rem * var(--service-font-scale, 1));
+  --text-xl: calc(1.25rem * var(--service-font-scale, 1));
+  --text-2xl: calc(1.5rem * var(--service-font-scale, 1));
+  --text-3xl: calc(1.875rem * var(--service-font-scale, 1));
+  --text-4xl: calc(2.25rem * var(--service-font-scale, 1));
+  --text-5xl: calc(3rem * var(--service-font-scale, 1));
+  --text-6xl: calc(3.75rem * var(--service-font-scale, 1));
+  --text-7xl: calc(4.5rem * var(--service-font-scale, 1));
+  --text-8xl: calc(6rem * var(--service-font-scale, 1));
+  --text-9xl: calc(8rem * var(--service-font-scale, 1));
+}
+
 /* Custom sleek scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
