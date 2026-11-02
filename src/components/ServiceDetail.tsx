@@ -171,11 +171,19 @@ function FAQAccordion({
 function LivePreviewPanel({ 
   draft, 
   onSelectTab,
-  onOpenLightbox
+  onOpenLightbox,
+  decisionTreeButtonFontSize = 16,
+  decisionTreeBreadcrumbFontSize = 16,
+  serviceTitleFontSize = 20,
+  decisionTreeOptionTitleFontSize = 16
 }: { 
   draft: Service & { hidden?: boolean };
   onSelectTab: (tab: 'general' | 'arbol' | 'bloques') => void;
   onOpenLightbox?: (url: string, title?: string) => void;
+  decisionTreeButtonFontSize?: number;
+  decisionTreeBreadcrumbFontSize?: number;
+  serviceTitleFontSize?: number;
+  decisionTreeOptionTitleFontSize?: number;
 }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const videoInfo = getEmbedVideoInfo(draft.videoUrl);
@@ -1167,6 +1175,10 @@ export default function ServiceDetail({
                 draft={draft} 
                 onSelectTab={(t) => { setEditorTab(t); setMobileViewMode('editor'); }} 
                 onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
+                decisionTreeButtonFontSize={decisionTreeButtonFontSize}
+                decisionTreeBreadcrumbFontSize={decisionTreeBreadcrumbFontSize}
+                serviceTitleFontSize={serviceTitleFontSize}
+                decisionTreeOptionTitleFontSize={decisionTreeOptionTitleFontSize}
               />
             </div>
 
