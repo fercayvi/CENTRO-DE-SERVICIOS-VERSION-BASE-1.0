@@ -368,7 +368,7 @@ export default function AdminPanel({
     image.src = editingNews.imageUrl;
 
     return () => { cancelled = true; };
-  }, [editingNews?.imageUrl]);
+  }, [editingNews?.id, editingNews?.imageUrl]);
 
   // Delete Confirmation Modal state
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<{
@@ -2451,6 +2451,7 @@ const handleOpenNewNewsModal = () => {
                                 };
                                 return (
                                   <Cropper
+                                    key={editingNews.id}
                                     image={editingNews.imageUrl}
                                     crop={newsCrop}
                                     zoom={newsCropZoom}
