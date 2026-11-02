@@ -337,7 +337,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
     const sanitizedHtml = cleanContent;
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-2" style={block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : undefined}>
         {block.title && (
           <div className={`flex items-center gap-2 border-b border-slate-100 pb-2 ${
             block.align === 'center' ? 'justify-center' : block.align === 'right' ? 'justify-end' : ''
@@ -361,7 +361,7 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
   }
 
   return (
-    <div className={`relative group/text rounded-xl transition-all ${
+    <div style={block.fontSizePx ? { fontSize: `${block.fontSizePx}px` } : undefined} className={`relative group/text rounded-xl transition-all ${
       shouldShowToolbar ? 'ring-2 ring-blue-500/80 border-blue-400 bg-blue-50/5' : ''
     }`}>
       {/* Floating mini formatting toolbar - positioned above without obscuring the first line */}
@@ -373,9 +373,26 @@ export const InlineTextBlock: React.FC<InlineTextBlockProps> = ({
             e.preventDefault();
           }}
         >
+          <label className="flex items-center gap-1.5 px-1.5 text-[10px] font-semibold text-slate-300 whitespace-nowrap" title="Tamaño de fuente en píxeles">
+            <span>px</span>
+            <input
+              type="number"
+              min={8}
+              max={96}
+              step={1}
+              value={block.fontSizePx ?? (block.style === 'heading' ? 20 : block.style === 'lead' ? 18 : 16)}
+              onChange={(event) => {
+                const value = Number(event.target.value);
+                if (Number.isFinite(value) && value >= 8 && value <= 96) onChange({ ...block, fontSizePx: value });
+              }}
+              aria-label="Tamaño de fuente en píxeles"
+              className="w-12 rounded-md border border-slate-600 bg-slate-800 px-1.5 py-1 text-center text-xs text-white outline-none focus:border-blue-400"
+            />
+          </label>
+          <div className="w-px h-4 bg-slate-700 mx-1" />
           <button
             type="button"
-            onClick={() => applyFormat('bold')}
+            onClick={() => applyFormat('bold')
             className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
               isBoldActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300 hover:text-white'
             }`}
