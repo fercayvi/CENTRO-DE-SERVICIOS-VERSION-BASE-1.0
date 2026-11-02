@@ -369,6 +369,7 @@ function LivePreviewPanel({
                     tree={draft.decisionTree}
                     onOpenLightbox={onOpenLightbox}
                     serviceTitle={draft.title}
+                    fontSize={decisionTreeFontSize}
                   />
                 </div>
               )}
@@ -995,6 +996,7 @@ export default function ServiceDetail({
                           tree={draft.decisionTree}
                           serviceTitle={draft.title}
                           onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
+                          fontSize={decisionTreeFontSize}
                         />
                       </div>
                     </div>
@@ -1241,6 +1243,7 @@ export default function ServiceDetail({
                   tree={draft.decisionTree}
                   onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
                   serviceTitle={draft.title}
+                  fontSize={decisionTreeFontSize}
                 />
               </div>
             )}
