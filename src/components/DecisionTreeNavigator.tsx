@@ -122,9 +122,11 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
     scrollToTop();
   };
 
+  const isAnswerView = currentNode?.nodeType === 'content' || currentNode?.nodeType === 'step';
+
   useEffect(() => {
-    onNavigationStateChange?.(currentNode?.nodeType === 'content', currentNode?.nodeType === 'content' ? handleGoBack : handleReset);
-  }, [navPath, currentNode, onNavigationStateChange]);
+    onNavigationStateChange?.(isAnswerView, isAnswerView ? handleGoBack : handleReset);
+  }, [navPath, currentNode, onNavigationStateChange, isAnswerView]);
 
   // Current options to display if at root or category node
   const currentOptions = currentNode ? (currentNode.children || []) : tree;
