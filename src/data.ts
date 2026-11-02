@@ -174,50 +174,6 @@ export const initialServices: Service[] = [
         }
       },
       {
-        "id": "node_1793308017307_x3pv",
-        "title": "¿Qué es y cuándo aplica el Bono Volumen?",
-        "nodeType": "content",
-        "blocks": [
-          {
-            "id": "txt_1793308043494_8ompo",
-            "type": "text",
-            "title": "¿Qué es y cuándo aplica el Bono Volumen?",
-            "content": "<p data-path-to-node=\"1\">El <b data-path-to-node=\"1,0\" data-index-in-node=\"24\">Bono Volumen</b> es un premio por área que se te otorga cuando se cumple la meta semanal establecida.   </p><p data-path-to-node=\"2\">Aquí te explicamos en qué casos se mantiene tu bono y en cuáles no:</p><p data-path-to-node=\"2\"><br></p><p data-path-to-node=\"3,0,0\"><b data-path-to-node=\"3,0,0,0\" data-index-in-node=\"0\">Situaciones en las que SÍ aplica el bono:</b>   </p><ul data-path-to-node=\"3,0,1\"><li><p data-path-to-node=\"3,0,1,0,0\">Tiempo por tiempo.   </p></li><li><p data-path-to-node=\"3,0,1,1,0\">Cita del SAT.   </p></li><li><p data-path-to-node=\"3,0,1,2,0\">Junta de sindicato.   </p></li><li><p data-path-to-node=\"3,0,1,3,0\">Vacaciones.   </p></li></ul><p data-path-to-node=\"3,1,0\"><b data-path-to-node=\"3,1,0,0\" data-index-in-node=\"0\">Situaciones en las que NO aplica el bono:</b>   </p><ul data-path-to-node=\"3,1,1\"><li><p data-path-to-node=\"3,1,1,0,0\">Falta injustificada.   </p></li><li><p data-path-to-node=\"3,1,1,1,0\">Permiso sin goce de sueldo.   </p></li><li><p data-path-to-node=\"3,1,1,2,0\">Incapacidad.   </p></li><li><p data-path-to-node=\"3,1,1,3,0\">Nuevo ingreso sin cumplir el periodo requerido. <br></p></li></ul>",
-            "align": "left",
-            "style": "normal"
-          },
-          {
-            "id": "alt_1793308113744_6a25g",
-            "type": "alert",
-            "level": "warning",
-            "title": "Aviso Importante",
-            "message": "Al igual que el Premio de Producción, este bono se paga de forma proporcional a los días que trabajaste en la semana.   \n\nTu supervisor será quien te informe si tu área alcanzó la meta y si eres acreedor a este pago."
-          }
-        ],
-        "contentData": {
-          "text": "",
-          "imageUrl": "",
-          "videoUrl": "",
-          "layoutBlocks": [
-            {
-              "id": "txt_1793308043494_8ompo",
-              "type": "text",
-              "title": "¿Qué es y cuándo aplica el Bono Volumen?",
-              "content": "<p data-path-to-node=\"1\">El <b data-path-to-node=\"1,0\" data-index-in-node=\"24\">Bono Volumen</b> es un premio por área que se te otorga cuando se cumple la meta semanal establecida.   </p><p data-path-to-node=\"2\">Aquí te explicamos en qué casos se mantiene tu bono y en cuáles no:</p><p data-path-to-node=\"2\"><br></p><p data-path-to-node=\"3,0,0\"><b data-path-to-node=\"3,0,0,0\" data-index-in-node=\"0\">Situaciones en las que SÍ aplica el bono:</b>   </p><ul data-path-to-node=\"3,0,1\"><li><p data-path-to-node=\"3,0,1,0,0\">Tiempo por tiempo.   </p></li><li><p data-path-to-node=\"3,0,1,1,0\">Cita del SAT.   </p></li><li><p data-path-to-node=\"3,0,1,2,0\">Junta de sindicato.   </p></li><li><p data-path-to-node=\"3,0,1,3,0\">Vacaciones.   </p></li></ul><p data-path-to-node=\"3,1,0\"><b data-path-to-node=\"3,1,0,0\" data-index-in-node=\"0\">Situaciones en las que NO aplica el bono:</b>   </p><ul data-path-to-node=\"3,1,1\"><li><p data-path-to-node=\"3,1,1,0,0\">Falta injustificada.   </p></li><li><p data-path-to-node=\"3,1,1,1,0\">Permiso sin goce de sueldo.   </p></li><li><p data-path-to-node=\"3,1,1,2,0\">Incapacidad.   </p></li><li><p data-path-to-node=\"3,1,1,3,0\">Nuevo ingreso sin cumplir el periodo requerido. <br></p></li></ul>",
-              "align": "left",
-              "style": "normal"
-            },
-            {
-              "id": "alt_1793308113744_6a25g",
-              "type": "alert",
-              "level": "warning",
-              "title": "Aviso Importante",
-              "message": "Al igual que el Premio de Producción, este bono se paga de forma proporcional a los días que trabajaste en la semana.   \n\nTu supervisor será quien te informe si tu área alcanzó la meta y si eres acreedor a este pago."
-            }
-          ]
-        }
-      },
-      {
         "id": "node_1793308156371_gduj",
         "title": "¿Dudas con tu descuento de Comedor o retención de ISR?",
         "nodeType": "content",
@@ -296,6 +252,13 @@ export const initialServices: Service[] = [
             "level": "info",
             "title": "Aviso Importante",
             "message": "Si trabajaste en más de una línea durante la semana, se toma el resultado de la línea con mejor cumplimiento."
+          },
+          {
+            "id": "alt_1793656949981_fd7tv",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Estos montos pueden cambiar si la compañía lo considera conveniente."
           }
         ],
         "contentData": {
@@ -317,6 +280,13 @@ export const initialServices: Service[] = [
               "level": "info",
               "title": "Aviso Importante",
               "message": "Si trabajaste en más de una línea durante la semana, se toma el resultado de la línea con mejor cumplimiento."
+            },
+            {
+              "id": "alt_1793656949981_fd7tv",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Estos montos pueden cambiar si la compañía lo considera conveniente."
             }
           ]
         }
@@ -325,10 +295,60 @@ export const initialServices: Service[] = [
         "id": "node_1793382703664_9bh5",
         "title": "¿Cuándo aplica y cuándo no el Bono Volumen?",
         "nodeType": "content",
+        "blocks": [
+          {
+            "id": "txt_1793657012587_4l8z4",
+            "type": "text",
+            "title": "",
+            "content": "<p>Para recibir el Bono Volumen necesitas <strong>asistencia perfecta</strong> en la semana, igual que para el Premio por Producción.</p>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "txt_1793657214129_tbcu5",
+            "type": "text",
+            "title": "",
+            "content": "<p><strong>SÍ aplica</strong> cuando tuviste asistencia perfecta y tu línea llegó al menos a 80 % del plan.</p><p><strong>NO aplica</strong> si en la semana tuviste alguna de estas ausencias:</p><ul><li>Vacaciones</li><li>Faltas</li><li>Incapacidades (general, riesgo de trabajo o maternidad)</li><li>Permisos con o sin goce de sueldo<br></li></ul>",
+            "align": "left",
+            "style": "normal"
+          },
+          {
+            "id": "alt_1793657075906_uwbdk",
+            "type": "alert",
+            "level": "warning",
+            "title": "Aviso Importante",
+            "message": "Con cualquiera de estas ausencias no se paga ningún premio esa semana."
+          }
+        ],
         "contentData": {
           "text": "",
           "imageUrl": "",
-          "videoUrl": ""
+          "videoUrl": "",
+          "layoutBlocks": [
+            {
+              "id": "txt_1793657012587_4l8z4",
+              "type": "text",
+              "title": "",
+              "content": "<p>Para recibir el Bono Volumen necesitas <strong>asistencia perfecta</strong> en la semana, igual que para el Premio por Producción.</p>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "txt_1793657214129_tbcu5",
+              "type": "text",
+              "title": "",
+              "content": "<p><strong>SÍ aplica</strong> cuando tuviste asistencia perfecta y tu línea llegó al menos a 80 % del plan.</p><p><strong>NO aplica</strong> si en la semana tuviste alguna de estas ausencias:</p><ul><li>Vacaciones</li><li>Faltas</li><li>Incapacidades (general, riesgo de trabajo o maternidad)</li><li>Permisos con o sin goce de sueldo<br></li></ul>",
+              "align": "left",
+              "style": "normal"
+            },
+            {
+              "id": "alt_1793657075906_uwbdk",
+              "type": "alert",
+              "level": "warning",
+              "title": "Aviso Importante",
+              "message": "Con cualquiera de estas ausencias no se paga ningún premio esa semana."
+            }
+          ]
         }
       }
     ],
@@ -2599,15 +2619,16 @@ export const initialNews: NewsItem[] = [
   {
     "id": "news_1788467824316",
     "title": "¡Próximamente: Descubre tu nuevo Portal de Talento y Cultura!",
-    "summary": "Muy pronto tendrás todos tus trámites, consultas y tutoriales de Recursos Humanos al alcance de tu celular, sin necesidad de hacer filas. ¡Espéralo!",
-    "content": "Estimado equipo,\n\nEn Talento y Cultura seguimos innovando para hacerte la vida más fácil. Nos emociona anunciar que estamos afinando los últimos detalles para el gran lanzamiento de nuestro nuevo Portal Digital de Servicios al Personal.\n\nSabemos que tu tiempo es valioso, por lo que hemos diseñado una plataforma completamente nueva, pensada para usarse de forma rápida y sencilla desde cualquier teléfono celular.\n\n¿Qué podrás encontrar en este nuevo portal?\n\nTrámites en un clic: Información clara sobre vacaciones, préstamos, control de asistencia y dudas de pago.\n\nTutoriales paso a paso: Guías visuales para que sepas exactamente cómo registrar tus tarjetas o usar las aplicaciones oficiales.\n\nAtención directa: Acceso directo a nuestro WhatsApp oficial, horarios actualizados y un croquis para ubicar nuestra ventanilla rápidamente.\n\nNuestro objetivo es que tengas la información de la empresa disponible las 24 horas del día, los 7 días de la semana, evitándote vueltas innecesarias a la oficina.\n\n¡Mantente atento a nuestros próximos comunicados! Muy pronto te compartiremos el enlace oficial y las instrucciones de acceso para que seas de los primeros en probarlo.\n\nTalento y Cultura",
+    "summary": "Muy pronto tendrás todos tus trámites, consultas y tutoriales al alcance de tu celular. ¡Espéralo!",
+    "content": "Talento y Cultura está preparando el lanzamiento de un nuevo Portal Digital de Servicios al Personal. Permitirá consultar trámites, tutoriales y medios de atención de forma rápida y sencilla, las 24 horas del día. Próximamente se compartirán más detalles sobre su lanzamiento.",
     "date": "15/10/2026",
     "imageName": "welcome_team",
     "category": "comunicado",
-    "imageUrl": "/1793314843322-ayvi-logo.png",
-    "imageZoom": 50,
-    "imagePositionX": 38.667201434642756,
-    "imagePositionY": 100
+    "imageUrl": "/1793657945150-Gemini_Generated_Image_a7g59ka7g59ka7g5.jpg",
+    "imageZoom": 123,
+    "imagePositionX": 49.20192760027477,
+    "imagePositionY": 0,
+    "featured": true
   }
 ];
 export const newsData = initialNews;
