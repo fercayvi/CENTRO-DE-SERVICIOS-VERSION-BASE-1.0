@@ -1247,7 +1247,7 @@ export default function ServiceDetail({
                     })}
                   </div>
                 )}
-                <h1 className="text-base sm:text-lg font-bold text-slate-900 font-display truncate">
+                <h1 style={{ fontSize: serviceTitleFontSize }} className="font-bold text-slate-900 font-display truncate">
                   {draft.title}
                 </h1>
               </div>
