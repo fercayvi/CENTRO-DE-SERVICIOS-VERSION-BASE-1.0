@@ -1213,19 +1213,8 @@ export default function ServiceDetail({
         <div className="space-y-4">
           
           {/* Header Card (Navbar Compacto Superior) */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl px-4 sm:px-5 py-3 sm:py-4 shadow-2xs flex items-center justify-between gap-3">
+          <div className="bg-white border border-slate-200/90 rounded-2xl px-4 sm:px-5 py-3 sm:py-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
-              <button 
-                id="btn-service-back"
-                type="button"
-                onClick={handleRequestExit}
-                className="min-h-[40px] shrink-0 inline-flex items-center gap-1.5 px-2 py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-500 hover:text-blue-700 hover:bg-blue-50 transition-colors cursor-pointer"
-                title="Ir al menú principal"
-              >
-                <House className="w-4 h-4" />
-                <span>Menú principal</span>
-              </button>
-
               <div className="flex items-center gap-2.5 min-w-0">
                 {draft.cardImage && typeof draft.cardImage === 'string' && draft.cardImage.trim().length > 0 ? (
                   <img 
@@ -1245,6 +1234,17 @@ export default function ServiceDetail({
                 </h1>
               </div>
             </div>
+
+            <button 
+              id="btn-service-back"
+              type="button"
+              onClick={handleRequestExit}
+              className="min-h-[44px] w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-slate-50 text-sm font-semibold text-slate-700 hover:bg-slate-100 hover:border-slate-400 transition-colors cursor-pointer"
+              title="Volver al catálogo de trámites"
+            >
+              <House className="w-4 h-4 text-slate-500" />
+              <span>Volver a trámites</span>
+            </button>
           </div>
 
           <div className="space-y-4">
