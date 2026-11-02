@@ -257,4 +257,5 @@ export interface ContactInfo {
 export interface SiteSettings {
   defaultHomeView: 'categories' | 'all_services';
   showNewsOnHome?: boolean;
+  serviceContentFontSize?: number;
 }
