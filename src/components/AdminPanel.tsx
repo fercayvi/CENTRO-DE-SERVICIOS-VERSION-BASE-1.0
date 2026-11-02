@@ -2502,7 +2502,11 @@ const handleOpenNewNewsModal = () => {
                               max="300"
                               step="1"
                               value={Math.round(newsCropZoom * 100)}
-                              onChange={(e) => setNewsCropZoom(Number(e.target.value) / 100)}
+                              onChange={(e) => {
+                                const zoom = Number(e.target.value) / 100;
+                                setNewsCropZoom(zoom);
+                                setEditingNews(prev => prev ? { ...prev, imageZoom: Math.round(zoom * 100) } : prev);
+                              }}
                               className="w-full accent-blue-600"
                             />
                           </label>
