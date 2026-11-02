@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   ChevronRight, 
-  ArrowLeft, 
   ArrowRight, 
   RotateCcw 
 } from 'lucide-react';
