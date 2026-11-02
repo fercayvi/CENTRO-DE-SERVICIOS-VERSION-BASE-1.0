@@ -1383,7 +1383,7 @@ const handleOpenNewNewsModal = () => {
                 <p className="text-xs text-slate-500 mt-0.5">Controla el nombre del trámite que aparece al abrirlo.</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <input type="number" min={8} max={48} step={1} value={currentSettings.serviceTitleFontSize ?? 20}
+                <input type="number" min={8} max={48} step={1} value={currentSettings.serviceTitleFontSize ?? 18}
                   onChange={(event) => { const value = Number(event.target.value); if (Number.isFinite(value) && value >= 8 && value <= 48) setSettings?.({ ...currentSettings, serviceTitleFontSize: value }); }}
                   aria-label="Tamaño de letra del título del trámite en píxeles"
                   className="w-24 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
