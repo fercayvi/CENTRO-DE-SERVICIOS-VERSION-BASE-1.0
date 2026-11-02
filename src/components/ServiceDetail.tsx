@@ -225,7 +225,7 @@ function LivePreviewPanel({
                   })}
                 </div>
               )}
-              <h3 className="text-sm font-bold text-slate-900 font-display line-clamp-2">{draft.title || 'Título sin definir'}</h3>
+              <h3 style={{ fontSize: serviceTitleFontSize }} className="font-bold text-slate-900 font-display line-clamp-2">{draft.title || 'Título sin definir'}</h3>
             </div>
 
             <p className="text-xs text-slate-600 font-medium leading-relaxed line-clamp-3 pt-1 border-t border-slate-100 mt-1">
@@ -253,7 +253,9 @@ function LivePreviewPanel({
                 tree={draft.decisionTree}
                 onOpenLightbox={onOpenLightbox}
                 serviceTitle={draft.title}
-                fontSize={decisionTreeFontSize}
+                buttonFontSize={decisionTreeButtonFontSize}
+                    breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
+                    contentFontSize={decisionTreeContentFontSize}
               />
             </div>
           )}
@@ -353,7 +355,7 @@ function LivePreviewPanel({
                         })}
                       </div>
                     )}
-                    <h1 className="text-base sm:text-lg font-bold text-slate-900 font-display truncate">{draft.title || 'Título sin definir'}</h1>
+                    <h1 style={{ fontSize: serviceTitleFontSize }} className="font-bold text-slate-900 font-display truncate">{draft.title || 'Título sin definir'}</h1>
                   </div>
                 </div>
 
@@ -369,7 +371,9 @@ function LivePreviewPanel({
                     tree={draft.decisionTree}
                     onOpenLightbox={onOpenLightbox}
                     serviceTitle={draft.title}
-                    fontSize={decisionTreeFontSize}
+                    buttonFontSize={decisionTreeButtonFontSize}
+                    breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
+                    contentFontSize={decisionTreeContentFontSize}
                   />
                 </div>
               )}
@@ -409,8 +413,10 @@ interface ServiceDetailProps {
   onUpdateService?: (updatedService: Service & { hidden?: boolean }) => void;
   initialEditMode?: boolean;
   onLightboxToggle?: (isOpen: boolean) => void;
-  contentFontSize?: number;
-  decisionTreeFontSize?: number;
+  decisionTreeButtonFontSize?: number;
+  decisionTreeBreadcrumbFontSize?: number;
+  serviceTitleFontSize?: number;
+  decisionTreeContentFontSize?: number;
 }
 
 export default function ServiceDetail({ 
@@ -420,8 +426,10 @@ export default function ServiceDetail({
   onUpdateService,
   initialEditMode = false,
   onLightboxToggle,
-  contentFontSize = 16,
-  decisionTreeFontSize = 16
+  decisionTreeButtonFontSize = 16,
+  decisionTreeBreadcrumbFontSize = 16,
+  serviceTitleFontSize = 20,
+  decisionTreeContentFontSize = 16
 }: ServiceDetailProps) {
   const [isEditing, setIsEditing] = useState<boolean>(initialEditMode);
   const [isExitConfirmationOpen, setIsExitConfirmationOpen] = useState(false);
@@ -996,7 +1004,9 @@ export default function ServiceDetail({
                           tree={draft.decisionTree}
                           serviceTitle={draft.title}
                           onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
-                          fontSize={decisionTreeFontSize}
+                          buttonFontSize={decisionTreeButtonFontSize}
+                    breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
+                    contentFontSize={decisionTreeContentFontSize}
                         />
                       </div>
                     </div>
@@ -1243,7 +1253,9 @@ export default function ServiceDetail({
                   tree={draft.decisionTree}
                   onOpenLightbox={(url, title) => setLightboxImage({ url, title })}
                   serviceTitle={draft.title}
-                  fontSize={decisionTreeFontSize}
+                  buttonFontSize={decisionTreeButtonFontSize}
+                    breadcrumbFontSize={decisionTreeBreadcrumbFontSize}
+                    contentFontSize={decisionTreeContentFontSize}
                 />
               </div>
             )}
