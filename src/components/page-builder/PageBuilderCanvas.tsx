@@ -59,6 +59,7 @@ const TableBlockEditor: React.FC<{
   onChange: (updated: TableLayoutBlock) => void;
   previewMode?: boolean;
 }> = ({ block, onChange, previewMode = false }) => {
+  const fontSizePx = block.fontSizePx ?? 16;
   const columnCount = Math.max(1, Math.min(6, block.headers?.length || 1));
   const headers = Array.from({ length: columnCount }, (_, i) => block.headers?.[i] || `Columna ${i + 1}`);
   const rows = (block.rows || []).slice(0, 30).map(row =>
@@ -142,7 +143,7 @@ const TableBlockEditor: React.FC<{
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" style={{ fontSize: `${fontSizePx}px` }}>
       {previewMode ? (
         block.title?.trim() && <h4 className="text-sm font-bold text-slate-800">{block.title}</h4>
       ) : (
@@ -166,17 +167,17 @@ const TableBlockEditor: React.FC<{
       )}
 
       <div className="overflow-x-auto rounded-xl border border-slate-200">
-        <table className="w-full min-w-[440px] border-collapse text-left text-xs">
+        <table style={{ fontSize: `${fontSizePx}px` }} className="w-full min-w-[440px] border-collapse text-left">
           {(block.showHeader || !previewMode) && (
             <thead className="bg-slate-100">
               <tr>
                 {headers.map((header, col) => (
                   <th key={col} className="min-w-[130px] border-b border-slate-200 px-2 py-2 align-top">
                     {previewMode ? (
-                      <span className="font-bold text-slate-800">{header}</span>
+                      <span style={{ fontSize: `${fontSizePx}px` }} className="font-bold text-slate-800">{header}</span>
                     ) : (
                       <div className="space-y-1.5">
-                        <input aria-label={`Encabezado de columna ${col + 1}`} value={header} onChange={event => updateHeader(col, event.target.value)} onClick={event => event.stopPropagation()} placeholder={`Columna ${col + 1}`} className="w-full min-w-0 rounded-md border border-transparent bg-transparent px-1.5 py-1 font-bold text-slate-800 placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:outline-none" />
+                        <input aria-label={`Encabezado de columna ${col + 1}`} value={header} onChange={event => updateHeader(col, event.target.value)} onClick={event => event.stopPropagation()} placeholder={`Columna ${col + 1}`} style={{ fontSize: `${fontSizePx}px` }} className="w-full min-w-0 rounded-md border border-transparent bg-transparent px-1.5 py-1 font-bold text-slate-800 placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:outline-none" />
                         <div className="flex items-center justify-between gap-1">
                           <div className="flex gap-1">
                             <button type="button" disabled={col === 0} onClick={event => { event.stopPropagation(); moveColumn(col, -1); }} className="rounded px-1 text-[10px] text-slate-500 hover:bg-white disabled:opacity-25" title="Mover columna a la izquierda">←</button>
@@ -199,9 +200,9 @@ const TableBlockEditor: React.FC<{
                 {row.map((cell, col) => (
                   <td key={col} className="min-w-[130px] border-b border-slate-100 px-2 py-1.5 align-top">
                     {previewMode ? (
-                      <span className="whitespace-pre-wrap text-slate-700">{cell}</span>
+                      <span style={{ fontSize: `${fontSizePx}px` }} className="whitespace-pre-wrap text-slate-700">{cell}</span>
                     ) : (
-                      <textarea aria-label={`Fila ${rowIndex + 1}, columna ${col + 1}`} rows={2} value={cell} onChange={event => updateCell(rowIndex, col, event.target.value)} onPaste={event => pasteRange(event, rowIndex, col)} onClick={event => event.stopPropagation()} placeholder="Escribe aquí..." className="w-full min-w-[110px] resize-y rounded-md border border-transparent bg-transparent px-1.5 py-1 text-slate-700 placeholder:text-slate-400 hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none" />
+                      <textarea aria-label={`Fila ${rowIndex + 1}, columna ${col + 1}`} rows={2} value={cell} onChange={event => updateCell(rowIndex, col, event.target.value)} onPaste={event => pasteRange(event, rowIndex, col)} onClick={event => event.stopPropagation()} placeholder="Escribe aquí..." style={{ fontSize: `${fontSizePx}px` }} className="w-full min-w-[110px] resize-y rounded-md border border-transparent bg-transparent px-1.5 py-1 text-slate-700 placeholder:text-slate-400 hover:border-slate-200 focus:border-blue-400 focus:bg-white focus:outline-none" />
                     )}
                   </td>
                 ))}
