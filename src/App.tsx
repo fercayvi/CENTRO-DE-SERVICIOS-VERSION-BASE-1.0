@@ -239,6 +239,7 @@ export default function App() {
                     onUpdateService={handleUpdateService}
                     initialEditMode={serviceEditMode}
                     contentFontSize={settings.serviceContentFontSize ?? 16}
+                    decisionTreeFontSize={settings.decisionTreeFontSize ?? 16}
                     onLightboxToggle={setIsImageZoomed}
                   />
                 </div>
