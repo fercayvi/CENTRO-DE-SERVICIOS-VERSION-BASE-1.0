@@ -2637,13 +2637,13 @@ export const initialNews: NewsItem[] = [
     "title": "¡Próximamente: Descubre tu nuevo Portal de Talento y Cultura!",
     "summary": "Muy pronto tendrás todos tus trámites, consultas y tutoriales al alcance de tu celular. ¡Espéralo!",
     "content": "Talento y Cultura está preparando el lanzamiento de un nuevo Portal Digital de Servicios al Personal. Permitirá consultar trámites, tutoriales y medios de atención de forma rápida y sencilla, las 24 horas del día. Próximamente se compartirán más detalles sobre su lanzamiento.",
-    "date": "15/10/2026",
+    "date": "04/11/2026",
     "imageName": "welcome_team",
     "category": "comunicado",
     "imageUrl": "/1793657945150-Gemini_Generated_Image_a7g59ka7g59ka7g5.jpg",
     "imageZoom": 136,
-    "imagePositionX": 61.91263295111563,
-    "imagePositionY": 13.833308630996532,
+    "imagePositionX": 61.91263295111572,
+    "imagePositionY": 13.833308630996525,
     "featured": true
   }
 ];
