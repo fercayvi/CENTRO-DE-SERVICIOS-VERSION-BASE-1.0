@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { 
   ChevronRight, 
   ArrowRight, 
+  ArrowLeft,
   RotateCcw 
 } from 'lucide-react';
 import { ServiceNode, LayoutBlock } from '../types';
@@ -175,6 +176,17 @@ export const DecisionTreeNavigator: React.FC<DecisionTreeNavigatorProps> = ({
     return (
       <div className={`${isTop ? 'border-b border-slate-100 pb-3 mb-3' : 'border-t border-slate-100 pt-4 mt-4'} flex items-center justify-center gap-3`}>
         <div className="w-fit max-w-full mx-auto flex flex-wrap items-center justify-center gap-3" style={{ justifyContent: "center", marginLeft: "auto", marginRight: "auto" }}>
+          {navPath.length > 0 && (
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="min-h-[48px] px-5 py-2.5 sm:py-3 font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+              style={{ fontSize: buttonFontSize }}
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>Atrás</span>
+            </button>
+          )}
           {forwardButton}
         </div>
       </div>
