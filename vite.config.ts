@@ -1,13 +1,80 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import * as ts from 'typescript';
 import {defineConfig} from 'vite';
 
 const execFileAsync = promisify(execFile);
+
+const uploadedMediaPattern = /^\d{13}-[a-zA-Z0-9_-]+\.(?:png|jpe?g|webp|gif|avif|mp4|webm|mov|pdf)$/i;
+const sourceTextExtensions = new Set([
+  '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json',
+  '.html', '.htm', '.css', '.scss', '.md', '.mdx',
+  '.yml', '.yaml', '.xml', '.svg'
+]);
+const ignoredScanDirectories = new Set([
+  '.git', 'node_modules', 'public', 'dist', 'dist-public',
+  'coverage', '.next', '.vite'
+]);
+
+async function collectRepositoryText(repoRoot: string): Promise<string> {
+  const collected: string[] = [];
+
+  const scanDirectory = async (directory: string): Promise<void> => {
+    const entries = await readdir(directory, { withFileTypes: true });
+
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        if (!ignoredScanDirectories.has(entry.name)) {
+          await scanDirectory(path.join(directory, entry.name));
+        }
+        continue;
+      }
+
+      if (!entry.isFile() || !sourceTextExtensions.has(path.extname(entry.name).toLowerCase())) {
+        continue;
+      }
+
+      const fileContent = await readFile(path.join(directory, entry.name), 'utf8');
+      collected.push(fileContent);
+    }
+  };
+
+  await scanDirectory(repoRoot);
+  return collected.join('\n');
+}
+
+async function removeUnreferencedUploadedMedia(repoRoot: string): Promise<string[]> {
+  const publicDirectory = path.resolve(repoRoot, 'public');
+  let entries;
+
+  try {
+    entries = await readdir(publicDirectory, { withFileTypes: true });
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
+
+  const repositoryText = await collectRepositoryText(repoRoot);
+  const removedFiles: string[] = [];
+
+  for (const entry of entries) {
+    if (!entry.isFile() || !uploadedMediaPattern.test(entry.name)) continue;
+
+    // Any textual mention protects the file, including references outside data.ts.
+    if (repositoryText.includes(entry.name)) continue;
+
+    await unlink(path.join(publicDirectory, entry.name));
+    removedFiles.push(entry.name);
+  }
+
+  return removedFiles;
+}
 
 export default defineConfig(() => {
   return {
@@ -171,6 +238,19 @@ export default defineConfig(() => {
                 return;
               }
 
+              // Remove only uploader-managed media that has no remaining reference.
+              // The scan errs on the side of keeping files if any mention remains.
+              let removedMedia: string[] = [];
+              try {
+                removedMedia = await removeUnreferencedUploadedMedia(repoRoot);
+                if (removedMedia.length > 0) {
+                  console.info(`Limpieza multimedia: ${removedMedia.length} archivo(s) huérfano(s) eliminado(s).`);
+                }
+              } catch (cleanupError) {
+                // Cleanup failure must never block publication or risk user content.
+                console.error('No se pudo completar la limpieza multimedia; se conservarán los archivos.', cleanupError);
+              }
+
               // Fixed arguments only; no shell and no user-provided command strings.
               await runGit(['add', '--', 'src/data.ts', 'public/']);
 
@@ -202,7 +282,9 @@ export default defineConfig(() => {
               res.end(JSON.stringify({
                 success: true,
                 noChanges: false,
-                message: 'Cambios guardados y enviados a GitHub. La versión pública se actualizará mediante GitHub Actions.',
+                message: removedMedia.length > 0
+                  ? `Cambios publicados. Se eliminaron ${removedMedia.length} archivo(s) multimedia que ya no se utilizan. La versión pública se actualizará mediante GitHub Actions.`
+                  : 'Cambios guardados y enviados a GitHub. No se encontraron archivos multimedia huérfanos. La versión pública se actualizará mediante GitHub Actions.',
               }));
             } catch (error) {
               const details = error && typeof error === 'object' && 'stderr' in error
